@@ -1,0 +1,8 @@
+{
+  "name": "Mesa Quente",
+  "description": "Mesa Quente - Jogo de cartas multiplayer para a galera com lobby e salas em tempo real",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

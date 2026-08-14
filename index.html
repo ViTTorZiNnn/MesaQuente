@@ -3,52 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mesa Quente</title>
+  <title>Mesa Quente — Jogo de Cartas</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- Fundo com brasas e partículas animadas -->
+  <canvas id="canvas-brasas"></canvas>
+
   <div class="tela" id="tela-inicial">
+    
+    <!-- Barra Superior com Identidade e Áudio -->
+    <div class="topo-bar">
+      <div class="logo-tag">🔥 Mesa Quente</div>
+      <button class="btn-audio-toggle" id="btn-audio" type="button" aria-label="Controle de Áudio">
+        <span>🔊</span><small>Som</small>
+      </button>
+    </div>
+
+    <!-- Cartão Principal de Boas-Vindas -->
     <div class="cartao">
-      <h1 class="titulo">🔥 Mesa Quente</h1>
-      <p class="subtitulo">O jogo de cartas para a galera</p>
+      <div class="emblema-fogo">🔥</div>
+      <h1 class="titulo">Mesa Quente</h1>
+      <p class="subtitulo">
+        Bem-vindo ao <strong>Mesa Quente</strong>!<br />
+        O jogo de cartas provocativo para a roda de amigos.<br />
+        <span class="subtitulo-destaque">Sem app, direto no navegador do celular.</span>
+      </p>
 
-      <button class="botao botao-principal" id="btn-criar-sala">
-        Criar Sala
-      </button>
+      <!-- Modo de Visualização 1: Botões Principais de Ação -->
+      <div id="bloco-acoes-iniciais">
+        <button class="botao botao-principal" id="btn-abrir-criar" type="button">
+          🔥 Criar Partida
+        </button>
 
-      <div class="divisor"><span>ou</span></div>
+        <button class="botao botao-secundaria" id="btn-abrir-entrar" type="button" style="margin-top: 12px;">
+          🚪 Entrar em um Jogo
+        </button>
+      </div>
 
-      <input
-        type="text"
-        id="input-codigo-entrar"
-        class="input-texto input-codigo"
-        placeholder="CÓDIGO DA SALA"
-        maxlength="6"
-        autocomplete="off"
-        autocapitalize="characters"
-      />
-      <input
-        type="text"
-        id="input-nome-entrar"
-        class="input-texto"
-        placeholder="Seu nome"
-        maxlength="20"
-        autocomplete="off"
-      />
-      <button class="botao botao-secundaria" id="btn-entrar-sala">
-        Entrar em Sala
-      </button>
+      <!-- Formulário: Criar Partida -->
+      <div id="form-criar-sala" class="bloco-oculto">
+        <div class="campo-grupo">
+          <label class="campo-rotulo" for="input-nome-host">Seu Nome / Apelido</label>
+          <input
+            type="text"
+            id="input-nome-host"
+            class="input-texto"
+            placeholder="Como a galera te chama?"
+            maxlength="20"
+            autocomplete="name"
+          />
+        </div>
+
+        <button class="botao botao-principal" id="btn-confirmar-criar" type="button">
+          Criar Sala Agora 🔥
+        </button>
+        <button class="botao botao-secundaria" id="btn-cancelar-criar" type="button" style="margin-top: 10px;">
+          ← Voltar ao Início
+        </button>
+      </div>
+
+      <!-- Formulário: Entrar em um Jogo -->
+      <div id="form-entrar-sala" class="bloco-oculto">
+        <div class="campo-grupo">
+          <label class="campo-rotulo" for="input-codigo-entrar">Código da Sala (4 letras)</label>
+          <input
+            type="text"
+            id="input-codigo-entrar"
+            class="input-texto input-codigo"
+            placeholder="ABCD"
+            maxlength="4"
+            autocomplete="off"
+            autocapitalize="characters"
+          />
+        </div>
+
+        <div class="campo-grupo">
+          <label class="campo-rotulo" for="input-nome-entrar">Seu Nome / Apelido</label>
+          <input
+            type="text"
+            id="input-nome-entrar"
+            class="input-texto"
+            placeholder="Seu nome"
+            maxlength="20"
+            autocomplete="name"
+          />
+        </div>
+
+        <button class="botao botao-principal" id="btn-confirmar-entrar" type="button">
+          Entrar na Sala 🚪
+        </button>
+        <button class="botao botao-secundaria" id="btn-cancelar-entrar" type="button" style="margin-top: 10px;">
+          ← Voltar ao Início
+        </button>
+      </div>
 
       <p class="mensagem-erro" id="mensagem-erro"></p>
     </div>
+
+    <!-- Rodapé Discreto com Versão da Entrega -->
+    <div class="rodape-versao">
+      <span>Mesa Quente</span> • <span class="tag-versao">v1.2</span>
+    </div>
   </div>
 
-  <!-- Firebase SDK (versão compat, mais simples para JS puro) -->
+  <!-- Firebase SDK (versão compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 
   <script src="firebase-config.js"></script>
+  <script src="baralhos.js"></script>
+  <script src="audio.js"></script>
+  <script src="brasas.js"></script>
   <script src="sala.js"></script>
   <script src="app.js"></script>
 </body>

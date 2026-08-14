@@ -1,40 +1,27 @@
 // ============================================================
-// SALA.JS
-// ============================================================
-// Funções compartilhadas para criar sala, entrar em sala,
-// e ler/escrever dados no Firebase Realtime Database.
-//
-// A estrutura de dados já é pensada para crescer nas próximas
-// etapas (baralhos, carta atual, líder de rodada, herança de
-// host), mas nesta etapa só usamos os campos abaixo.
+// SALA.JS — Lógica Compartilhada, Firebase & Motor de Gameplay (Etapa 3)
 // ============================================================
 
 // Inicializa o Firebase (config vem de firebase-config.js)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ---------- Estrutura de dados da sala no Realtime Database ----------
-//
-// /salas/{codigoDaSala}/
-//     criadaEm: timestamp
-//     hostId: "<id do jogador host>"
-//     status: "lobby" | "em_partida"   (nesta etapa só alternamos entre esses dois)
-//     jogadores/
-//         {idJogador}/
-//             nome: string
-//             entrouEm: timestamp
-//             conectado: true/false   (controlado via onDisconnect)
-//     partida/                         <- reservado para próximas etapas
-//         baralhoAtivo: null
-//         cartaAtual: null
-//         liderDaRodada: null
-//
-// O campo "partida" já existe vazio para não precisarmos
-// reestruturar o banco quando essas features forem implementadas.
+// Offset do relógio central do servidor Firebase
+let serverTimeOffset = 0;
+const offsetRef = db.ref(".info/serverTimeOffset");
+offsetRef.on("value", (snap) => {
+  serverTimeOffset = snap.val() || 0;
+});
 
 /**
- * Gera um código de sala curto (4 caracteres), sem letras/números
- * ambíguos (evita 0/O, 1/I) para facilitar digitar no celular.
+ * Retorna o timestamp estimado do servidor sincronizado.
+ */
+function obterTimestampServidor() {
+  return Date.now() + serverTimeOffset;
+}
+
+/**
+ * Gera um código de sala curto (4 caracteres), sem caracteres ambíguos.
  */
 function gerarCodigoSala() {
   const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -46,9 +33,7 @@ function gerarCodigoSala() {
 }
 
 /**
- * Gera (ou recupera) um ID único de jogador para este navegador,
- * salvo no localStorage. É isso que permite reentrar na sala sem
- * duplicar o nome na lista.
+ * Gera ou recupera o ID único de jogador para este navegador.
  */
 function obterIdJogador() {
   let id = localStorage.getItem("mesaQuente_idJogador");
@@ -60,9 +45,7 @@ function obterIdJogador() {
 }
 
 /**
- * Cria uma sala nova no banco, tentando de novo se o código
- * gerado já existir (raro, mas possível).
- * Retorna o código da sala criada.
+ * Cria uma sala nova no banco.
  */
 async function criarSala(nomeHost) {
   let codigo;
@@ -81,6 +64,10 @@ async function criarSala(nomeHost) {
     criadaEm: firebase.database.ServerValue.TIMESTAMP,
     hostId: idJogador,
     status: "lobby",
+    configLobby: {
+      baralhosAtivos: ["quebra_gelo", "confissoes_segredos"],
+      totalCartas: 20
+    },
     jogadores: {
       [idJogador]: {
         nome: nomeHost,
@@ -89,22 +76,20 @@ async function criarSala(nomeHost) {
       }
     },
     partida: {
-      baralhoAtivo: null,
+      status: "aguardando",
+      rodadaAtual: 0,
+      totalRodadas: 20,
       cartaAtual: null,
-      liderDaRodada: null
+      interacoes: {}
     }
   });
 
   configurarDesconexao(codigo, idJogador);
-
   return codigo;
 }
 
 /**
- * Entra numa sala existente. Lança erro se a sala não existir.
- * Se o jogador já estiver na sala (mesmo idJogador salvo no
- * localStorage), apenas atualiza o status de conexão em vez de
- * duplicar.
+ * Entra numa sala existente.
  */
 async function entrarNaSala(codigo, nome) {
   codigo = codigo.trim().toUpperCase();
@@ -112,7 +97,7 @@ async function entrarNaSala(codigo, nome) {
   const snapshot = await refSala.get();
 
   if (!snapshot.exists()) {
-    throw new Error("Sala não encontrada. Confira o código.");
+    throw new Error("Sala não encontrada. Confira o código digitado.");
   }
 
   const idJogador = obterIdJogador();
@@ -124,15 +109,11 @@ async function entrarNaSala(codigo, nome) {
   });
 
   configurarDesconexao(codigo, idJogador);
-
   return codigo;
 }
 
 /**
- * Marca o jogador como desconectado automaticamente se ele
- * fechar o navegador ou perder conexão (usando onDisconnect do
- * próprio Firebase — não depende de nenhum código nosso rodar
- * no momento da queda).
+ * Marca desconexão automática se fechar o navegador.
  */
 function configurarDesconexao(codigo, idJogador) {
   const refConectado = db.ref("salas/" + codigo + "/jogadores/" + idJogador + "/conectado");
@@ -140,8 +121,19 @@ function configurarDesconexao(codigo, idJogador) {
 }
 
 /**
- * Escuta mudanças na lista de jogadores de uma sala em tempo real.
- * callback recebe um objeto { idJogador: {nome, conectado, ...} }
+ * Remove ou desativa o jogador ao clicar explicitamente em Sair.
+ */
+async function sairDaSala(codigo) {
+  const idJogador = obterIdJogador();
+  try {
+    await db.ref("salas/" + codigo + "/jogadores/" + idJogador + "/conectado").set(false);
+  } catch (e) {
+    console.warn("Erro ao sair da sala:", e);
+  }
+}
+
+/**
+ * Escutas em Tempo Real
  */
 function escutarJogadores(codigo, callback) {
   db.ref("salas/" + codigo + "/jogadores").on("value", (snapshot) => {
@@ -149,27 +141,277 @@ function escutarJogadores(codigo, callback) {
   });
 }
 
-/**
- * Escuta o status da sala ("lobby" / "em_partida") em tempo real.
- */
 function escutarStatusSala(codigo, callback) {
   db.ref("salas/" + codigo + "/status").on("value", (snapshot) => {
     callback(snapshot.val());
   });
 }
 
-/**
- * Escuta o hostId da sala (usado para saber se o jogador atual é o host).
- */
+function escutarPartida(codigo, callback) {
+  db.ref("salas/" + codigo + "/partida").on("value", (snapshot) => {
+    callback(snapshot.val() || null);
+  });
+}
+
+function escutarInteracoes(codigo, callback) {
+  db.ref("salas/" + codigo + "/partida/interacoes").on("value", (snapshot) => {
+    callback(snapshot.val() || {});
+  });
+}
+
+function escutarConfigLobby(codigo, callback) {
+  db.ref("salas/" + codigo + "/configLobby").on("value", (snapshot) => {
+    callback(snapshot.val() || null);
+  });
+}
+
+async function salvarConfigLobby(codigo, config) {
+  await db.ref("salas/" + codigo + "/configLobby").set(config);
+}
+
 async function obterHostId(codigo) {
   const snapshot = await db.ref("salas/" + codigo + "/hostId").get();
   return snapshot.val();
 }
 
 /**
- * Host clica em "Iniciar Partida" — muda o status da sala,
- * que propaga pra todo mundo que está escutando.
+ * Sorteia uma nova carta do pool ativo com mecânicas, durações e opções
  */
-async function iniciarPartida(codigo) {
-  await db.ref("salas/" + codigo + "/status").set("em_partida");
+function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadoresConectados, sacolaLeitoresAtual, sacolaAlvosAtual) {
+  const idsValidos = (baralhosAtivosIds && baralhosAtivosIds.length > 0)
+    ? baralhosAtivosIds
+    : ["quebra_gelo"];
+
+  let baralhosCandidatos = idsValidos;
+  if (idsValidos.length > 1 && ultimoBaralhoId) {
+    const filtrados = idsValidos.filter((id) => id !== ultimoBaralhoId);
+    if (filtrados.length > 0) {
+      baralhosCandidatos = filtrados;
+    }
+  }
+
+  const deckIdSorteado = baralhosCandidatos[Math.floor(Math.random() * baralhosCandidatos.length)];
+  const baralhoObj = obterBaralhoPorId(deckIdSorteado) || BARALHOS_DISPONIVEIS[0];
+  const cartaSorteada = baralhoObj.cartas[Math.floor(Math.random() * baralhoObj.cartas.length)];
+
+  // Lista de jogadores conectados
+  const idsJogadores = Object.keys(jogadoresConectados).filter(
+    (id) => jogadoresConectados[id] && jogadoresConectados[id].conectado !== false
+  );
+  const listaBaseJogadores = idsJogadores.length > 0 ? idsJogadores : Object.keys(jogadoresConectados);
+
+  // Sorteio do Leitor da Rodada via Sacola
+  const { itemPuxado: leitorId, novaSacola: novaSacolaLeitores } = puxarDaSacola(sacolaLeitoresAtual, listaBaseJogadores);
+  const leitorNome = (jogadoresConectados[leitorId] && jogadoresConectados[leitorId].nome) || "Jogador";
+
+  // Sorteio do Alvo da Rodada (para cartas RANDOM de CONFISSÃO / PROVA)
+  let alvoId = null;
+  let alvoNome = null;
+  let novaSacolaAlvos = sacolaAlvosAtual || [];
+
+  if (cartaSorteada.target === "RANDOM") {
+    const resAlvo = puxarDaSacola(sacolaAlvosAtual, listaBaseJogadores);
+    alvoId = resAlvo.itemPuxado;
+    novaSacolaAlvos = resAlvo.novaSacola;
+    alvoNome = (jogadoresConectados[alvoId] && jogadoresConectados[alvoId].nome) || "Jogador";
+  }
+
+  return {
+    cartaAtual: {
+      id: cartaSorteada.id + "_" + Date.now().toString(36),
+      template_id: cartaSorteada.id,
+      deck_id: cartaSorteada.deck_id,
+      deck_nome: baralhoObj.nome,
+      deck_icone: baralhoObj.icone || "🔥",
+      text: cartaSorteada.text,
+      mechanic: cartaSorteada.mechanic,
+      target: cartaSorteada.target,
+      age_rating: cartaSorteada.age_rating,
+      subtype: cartaSorteada.subtype || "",
+      opcoes: cartaSorteada.opcoes || null,
+      duracao: cartaSorteada.duration || 30,
+      iniciadaEm: firebase.database.ServerValue.TIMESTAMP,
+      revelada: false,
+      leitorId: leitorId,
+      leitorNome: leitorNome,
+      alvoId: alvoId,
+      alvoNome: alvoNome
+    },
+    ultimoBaralhoId: deckIdSorteado,
+    novaSacolaLeitores,
+    novaSacolaAlvos
+  };
+}
+
+/**
+ * Inicia a partida configurada pelo Host
+ */
+async function iniciarPartida(codigo, configPersonalizada = null) {
+  const refSala = db.ref("salas/" + codigo);
+  const snapshot = await refSala.get();
+
+  if (!snapshot.exists()) {
+    throw new Error("Sala não encontrada.");
+  }
+
+  const dadosSala = snapshot.val();
+  const jogadores = dadosSala.jogadores || {};
+  const config = configPersonalizada || dadosSala.configLobby || {
+    baralhosAtivos: ["quebra_gelo", "confissoes_segredos"],
+    totalCartas: 20
+  };
+
+  const baralhosAtivos = (config.baralhosAtivos && config.baralhosAtivos.length > 0)
+    ? config.baralhosAtivos
+    : ["quebra_gelo"];
+
+  const totalRodadas = Number(config.totalCartas) || 20;
+
+  const { cartaAtual, ultimoBaralhoId, novaSacolaLeitores, novaSacolaAlvos } = sortearProximaCartaDoPool(
+    baralhosAtivos,
+    null,
+    jogadores,
+    [],
+    []
+  );
+
+  const dadosPartida = {
+    status: "jogando",
+    rodadaAtual: 1,
+    totalRodadas: totalRodadas,
+    baralhosAtivos: baralhosAtivos,
+    ultimoBaralhoId: ultimoBaralhoId,
+    sacolaLeitores: novaSacolaLeitores,
+    sacolaAlvos: novaSacolaAlvos,
+    cartaAtual: cartaAtual,
+    interacoes: {
+      votos: {},
+      dilema: {},
+      escolha: null,
+      reacoes: {}
+    },
+    iniciadaEm: firebase.database.ServerValue.TIMESTAMP
+  };
+
+  await refSala.update({
+    status: "em_partida",
+    partida: dadosPartida
+  });
+}
+
+/**
+ * Avança para a próxima carta da partida (acionado exclusivamente pelo Host)
+ */
+async function avancarProximaCarta(codigo) {
+  const refSala = db.ref("salas/" + codigo);
+  const snapshot = await refSala.get();
+
+  if (!snapshot.exists()) {
+    throw new Error("Sala não encontrada.");
+  }
+
+  const dadosSala = snapshot.val();
+  const partida = dadosSala.partida || {};
+  const jogadores = dadosSala.jogadores || {};
+
+  const rodadaAtual = (partida.rodadaAtual || 1) + 1;
+  const totalRodadas = partida.totalRodadas || 20;
+
+  if (rodadaAtual > totalRodadas) {
+    await refSala.child("partida/status").set("finalizada");
+    return;
+  }
+
+  const baralhosAtivos = partida.baralhosAtivos || ["quebra_gelo"];
+  const ultimoBaralhoId = partida.ultimoBaralhoId || null;
+  const sacolaLeitoresAtual = partida.sacolaLeitores || [];
+  const sacolaAlvosAtual = partida.sacolaAlvos || [];
+
+  const { cartaAtual, ultimoBaralhoId: novoUltimo, novaSacolaLeitores, novaSacolaAlvos } = sortearProximaCartaDoPool(
+    baralhosAtivos,
+    ultimoBaralhoId,
+    jogadores,
+    sacolaLeitoresAtual,
+    sacolaAlvosAtual
+  );
+
+  await refSala.child("partida").update({
+    rodadaAtual: rodadaAtual,
+    ultimoBaralhoId: novoUltimo,
+    sacolaLeitores: novaSacolaLeitores,
+    sacolaAlvos: novaSacolaAlvos,
+    cartaAtual: cartaAtual,
+    interacoes: {
+      votos: {},
+      dilema: {},
+      escolha: null,
+      reacoes: {}
+    }
+  });
+}
+
+/**
+ * Votar em Alvo (Mecânica ALVO - target: VOTE)
+ */
+async function votarEmAlvo(codigo, idAlvoEscolhido) {
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/partida/interacoes/votos/" + idJogador).set(idAlvoEscolhido);
+}
+
+/**
+ * Votar em Opção de Dilema (Mecânica DILEMA - target: ALL)
+ */
+async function votarDilema(codigo, opcaoEscolhida) {
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/partida/interacoes/dilema/" + idJogador).set(opcaoEscolhida);
+}
+
+/**
+ * Escolher Jogador (Mecânica ESCOLHA - target: CHOOSE)
+ */
+async function escolherJogador(codigo, idEscolhido, nomeEscolhido) {
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/partida/interacoes/escolha").set({
+    autorId: idJogador,
+    alvoId: idEscolhido,
+    alvoNome: nomeEscolhido,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
+/**
+ * Enviar Reação Emoji em tempo real (Mecânica CONFISSAO / PROVA)
+ */
+async function enviarReacao(codigo, emoji, nomeJogador) {
+  const idJogador = obterIdJogador();
+  const reacaoRef = db.ref("salas/" + codigo + "/partida/interacoes/reacoes").push();
+  await reacaoRef.set({
+    emoji: emoji,
+    autorId: idJogador,
+    autorNome: nomeJogador || "Jogador",
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
+/**
+ * Revelar Resultados da Rodada
+ */
+async function revelarResultadoCarta(codigo) {
+  await db.ref("salas/" + codigo + "/partida/cartaAtual/revelada").set(true);
+}
+
+/**
+ * Reinicia a partida e traz todos os jogadores de volta ao Lobby.
+ */
+async function reiniciarPartida(codigo) {
+  const refSala = db.ref("salas/" + codigo);
+  await refSala.update({
+    status: "lobby",
+    partida: {
+      status: "aguardando",
+      rodadaAtual: 0,
+      cartaAtual: null,
+      interacoes: {}
+    }
+  });
 }
