@@ -11,6 +11,20 @@
   <!-- Fundo com brasas e partículas animadas -->
   <canvas id="canvas-brasas"></canvas>
 
+  <!-- Overlay de Bloqueio de Orientação (Landscape Mode) -->
+  <div id="overlay-orientacao-landscape" class="overlay-orientacao-landscape" aria-live="polite">
+    <div class="caixa-aviso-rotacao">
+      <div class="anim-celular-rotacao">
+        <div class="celular-forma">
+          <div class="celular-tela-conteudo">🔥</div>
+        </div>
+        <div class="seta-rotacao-arco">↻</div>
+      </div>
+      <h2 class="titulo-rotacao">Vire o celular para jogar</h2>
+      <p class="desc-rotacao">O Mesa Quente foi feito para ser jogado na horizontal (modo paisagem).</p>
+    </div>
+  </div>
+
   <div class="tela-container" id="tela-inicial">
     
     <!-- Barra Superior com Identidade e Áudio -->
@@ -76,7 +90,7 @@
         <!-- Formulário: Criar Partida -->
         <div id="form-criar-sala" class="bloco-oculto form-mesa-anim">
           <div class="campo-grupo">
-            <label class="campo-rotulo" for="input-nome-host">Seu Nome / Apelido</label>
+            <label class="campo-rotulo" for="input-nome-host">1. Seu Nome / Apelido</label>
             <input
               type="text"
               id="input-nome-host"
@@ -85,6 +99,85 @@
               maxlength="20"
               autocomplete="name"
             />
+          </div>
+
+          <!-- Galeria de Avatares do Host -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">2. Escolha seu Avatar</label>
+            <div class="galeria-avatares-wrapper">
+              <div class="galeria-avatares-scroll" id="galeria-avatares-host">
+                <!-- Injetado dinamicamente via JS com os 10 avatares vibrantes -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Seletor do Modo de Jogo -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">3. Modo de Jogo</label>
+            <div class="seletor-modos-grid" id="seletor-modos-jogo">
+              <div class="card-modo-opcao" data-modo="quebra_gelo" id="modo-opt-quebra-gelo">
+                <span class="card-modo-icone">🧊</span>
+                <div class="card-modo-info">
+                  <strong class="card-modo-titulo">Quebra-Gelo</strong>
+                  <p class="card-modo-desc">Perguntas casuais para conhecer.</p>
+                </div>
+              </div>
+
+              <div class="card-modo-opcao selecionado" data-modo="fogo_no_parquinho" id="modo-opt-fogo-parquinho">
+                <span class="card-modo-icone">🔥</span>
+                <div class="card-modo-info">
+                  <strong class="card-modo-titulo">Fogo no Parquinho</strong>
+                  <p class="card-modo-desc">Desafios, intrigas e polêmicas.</p>
+                </div>
+              </div>
+
+              <div class="card-modo-opcao" data-modo="caos_total" id="modo-opt-caos-total">
+                <span class="card-modo-icone">⚡</span>
+                <div class="card-modo-info">
+                  <strong class="card-modo-titulo">Caos Total</strong>
+                  <p class="card-modo-desc">Todas as cartas misturadas.</p>
+                </div>
+              </div>
+
+              <div class="card-modo-opcao" data-modo="personalizado" id="modo-opt-personalizado">
+                <span class="card-modo-icone">🛠️</span>
+                <div class="card-modo-info">
+                  <strong class="card-modo-titulo">Personalizado</strong>
+                  <p class="card-modo-desc">Monte sua própria mistura de baralhos.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Painel Dinâmico de Baralhos para Modo Personalizado -->
+            <div id="painel-baralhos-personalizados" class="painel-baralhos-personalizados bloco-oculto">
+              <span class="rotulo-painel-baralhos">Marque os Baralhos da Mesa:</span>
+              <div class="lista-checkboxes-baralhos" id="lista-checkboxes-baralhos-index">
+                <!-- Checkboxes estilizados injetados via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Seletor de Quantidade de Rodadas (Cartas) -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">4. Duração da Partida (Rodadas / Cartas)</label>
+            <div class="seletor-rodadas-grid" id="seletor-rodadas-host">
+              <button type="button" class="btn-opcao-rodada" data-rodadas="10">10 Cartas</button>
+              <button type="button" class="btn-opcao-rodada selecionado" data-rodadas="20">20 Cartas</button>
+              <button type="button" class="btn-opcao-rodada" data-rodadas="40">40 Cartas</button>
+              <button type="button" class="btn-opcao-rodada" data-rodadas="custom">Personalizado</button>
+            </div>
+            <div id="campo-rodadas-custom" class="campo-rodadas-custom bloco-oculto">
+              <input
+                type="number"
+                id="input-rodadas-custom"
+                class="input-texto-3d input-numero-3d"
+                placeholder="Qtd (ex: 25)"
+                min="5"
+                max="100"
+                value="25"
+              />
+              <span class="subtexto-campo-rodadas">cartas na partida</span>
+            </div>
           </div>
 
           <button class="botao-3d botao-primario-3d" id="btn-confirmar-criar" type="button">
@@ -98,7 +191,7 @@
         <!-- Formulário: Entrar em um Jogo -->
         <div id="form-entrar-sala" class="bloco-oculto form-mesa-anim">
           <div class="campo-grupo">
-            <label class="campo-rotulo" for="input-codigo-entrar">Código da Sala (4 letras)</label>
+            <label class="campo-rotulo" for="input-codigo-entrar">1. Código da Sala (4 letras)</label>
             <input
               type="text"
               id="input-codigo-entrar"
@@ -111,7 +204,7 @@
           </div>
 
           <div class="campo-grupo">
-            <label class="campo-rotulo" for="input-nome-entrar">Seu Nome / Apelido</label>
+            <label class="campo-rotulo" for="input-nome-entrar">2. Seu Nome / Apelido</label>
             <input
               type="text"
               id="input-nome-entrar"
@@ -120,6 +213,16 @@
               maxlength="20"
               autocomplete="name"
             />
+          </div>
+
+          <!-- Galeria de Avatares do Convidado -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">3. Escolha seu Avatar</label>
+            <div class="galeria-avatares-wrapper">
+              <div class="galeria-avatares-scroll" id="galeria-avatares-entrar">
+                <!-- Injetado dinamicamente via JS com os 10 avatares vibrantes -->
+              </div>
+            </div>
           </div>
 
           <button class="botao-3d botao-primario-3d" id="btn-confirmar-entrar" type="button">

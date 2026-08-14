@@ -14,6 +14,72 @@
   <!-- Container de Emojis Flutuantes em Tempo Real -->
   <div id="container-emojis-flutuantes" class="container-emojis-flutuantes" aria-hidden="true"></div>
 
+  <!-- Overlay de Bloqueio de Orientação (Landscape Mode) -->
+  <div id="overlay-orientacao-landscape" class="overlay-orientacao-landscape" aria-live="polite">
+    <div class="caixa-aviso-rotacao">
+      <div class="anim-celular-rotacao">
+        <div class="celular-forma">
+          <div class="celular-tela-conteudo">🔥</div>
+        </div>
+        <div class="seta-rotacao-arco">↻</div>
+      </div>
+      <h2 class="titulo-rotacao">Vire o celular para jogar</h2>
+      <p class="desc-rotacao">O Mesa Quente foi feito para ser jogado na horizontal (modo paisagem).</p>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       OVERLAY 1: CONTAGEM REGRESSIVA (5, 4, 3, 2, 1)
+       ======================================================== -->
+  <div id="overlay-contagem-regressiva" class="overlay-contagem-regressiva bloco-oculto" aria-live="assertive">
+    <div class="contagem-fundo-brilho"></div>
+    <div class="contagem-conteudo-central">
+      <span class="contagem-tag-preparando">A MESA VAI COMEÇAR</span>
+      <div class="contagem-numero-wrapper">
+        <div id="contagem-numero-display" class="contagem-numero-zoom">5</div>
+      </div>
+      <p class="contagem-subtexto" id="contagem-subtexto">Preparando os baralhos da mesa...</p>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       OVERLAY 2: O SORTEIO DO DADO (A DISPUTA DO 1º TURNO)
+       ======================================================== -->
+  <div id="overlay-sorteio-dado" class="overlay-sorteio-dado bloco-oculto" aria-live="polite">
+    <div class="dado-arena-cenario">
+      
+      <!-- Topo: Título da Disputa -->
+      <div class="dado-arena-topo">
+        <span class="dado-tag-fase">🎲 DISPUTA DO 1º TURNO</span>
+        <h2 class="dado-titulo-fase">Quem tira a maior sorte na mesa?</h2>
+      </div>
+
+      <!-- A Roda (Landscape): Jogadores posicionados nas extremidades da tela -->
+      <div class="roda-sorteio-jogadores-landscape" id="roda-sorteio-jogadores">
+        <!-- Renderizado dinamicamente via JS com os avatares e nomes -->
+      </div>
+
+      <!-- Palco Central do Dado 2.5D com Efeito de Rotação Rápida -->
+      <div class="palco-central-dado">
+        <div class="dado-3d-wrapper" id="dado-3d-wrapper">
+          <div class="dado-cubo-animado" id="dado-cubo-animado">
+            <span class="dado-face-numero" id="dado-face-display">6</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner Notificação de Vitória Sincronizada -->
+      <div class="banner-anuncio-vencedor-dado bloco-oculto" id="banner-vencedor-dado">
+        <div class="vencedor-dado-avatar-box" id="vencedor-dado-avatar">🦊</div>
+        <div class="vencedor-dado-texto-box">
+          <strong class="vencedor-dado-nome" id="vencedor-dado-nome">Jogador</strong>
+          <p class="vencedor-dado-mensagem" id="vencedor-dado-mensagem">tirou o maior número e começa puxando a primeira carta!</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="tela-container" id="tela-sala">
 
     <!-- Barra Superior -->
@@ -48,6 +114,16 @@
         </div>
       </div>
 
+      <!-- Banner Destaque do Modo de Jogo Selecionado -->
+      <div class="banner-modo-jogo-3d" id="banner-modo-jogo">
+        <div class="modo-jogo-icone-box" id="modo-jogo-icone">🔥</div>
+        <div class="modo-jogo-detalhes">
+          <span class="modo-jogo-subrotulo">Modo Selecionado</span>
+          <strong class="modo-jogo-nome" id="modo-jogo-nome">Fogo no Parquinho</strong>
+          <p class="modo-jogo-descricao" id="modo-jogo-desc">Desafios, intrigas e polêmicas.</p>
+        </div>
+      </div>
+
       <!-- A Mesa 2.5D com os Assentos dos Jogadores -->
       <div class="mesa-redonda-arena">
         <div class="tapete-feltro-25d">
@@ -58,13 +134,13 @@
             <div class="carta-pilha carta-pilha-2"></div>
             <div class="carta-pilha carta-pilha-1">
               <div class="estampa-verso-deck">
-                <span>🔥</span>
-                <small>MESA</small>
+                <span id="deck-centro-icone">🔥</span>
+                <small id="deck-centro-tag">MESA</small>
               </div>
             </div>
           </div>
 
-          <!-- Roda de Jogadores Sentando à Mesa (Grid/Circular 2.5D) -->
+          <!-- Roda de Jogadores Sentando à Mesa (Grid de Cards/Círculos com Avatar 2.5D) -->
           <div class="grade-assentos-mesa" id="grade-assentos-mesa">
             <!-- Renderizado dinamicamente via JS como assentos da mesa -->
           </div>
@@ -108,20 +184,57 @@
     </section>
 
     <!-- ========================================================
-         PAINEL 2: CONFIGURAÇÃO DE BARALHOS (HOST)
+         PAINEL 2: CONFIGURAÇÃO DE BARALHOS E MODOS (HOST)
          ======================================================== -->
     <section class="cartao-mesa bloco-oculto painel-configuracao" id="painel-configuracao">
       <div class="config-cabecalho">
-        <h2 class="titulo-config">⚙️ Configurar Baralhos</h2>
+        <h2 class="titulo-config">⚙️ Configuração da Mesa</h2>
         <p class="subtitulo-config">
-          Selecione os baralhos que serão misturados na mesa e o total de cartas.
+          Ajuste os modos, baralhos misturados e a duração das rodadas.
         </p>
       </div>
 
-      <!-- Seleção de Baralhos -->
+      <!-- Modo de Jogo no Lobby Config -->
       <div class="secao-config-3d">
         <div class="secao-titulo-3d">
-          <span>Baralhos Selecionados</span>
+          <span>Modo de Jogo</span>
+        </div>
+        <div class="seletor-modos-grid" id="seletor-modos-config">
+          <div class="card-modo-opcao" data-modo="quebra_gelo">
+            <span class="card-modo-icone">🧊</span>
+            <div class="card-modo-info">
+              <strong class="card-modo-titulo">Quebra-Gelo</strong>
+              <p class="card-modo-desc">Perguntas casuais.</p>
+            </div>
+          </div>
+          <div class="card-modo-opcao selecionado" data-modo="fogo_no_parquinho">
+            <span class="card-modo-icone">🔥</span>
+            <div class="card-modo-info">
+              <strong class="card-modo-titulo">Fogo no Parquinho</strong>
+              <p class="card-modo-desc">Intrigas e polêmicas.</p>
+            </div>
+          </div>
+          <div class="card-modo-opcao" data-modo="caos_total">
+            <span class="card-modo-icone">⚡</span>
+            <div class="card-modo-info">
+              <strong class="card-modo-titulo">Caos Total</strong>
+              <p class="card-modo-desc">Tudo misturado.</p>
+            </div>
+          </div>
+          <div class="card-modo-opcao" data-modo="personalizado">
+            <span class="card-modo-icone">🛠️</span>
+            <div class="card-modo-info">
+              <strong class="card-modo-titulo">Personalizado</strong>
+              <p class="card-modo-desc">Escolha os baralhos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seleção de Baralhos (Ativo especialmente no modo Personalizado) -->
+      <div class="secao-config-3d" id="secao-baralhos-config">
+        <div class="secao-titulo-3d">
+          <span>Baralhos Ativos</span>
           <small id="resumo-baralhos-selecionados" class="tag-resumo-config">2 ativos</small>
         </div>
         <div class="lista-baralhos-3d" id="lista-baralhos-config">
@@ -129,17 +242,29 @@
         </div>
       </div>
 
-      <!-- Quantidade de Cartas -->
+      <!-- Quantidade de Cartas / Rodadas -->
       <div class="secao-config-3d">
         <div class="secao-titulo-3d">
-          <span>Tamanho do Maço</span>
+          <span>Duração da Partida</span>
           <small id="resumo-total-cartas" class="tag-resumo-config destaque-dourado">20 cartas</small>
         </div>
         <div class="grade-qtd-cartas-3d" id="grade-qtd-cartas">
           <button class="btn-qtd-3d" data-qtd="10" type="button">10</button>
           <button class="btn-qtd-3d selecionado" data-qtd="20" type="button">20</button>
-          <button class="btn-qtd-3d" data-qtd="30" type="button">30</button>
           <button class="btn-qtd-3d" data-qtd="40" type="button">40</button>
+          <button class="btn-qtd-3d" data-qtd="custom" type="button">Personalizado</button>
+        </div>
+        <div id="campo-rodadas-custom-lobby" class="campo-rodadas-custom bloco-oculto" style="margin-top: 10px;">
+          <input
+            type="number"
+            id="input-rodadas-custom-lobby"
+            class="input-texto-3d input-numero-3d"
+            placeholder="Qtd (ex: 25)"
+            min="5"
+            max="100"
+            value="25"
+          />
+          <span class="subtexto-campo-rodadas">cartas na partida</span>
         </div>
       </div>
 
@@ -155,61 +280,74 @@
     </section>
 
     <!-- ========================================================
-         PAINEL 3: MESA VERTICAL 2.5D (ESTRUTURA DE 3 ZONAS)
+         PAINEL 3: MESA CIRCULAR 2.5D (ESTILO UNO / RADIAL)
          ======================================================== -->
-    <section class="mesa-vertical-container bloco-oculto" id="painel-mesa-jogo">
+    <section class="mesa-circular-container bloco-oculto" id="painel-mesa-jogo">
       
-      <!-- ======================================================
-           ZONA SUPERIOR: OS OUTROS (RODA DE AMIGOS COM GLOW 2.5D)
-           ====================================================== -->
-      <div class="zona-superior-outros" id="zona-superior-outros">
-        <div class="roda-amigos-scroll" id="roda-amigos-topo">
-          <!-- Avatares em 2.5D dos amigos com efeitos de vez/leitor inseridos pelo JS -->
+      <!-- Topo Compacto da Mesa: Modo de Jogo & Contador de Rodadas -->
+      <div class="status-mesa-topo">
+        <div class="deck-tag-atual" id="tag-deck-nome">🔥 QUEBRA-GELO</div>
+        <div class="badges-status-jogo">
+          <span class="contador-cartas-badge-3d" id="contador-cartas-rodada">Rodada 1 / 20</span>
         </div>
       </div>
 
-      <!-- ======================================================
-           ZONA CENTRAL: A MESA, O BARALHO E A CARTA FÍSICA 2.5D
-           ====================================================== -->
-      <div class="zona-central-mesa" id="zona-central-mesa">
+      <!-- Palco da Mesa Circular 2.5D (Arena Uno com Distribuição Radial) -->
+      <div class="mesa-circular-arena" id="mesa-circular-arena">
         
-        <!-- Status Compacto de Partida e Timer Central -->
-        <div class="status-mesa-topo">
-          <div class="deck-tag-atual" id="tag-deck-nome">🔥 QUEBRA-GELO</div>
-          <div class="badges-status-jogo">
-            <span class="timer-badge-3d" id="badge-timer-jogo">⏱️ 30s</span>
-            <span class="contador-cartas-badge-3d" id="contador-cartas-rodada">1 / 20</span>
-          </div>
+        <!-- Borda e Feltro da Mesa Circular -->
+        <div class="feltro-mesa-circular"></div>
+        <div class="anel-iluminacao-mesa"></div>
+
+        <!-- Camada de Distribuição Radial dos Jogadores (Posicionados via JS em Círculo) -->
+        <div class="camada-jogadores-radial" id="camada-jogadores-radial">
+          <!-- Jogadores inseridos dinamicamente pelo JS ao redor do centro -->
         </div>
 
-        <!-- Barra do Timer Central Sincronizado -->
-        <div class="barra-timer-3d-wrapper">
-          <div class="barra-timer-3d-preenchimento" id="barra-timer-preenchimento" style="width: 100%;"></div>
-        </div>
+        <!-- Overlay de Foco Suave para Leitura da Carta -->
+        <div class="foco-carta-backdrop bloco-oculto" id="foco-carta-backdrop"></div>
 
-        <!-- Palco da Carta e do Maço em Perspectiva -->
-        <div class="palco-cartas-arena">
+        <!-- ====================================================
+             CENTRO DA MESA: MAÇO DE CARTAS OU CARTA SECRETA
+             ==================================================== -->
+        <div class="centro-mesa-palco" id="centro-mesa-palco">
           
-          <!-- Maço de Cartas da Mesa (Físico com rotação) -->
-          <div class="deck-pilha-3d" id="deck-pilha-jogo" title="Maço de Cartas da Mesa">
-            <div class="carta-camada camada-3"></div>
-            <div class="carta-camada camada-2"></div>
-            <div class="carta-camada camada-1">
-              <div class="estampa-verso-deck">
-                <span>🔥</span>
-                <small>MESA QUENTE</small>
+          <!-- 1. MAÇO CENTRAL (VIRADO PARA BAIXO NO CENTRO DA MESA) -->
+          <div class="deck-central-area" id="deck-central-area">
+            <div class="deck-pilha-3d" id="deck-pilha-jogo" title="Maço de Cartas da Mesa">
+              <div class="carta-camada camada-3"></div>
+              <div class="carta-camada camada-2"></div>
+              <div class="carta-camada camada-1">
+                <div class="estampa-verso-deck">
+                  <span>🔥</span>
+                  <small>MESA QUENTE</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botão de Ação ou Status do Turno -->
+            <div class="acao-puxar-carta-container" id="container-acao-puxar">
+              <button class="btn-puxar-carta-3d bloco-oculto" id="btn-puxar-carta-mesa" type="button">
+                <span class="btn-puxar-icone">🎴</span>
+                <span class="btn-puxar-texto">Sua vez! Puxar Carta</span>
+                <span class="btn-puxar-fogo">🔥</span>
+              </button>
+
+              <div class="box-espera-puxar bloco-oculto" id="box-espera-puxar">
+                <span class="espera-puxar-icone">⏳</span>
+                <span class="espera-puxar-texto" id="texto-espera-puxar">Aguardando o jogador puxar a carta...</span>
               </div>
             </div>
           </div>
 
-          <!-- A Carta Física 2.5D (Proporção de Baralho Real com 3D Flip) -->
-          <div class="carta-flip-wrapper" id="carta-flip-wrapper">
+          <!-- 2. A CARTA SECRETA: VISÃO ISOLADA (ABERTA PARA QUEM PUXA, FECHADA PARA OS DEMAIS) -->
+          <div class="carta-flip-wrapper bloco-oculto" id="carta-flip-wrapper">
+            
+            <!-- CASO A: VISÃO DO LEITOR (CARTA ABERTA COM TEXTO EM 3D) -->
             <div class="carta-flip-card anim-puxar-flip" id="carta-jogo-elemento">
               
-              <!-- Frente da Carta Física -->
+              <!-- Frente da Carta (Exibida Apenas Para Quem Puxou) -->
               <div class="carta-face carta-face-frente" id="carta-face-frente">
-                
-                <!-- Borda e Cabeçalho da Carta -->
                 <div class="carta-cabecalho-fisica">
                   <div class="carta-naipe-tipo" id="carta-deck-tag">
                     <span id="carta-deck-icone">🃏</span>
@@ -220,33 +358,37 @@
                   </span>
                 </div>
 
-                <!-- Conteúdo Central / Texto Principal -->
                 <div class="carta-corpo-fisica">
                   <p class="carta-texto-fisica" id="carta-texto">
                     Puxando carta da mesa...
                   </p>
                 </div>
 
-                <!-- Rodapé da Carta com Alvo Sorteado -->
                 <div class="carta-rodape-fisica">
                   <div class="bloco-alvo-sorteado bloco-oculto" id="bloco-alvo-sorteado">
                     <span class="alvo-label">🎯 Alvo:</span>
                     <span class="nome-alvo-destaque" id="nome-alvo-destaque">Jogador</span>
                   </div>
-                  <div class="carta-selo-autenticidade">MESA QUENTE</div>
+                  <div class="instrucao-leitor-voz-alta">
+                    📢 Leia em voz alta para todos na mesa!
+                  </div>
                 </div>
-
               </div>
 
-              <!-- Verso da Carta Física (Visual de Baralho de Luxo) -->
+              <!-- CASO B: VISÃO DOS OUTROS JOGADORES (CARTA FECHADA / VERSO SECRETO) -->
               <div class="carta-face carta-face-verso" id="carta-face-verso">
                 <div class="padrao-verso-geometrico">
                   <div class="simbolo-verso-central">🔥</div>
                   <span class="texto-verso-central">MESA QUENTE</span>
+                  <div class="aviso-secreto-mesa" id="aviso-secreto-mesa">
+                    <span class="badge-secreto-tag">🤫 CARTA SECRETA</span>
+                    <p class="texto-ouca-leitor" id="texto-ouca-leitor">Escute o que o jogador tem a dizer!</p>
+                  </div>
                 </div>
               </div>
 
             </div>
+
           </div>
 
         </div>
@@ -254,7 +396,7 @@
       </div>
 
       <!-- ======================================================
-           ZONA INFERIOR: HUD ANCORADO DO JOGADOR (AÇÕES & MECÂNICAS)
+           ZONA INFERIOR: HUD ANCORADO & CONTROLE DE PRÓXIMA RODADA
            ====================================================== -->
       <div class="zona-inferior-hud" id="zona-inferior-hud">
         
@@ -268,19 +410,17 @@
         </div>
 
         <!-- ====================================================
-             ÁREAS INTERATIVAS DAS 5 MECÂNICAS NO HUD
+             ÁREAS INTERATIVAS DAS MECÂNICAS & REAÇÕES NO HUD
              ==================================================== -->
         <div class="area-mecanicas-hud" id="area-interacoes">
           
-          <!-- MECÂNICA 1: ALVO (target: VOTE) -->
+          <!-- MECÂNICA: ALVO (target: VOTE) -->
           <div class="bloco-mecanica-hud bloco-oculto" id="mecanica-alvo">
             <div class="mecanica-hud-topo">
               <span class="mecanica-icone-hud">🎯</span>
               <span class="mecanica-titulo-hud" id="status-voto-alvo">Aponte para alguém na roda:</span>
             </div>
-            
             <div class="grade-jogadores-votacao-hud" id="grade-voto-alvo"></div>
-
             <div class="resultado-votacao-hud bloco-oculto" id="resultado-voto-alvo">
               <div class="vencedor-alvo-badge" id="vencedor-alvo-destaque">
                 👑 Mais votado(a): <strong id="nome-vencedor-alvo">-</strong>
@@ -289,11 +429,11 @@
             </div>
           </div>
 
-          <!-- MECÂNICA 2 & 3: CONFISSÃO & PROVA (Reações em Tempo Real) -->
-          <div class="bloco-mecanica-hud bloco-oculto" id="mecanica-reacoes">
+          <!-- REAÇÕES DA RODA (SEMPRE DISPONÍVEIS DURANTE A LEITURA) -->
+          <div class="bloco-mecanica-hud" id="mecanica-reacoes">
             <div class="mecanica-hud-topo">
               <span class="mecanica-icone-hud">✨</span>
-              <span class="mecanica-titulo-hud">Reações da Roda (Toque para reagir):</span>
+              <span class="mecanica-titulo-hud">Reações da Roda (Toque para reagir ao vivo):</span>
             </div>
 
             <div class="barra-botoes-reacao-hud" id="barra-reacoes">
@@ -320,21 +460,19 @@
             </div>
           </div>
 
-          <!-- MECÂNICA 4: ESCOLHA (target: CHOOSE) -->
+          <!-- MECÂNICA: ESCOLHA (target: CHOOSE) -->
           <div class="bloco-mecanica-hud bloco-oculto" id="mecanica-escolha">
             <div class="mecanica-hud-topo">
               <span class="mecanica-icone-hud">👉</span>
               <span class="mecanica-titulo-hud" id="status-escolha">Escolha um jogador da mesa:</span>
             </div>
-
             <div class="grade-jogadores-votacao-hud" id="grade-escolha-jogador"></div>
-
             <div class="resultado-escolha-hud bloco-oculto" id="resultado-escolha-box">
               🎯 <strong id="texto-escolha-feita">-</strong>
             </div>
           </div>
 
-          <!-- MECÂNICA 5: DILEMA (target: ALL) -->
+          <!-- MECÂNICA: DILEMA (target: ALL) -->
           <div class="bloco-mecanica-hud bloco-oculto" id="mecanica-dilema">
             <div class="mecanica-hud-topo">
               <span class="mecanica-icone-hud">⚖️</span>
@@ -367,25 +505,23 @@
 
         </div>
 
-        <!-- Aviso de Tempo Esgotado -->
-        <div id="aviso-tempo-esgotado" class="tag-tempo-esgotado-hud bloco-oculto">
-          ⌛ TEMPO ESGOTADO NA MESA!
-        </div>
-
-        <!-- Controles Principais de Avanço do Host e Status do Jogador -->
+        <!-- ====================================================
+             CONTROLES DE AVANÇO: BOTÃO "PRÓXIMA RODADA"
+             (Disponível para o Leitor da vez ou para o Host)
+             ==================================================== -->
         <div class="controles-fundo-hud">
-          <div id="controles-host-jogo" class="bloco-oculto grid-botoes-host-hud">
-            <button class="botao-3d botao-secundario-3d" id="btn-revelar-resultado" type="button">
-              🎯 Revelar Votos da Roda
-            </button>
+          <div id="controles-avanco-jogo" class="bloco-oculto grid-botoes-host-hud">
             <button class="botao-3d botao-primario-3d" id="btn-proxima-carta" type="button">
-              <span>🃏 Puxar Próxima Carta 🔥</span>
+              <span>⏭️ Próxima Rodada (Passar a Vez) 🔥</span>
+            </button>
+            <button class="botao-3d botao-secundario-3d bloco-oculto" id="btn-revelar-resultado" type="button">
+              🎯 Revelar Votos da Roda
             </button>
           </div>
 
           <div id="aviso-jogador-jogo" class="bloco-oculto">
-            <p class="aviso-roda-espera">
-              👑 Aguarde o anfitrião puxar a próxima carta...
+            <p class="aviso-roda-espera" id="texto-aviso-roda-espera">
+              💬 Aguarde o jogador da vez concluir a rodada...
             </p>
           </div>
         </div>
@@ -396,35 +532,42 @@
     </section>
 
     <!-- ========================================================
-         PAINEL 4: FIM DE PARTIDA (PÓDIO DA MESA)
+         PAINEL 4: FIM DE PARTIDA (PÓDIO 2.5D & RETORNO AO LOBBY)
          ======================================================== -->
     <section class="cartao-mesa bloco-oculto painel-fim-25d" id="painel-fim-partida">
       <div class="trofeu-emoji-3d">🏆</div>
       <h2 class="titulo-fim-3d">Partida Concluída!</h2>
       <p class="subtitulo-fim-3d" id="texto-resumo-fim">
-        A mesa completou todas as cartas desta rodada!
+        A mesa completou todas as cartas com sucesso! Obrigado por jogar!
       </p>
 
-      <div id="controles-host-fim" class="bloco-oculto acoes-fim-grid">
+      <!-- Grade dos Participantes da Mesa -->
+      <div class="quadro-participantes-fim">
+        <span class="rotulo-participantes-fim">Mesa Quente • Galera que Jogou:</span>
+        <div class="grade-avatares-fim" id="grade-avatares-fim"></div>
+      </div>
+
+      <!-- Controles Exclusivos do Host para Voltar ao Lobby -->
+      <div id="controles-host-fim" class="bloco-oculto acoes-fim-grid" style="margin-top: 18px;">
         <button class="botao-3d botao-primario-3d" id="btn-jogar-novamente" type="button">
-          <span>🔥 Jogar Novamente (Voltar à Mesa)</span>
+          <span>🔄 Voltar ao Lobby (Nova Partida)</span>
         </button>
       </div>
 
-      <button class="botao-3d botao-voltar-3d" id="btn-sair-partida-fim" type="button" style="margin-top: 10px;">
+      <button class="botao-3d botao-voltar-3d" id="btn-sair-partida-fim" type="button" style="margin-top: 12px;">
         <span>← Voltar à Tela Inicial</span>
       </button>
 
-      <div id="aviso-jogador-fim" class="bloco-oculto" style="margin-top: 10px;">
+      <div id="aviso-jogador-fim" class="bloco-oculto" style="margin-top: 14px;">
         <p class="texto-aviso-espera">
-          ⏳ Aguardando o anfitrião reiniciar o jogo...
+          ⏳ Aguardando o anfitrião reiniciar o lobby...
         </p>
       </div>
     </section>
 
     <!-- Rodapé com Versão da Entrega -->
     <footer class="rodape-versao">
-      <span>Mesa Quente</span> • <span class="tag-versao">v1.3</span>
+      <span>Mesa Quente</span> • <span class="tag-versao">v1.4</span>
     </footer>
 
   </div>

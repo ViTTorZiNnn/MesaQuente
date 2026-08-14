@@ -155,6 +155,149 @@ class GerenciadorDeAudio {
       osc.stop(agora + 0.06);
     } catch (e) {}
   }
+
+  tocarContagem(numero) {
+    if (this.mutado) return;
+    this.iniciarContexto();
+    if (!this.ctx) return;
+
+    try {
+      const agora = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const baseFreq = numero === 1 ? 660 : 330 + (5 - numero) * 50;
+
+      osc.type = numero === 1 ? "sine" : "triangle";
+      osc.frequency.setValueAtTime(baseFreq, agora);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.3, agora + 0.15);
+
+      gain.gain.setValueAtTime(0.12, agora);
+      gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.35);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(agora);
+      osc.stop(agora + 0.35);
+    } catch (e) {}
+  }
+
+  tocarDadoRolando() {
+    if (this.mutado) return;
+    this.iniciarContexto();
+    if (!this.ctx) return;
+
+    try {
+      const agora = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = "square";
+      osc.frequency.setValueAtTime(120 + Math.random() * 80, agora);
+      osc.frequency.exponentialRampToValueAtTime(40, agora + 0.04);
+
+      gain.gain.setValueAtTime(0.04, agora);
+      gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.04);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(agora);
+      osc.stop(agora + 0.04);
+    } catch (e) {}
+  }
+
+  tocarDadoVencedor() {
+    if (this.mutado) return;
+    this.iniciarContexto();
+    if (!this.ctx) return;
+
+    try {
+      const agora = this.ctx.currentTime;
+      const notas = [392, 523.25, 659.25, 783.99]; // G4, C5, E5, G5
+      notas.forEach((freq, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, agora + i * 0.08);
+
+        gain.gain.setValueAtTime(0.1, agora + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.08 + 0.5);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(agora + i * 0.08);
+        osc.stop(agora + i * 0.08 + 0.5);
+      });
+    } catch (e) {}
+  }
+
+  tocarDescarte() {
+    if (this.mutado) return;
+    this.iniciarContexto();
+    if (!this.ctx) return;
+
+    try {
+      const agora = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const filtro = this.ctx.createBiquadFilter();
+
+      filtro.type = "lowpass";
+      filtro.frequency.setValueAtTime(1200, agora);
+      filtro.frequency.exponentialRampToValueAtTime(200, agora + 0.22);
+
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(320, agora);
+      osc.frequency.exponentialRampToValueAtTime(90, agora + 0.22);
+
+      gain.gain.setValueAtTime(0.09, agora);
+      gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.22);
+
+      osc.connect(filtro);
+      filtro.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(agora);
+      osc.stop(agora + 0.22);
+    } catch (e) {}
+  }
+
+  tocarReacao(emoji) {
+    if (this.mutado) return;
+    this.iniciarContexto();
+    if (!this.ctx) return;
+
+    try {
+      const agora = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      const freqMap = {
+        "👏": 587.33, // D5
+        "🔥": 739.99, // F#5
+        "😳": 440.00, // A4
+        "😂": 659.25  // E5
+      };
+
+      const f = freqMap[emoji] || 523.25;
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(f, agora);
+      osc.frequency.exponentialRampToValueAtTime(f * 1.25, agora + 0.12);
+
+      gain.gain.setValueAtTime(0.08, agora);
+      gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.14);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(agora);
+      osc.stop(agora + 0.14);
+    } catch (e) {}
+  }
 }
 
 const audioApp = new GerenciadorDeAudio();
