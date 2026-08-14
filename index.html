@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mesa Quente</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="tela" id="tela-inicial">
+    <div class="cartao">
+      <h1 class="titulo">🔥 Mesa Quente</h1>
+      <p class="subtitulo">O jogo de cartas para a galera</p>
+
+      <button class="botao botao-principal" id="btn-criar-sala">
+        Criar Sala
+      </button>
+
+      <div class="divisor"><span>ou</span></div>
+
+      <input
+        type="text"
+        id="input-codigo-entrar"
+        class="input-texto input-codigo"
+        placeholder="CÓDIGO DA SALA"
+        maxlength="6"
+        autocomplete="off"
+        autocapitalize="characters"
+      />
+      <input
+        type="text"
+        id="input-nome-entrar"
+        class="input-texto"
+        placeholder="Seu nome"
+        maxlength="20"
+        autocomplete="off"
+      />
+      <button class="botao botao-secundaria" id="btn-entrar-sala">
+        Entrar em Sala
+      </button>
+
+      <p class="mensagem-erro" id="mensagem-erro"></p>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (versão compat, mais simples para JS puro) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="sala.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

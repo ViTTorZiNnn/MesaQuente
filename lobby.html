@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mesa Quente — Lobby</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="tela" id="tela-lobby">
+    <div class="cartao">
+      <p class="rotulo">Código da sala</p>
+      <h1 class="codigo-sala" id="texto-codigo-sala">----</h1>
+      <button class="botao-copiar" id="btn-copiar-codigo">Copiar código</button>
+
+      <p class="rotulo lista-titulo">Jogadores na sala</p>
+      <ul class="lista-jogadores" id="lista-jogadores">
+        <!-- jogadores entram aqui via JS -->
+      </ul>
+
+      <button class="botao botao-principal" id="btn-iniciar-partida" style="display:none;">
+        Iniciar Partida
+      </button>
+
+      <p class="texto-aviso" id="texto-aviso-espera">
+        Aguardando o host iniciar a partida...
+      </p>
+
+      <p class="mensagem-erro" id="mensagem-erro-lobby"></p>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="sala.js"></script>
+  <script src="lobby.js"></script>
+</body>
+</html>

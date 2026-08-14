@@ -1,0 +1,188 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.tela {
+  width: 100%;
+  max-width: 420px;
+}
+
+.cartao {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  text-align: center;
+}
+
+.titulo {
+  font-size: 32px;
+  margin-bottom: 4px;
+  color: #1a1a2e;
+}
+
+.subtitulo {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+.botao {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.botao:active {
+  transform: scale(0.97);
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botao-principal {
+  background: linear-gradient(135deg, #f2542d, #d1364f);
+  color: white;
+}
+
+.botao-secundaria {
+  background: #16213e;
+  color: white;
+  margin-top: 8px;
+}
+
+.divisor {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 24px 0 16px;
+}
+
+.divisor::before,
+.divisor::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.divisor span {
+  padding: 0 12px;
+}
+
+.input-texto {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input-texto:focus {
+  border-color: #f2542d;
+}
+
+.input-codigo {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 700;
+}
+
+.mensagem-erro {
+  color: #d1364f;
+  font-size: 13px;
+  margin-top: 14px;
+  min-height: 16px;
+}
+
+/* ---------- Lobby ---------- */
+
+.rotulo {
+  color: #999;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.codigo-sala {
+  font-size: 48px;
+  letter-spacing: 6px;
+  color: #1a1a2e;
+  margin: 6px 0 12px;
+}
+
+.botao-copiar {
+  background: none;
+  border: none;
+  color: #f2542d;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+
+.lista-titulo {
+  margin-bottom: 10px;
+}
+
+.lista-jogadores {
+  list-style: none;
+  margin-bottom: 24px;
+  text-align: left;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.lista-jogadores li {
+  padding: 12px 14px;
+  background: #f7f7f9;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.marca-host {
+  font-size: 11px;
+  background: #f2542d;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.texto-aviso {
+  color: #999;
+  font-size: 13px;
+  margin-top: 4px;
+}
