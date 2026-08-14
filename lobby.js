@@ -1,5 +1,5 @@
 // ============================================================
-// LOBBY.JS — Lógica do Lobby, Gameplay Interativa, Timer Central e Sincronização
+// LOBBY.JS — Mesa Quente (2.5D Physical Card Table & Multiplayer)
 // ============================================================
 
 // Pega o código da sala pela URL (?sala=ABCD)
@@ -20,10 +20,11 @@ const painelFimPartida = document.getElementById("painel-fim-partida");
 const btnSairSala = document.getElementById("btn-sair-sala");
 const btnAudio = document.getElementById("btn-audio");
 
-// Elementos — Lobby
+// Elementos — Lobby 2.5D
 const textoCodigoSala = document.getElementById("texto-codigo-sala");
 const btnCopiarCodigo = document.getElementById("btn-copiar-codigo");
-const listaJogadores = document.getElementById("lista-jogadores");
+const gradeAssentosMesa = document.getElementById("grade-assentos-mesa");
+const deckCentroLobby = document.getElementById("deck-centro-lobby");
 const contadorJogadores = document.getElementById("contador-jogadores");
 const avisoSozinhoSala = document.getElementById("aviso-sozinho-sala");
 const btnVoltarInicioSozinho = document.getElementById("btn-voltar-inicio-sozinho");
@@ -41,17 +42,16 @@ const resumoTotalCartas = document.getElementById("resumo-total-cartas");
 const btnSalvarIniciarConfig = document.getElementById("btn-salvar-iniciar-config");
 const btnVoltarConfig = document.getElementById("btn-voltar-config");
 
-// Elementos — Mesa de Jogo
+// Elementos — Zona Superior (Os Outros)
+const rodaAmigosTopo = document.getElementById("roda-amigos-topo");
+
+// Elementos — Zona Central (A Mesa e o Baralho 2.5D)
 const tagDeckNome = document.getElementById("tag-deck-nome");
 const badgeTimerJogo = document.getElementById("badge-timer-jogo");
 const barraTimerPreenchimento = document.getElementById("barra-timer-preenchimento");
 const contadorCartasRodada = document.getElementById("contador-cartas-rodada");
-const barraProgressoPreenchimento = document.getElementById("barra-progresso-preenchimento");
-const boxLeitorRodada = document.getElementById("box-leitor-rodada");
-const leitorTitulo = document.getElementById("leitor-titulo");
-const leitorInstrucao = document.getElementById("leitor-instrucao");
-
-const mesaCartaWrapper = document.getElementById("mesa-carta-wrapper");
+const deckPilhaJogo = document.getElementById("deck-pilha-jogo");
+const cartaFlipWrapper = document.getElementById("carta-flip-wrapper");
 const cartaJogoElemento = document.getElementById("carta-jogo-elemento");
 const cartaDeckIcone = document.getElementById("carta-deck-icone");
 const cartaDeckNome = document.getElementById("carta-deck-nome");
@@ -60,7 +60,11 @@ const cartaTexto = document.getElementById("carta-texto");
 const blocoAlvoSorteado = document.getElementById("bloco-alvo-sorteado");
 const nomeAlvoDestaque = document.getElementById("nome-alvo-destaque");
 
-// Elementos — Mecânicas Interativas
+// Elementos — Zona Inferior (HUD & Mecânicas)
+const boxLeitorRodada = document.getElementById("box-leitor-rodada");
+const leitorTitulo = document.getElementById("leitor-titulo");
+const leitorInstrucao = document.getElementById("leitor-instrucao");
+
 const mecanicaAlvo = document.getElementById("mecanica-alvo");
 const gradeVotoAlvo = document.getElementById("grade-voto-alvo");
 const statusVotoAlvo = document.getElementById("status-voto-alvo");
@@ -73,7 +77,6 @@ const barraReacoes = document.getElementById("barra-reacoes");
 const containerEmojisFlutuantes = document.getElementById("container-emojis-flutuantes");
 
 const mecanicaEscolha = document.getElementById("mecanica-escolha");
-const tituloEscolha = document.getElementById("titulo-escolha");
 const statusEscolha = document.getElementById("status-escolha");
 const gradeEscolhaJogador = document.getElementById("grade-escolha-jogador");
 const resultadoEscolhaBox = document.getElementById("resultado-escolha-box");
@@ -155,7 +158,7 @@ if (btnAudio) {
 
 // Sair da Sala
 async function executarSaidaSala() {
-  if (confirm("Tem certeza que deseja sair desta sala?")) {
+  if (confirm("Tem certeza que deseja sair desta mesa?")) {
     if (typeof audioApp !== "undefined") audioApp.tocarClique();
     await sairDaSala(codigoSala);
     window.location.href = "index.html";
@@ -166,14 +169,15 @@ btnSairSala.addEventListener("click", executarSaidaSala);
 btnVoltarInicioSozinho.addEventListener("click", executarSaidaSala);
 btnSairPartidaFim.addEventListener("click", executarSaidaSala);
 
-// Inicializa verificação de Host
-obterHostId(codigoSala).then((hostId) => {
+// Escuta e verificação contínua do Host (com suporte a Host Migration)
+escutarHostId(codigoSala, (hostId) => {
   idHostSala = hostId;
   souHost = hostId === idJogadorAtual;
   atualizarVisualHost();
-}).catch((err) => {
-  console.error(err);
-  mensagemErroLobby.textContent = "Erro ao identificar anfitrião da sala.";
+  if (dadosJogadoresCache) {
+    renderizarLobbyMesa(dadosJogadoresCache);
+    renderizarZonaSuperiorAmigos(dadosJogadoresCache, cartaAtualCache);
+  }
 });
 
 function atualizarVisualHost() {
@@ -199,42 +203,182 @@ function atualizarVisualHost() {
 }
 
 // ============================================================
+// LOBBY DINÂMICO 2.5D (ASSENTOS DA MESA REDONDA)
+// ============================================================
+function renderizarLobbyMesa(jogadores) {
+  if (!gradeAssentosMesa) return;
+  gradeAssentosMesa.innerHTML = "";
+
+  const ids = Object.keys(jogadores).sort((a, b) => {
+    return (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0);
+  });
+
+  ids.forEach((id) => {
+    const j = jogadores[id];
+    if (!j.nome) return;
+
+    const isDesconectado = j.conectado === false;
+    const isMe = id === idJogadorAtual;
+    const isHost = id === idHostSala;
+
+    const assento = document.createElement("div");
+    assento.className = `assento-jogador-3d ${isDesconectado ? "assento-desconectado" : ""} ${isMe ? "assento-meu" : ""}`;
+
+    const avatar = document.createElement("div");
+    avatar.className = "assento-avatar-3d";
+    avatar.style.backgroundColor = gerarCorAvatar(id + j.nome);
+    avatar.textContent = j.nome.charAt(0).toUpperCase();
+
+    const info = document.createElement("div");
+    info.className = "assento-info-3d";
+
+    const nome = document.createElement("span");
+    nome.className = "assento-nome-3d";
+    nome.textContent = j.nome;
+
+    const tags = document.createElement("div");
+    tags.className = "assento-tags-3d";
+
+    if (isHost) {
+      const tagH = document.createElement("span");
+      tagH.className = "tag-3d tag-host-3d";
+      tagH.textContent = "HOST";
+      tags.appendChild(tagH);
+    }
+    if (isMe) {
+      const tagV = document.createElement("span");
+      tagV.className = "tag-3d tag-voce-3d";
+      tagV.textContent = "VOCÊ";
+      tags.appendChild(tagV);
+    }
+    if (isDesconectado) {
+      const tagS = document.createElement("span");
+      tagS.className = "tag-3d tag-saiu-3d";
+      tagS.textContent = "SAIU";
+      tags.appendChild(tagS);
+    }
+
+    info.appendChild(nome);
+    info.appendChild(tags);
+
+    assento.appendChild(avatar);
+    assento.appendChild(info);
+
+    gradeAssentosMesa.appendChild(assento);
+  });
+
+  // Mostra assentos vazios amigáveis se houver poucos jogadores
+  const totalConectados = ids.filter((id) => jogadores[id].conectado !== false).length;
+  if (totalConectados < 4) {
+    const faltam = 4 - totalConectados;
+    for (let i = 0; i < faltam; i++) {
+      const vaga = document.createElement("div");
+      vaga.className = "assento-vazio-3d";
+      vaga.innerHTML = `
+        <span class="vaga-icone">🪑</span>
+        <span class="vaga-texto">Cadeira vaga...</span>
+      `;
+      gradeAssentosMesa.appendChild(vaga);
+    }
+  }
+}
+
+// ============================================================
+// ZONA SUPERIOR: OS OUTROS (RODA DE AMIGOS COM GLOW 2.5D)
+// ============================================================
+function renderizarZonaSuperiorAmigos(jogadores, cartaAtual) {
+  if (!rodaAmigosTopo) return;
+  rodaAmigosTopo.innerHTML = "";
+
+  const ids = Object.keys(jogadores).sort((a, b) => {
+    return (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0);
+  });
+
+  const leitorId = cartaAtual ? cartaAtual.leitorId : null;
+  const alvoId = cartaAtual ? cartaAtual.alvoId : null;
+
+  ids.forEach((id) => {
+    const j = jogadores[id];
+    if (!j.nome || j.conectado === false) return;
+
+    const isLeitor = id === leitorId;
+    const isAlvo = id === alvoId;
+    const isMe = id === idJogadorAtual;
+
+    const item = document.createElement("div");
+    item.className = `amigo-topo-card ${isLeitor ? "amigo-leitor-ativo" : ""} ${isAlvo ? "amigo-alvo-ativo" : ""}`;
+
+    const avatarWrap = document.createElement("div");
+    avatarWrap.className = "amigo-avatar-wrap";
+
+    const avatar = document.createElement("div");
+    avatar.className = "amigo-avatar-3d";
+    avatar.style.backgroundColor = gerarCorAvatar(id + j.nome);
+    avatar.textContent = j.nome.charAt(0).toUpperCase();
+
+    avatarWrap.appendChild(avatar);
+
+    if (isLeitor) {
+      const badgeLeitor = document.createElement("span");
+      badgeLeitor.className = "badge-flutuante-amigo badge-leitor";
+      badgeLeitor.textContent = "🎙️";
+      avatarWrap.appendChild(badgeLeitor);
+    } else if (isAlvo) {
+      const badgeAlvo = document.createElement("span");
+      badgeAlvo.className = "badge-flutuante-amigo badge-alvo";
+      badgeAlvo.textContent = "🎯";
+      avatarWrap.appendChild(badgeAlvo);
+    }
+
+    const nome = document.createElement("span");
+    nome.className = "amigo-nome-topo";
+    nome.textContent = isMe ? `${j.nome} (Você)` : j.nome;
+
+    item.appendChild(avatarWrap);
+    item.appendChild(nome);
+
+    rodaAmigosTopo.appendChild(item);
+  });
+}
+
+// ============================================================
 // CONFIGURAÇÃO DE BARALHOS
 // ============================================================
 function renderizarListaBaralhosConfig() {
+  if (!listaBaralhosConfig) return;
   listaBaralhosConfig.innerHTML = "";
 
   BARALHOS_DISPONIVEIS.forEach((baralho) => {
     const isAtivo = configLocal.baralhosAtivos.includes(baralho.id);
 
     const divOpcao = document.createElement("div");
-    divOpcao.className = `baralho-opcao ${isAtivo ? "selecionado" : ""}`;
+    divOpcao.className = `baralho-opcao-3d ${isAtivo ? "selecionado" : ""}`;
     divOpcao.setAttribute("data-deck-id", baralho.id);
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.className = "baralho-checkbox";
+    checkbox.className = "baralho-checkbox-3d";
     checkbox.checked = isAtivo;
 
     const corpo = document.createElement("div");
-    corpo.className = "baralho-corpo";
+    corpo.className = "baralho-corpo-3d";
 
     const topo = document.createElement("div");
-    topo.className = "baralho-topo";
+    topo.className = "baralho-topo-3d";
 
     const nome = document.createElement("span");
-    nome.className = "baralho-nome";
+    nome.className = "baralho-nome-3d";
     nome.innerHTML = `<span>${baralho.icone || "🃏"}</span> ${baralho.nome}`;
 
     const rating = document.createElement("span");
-    rating.className = `baralho-rating ${baralho.age_rating === "18+" ? "rating-18" : "rating-geral"}`;
+    rating.className = `baralho-rating-3d ${baralho.age_rating === "18+" ? "rating-18-3d" : "rating-geral-3d"}`;
     rating.textContent = baralho.age_rating;
 
     topo.appendChild(nome);
     topo.appendChild(rating);
 
     const desc = document.createElement("p");
-    desc.className = "baralho-desc";
+    desc.className = "baralho-desc-3d";
     desc.textContent = baralho.descricao;
 
     corpo.appendChild(topo);
@@ -269,7 +413,7 @@ function alternarSelecaoBaralho(deckId, ativo, elementoOpcao) {
   } else {
     if (configLocal.baralhosAtivos.length === 1 && configLocal.baralhosAtivos.includes(deckId)) {
       alert("A partida precisa de pelo menos 1 baralho ativo!");
-      const cb = elementoOpcao.querySelector(".baralho-checkbox");
+      const cb = elementoOpcao.querySelector(".baralho-checkbox-3d");
       if (cb) cb.checked = true;
       return;
     }
@@ -282,49 +426,57 @@ function alternarSelecaoBaralho(deckId, ativo, elementoOpcao) {
 
 function atualizarResumosConfig() {
   const qtd = configLocal.baralhosAtivos.length;
-  resumoBaralhos.textContent = `${qtd} baralho${qtd > 1 ? "s" : ""} ativo${qtd > 1 ? "s" : ""}`;
-  resumoTotalCartas.textContent = `${configLocal.totalCartas} cartas`;
+  if (resumoBaralhos) resumoBaralhos.textContent = `${qtd} ativo${qtd > 1 ? "s" : ""}`;
+  if (resumoTotalCartas) resumoTotalCartas.textContent = `${configLocal.totalCartas} cartas`;
 }
 
 // Botoes de quantidade de cartas (10, 20, 30, 40)
-gradeQtdCartas.querySelectorAll(".btn-qtd-opcao").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    gradeQtdCartas.querySelectorAll(".btn-qtd-opcao").forEach((b) => b.classList.remove("selecionado"));
-    btn.classList.add("selecionado");
-    configLocal.totalCartas = parseInt(btn.getAttribute("data-qtd"), 10) || 20;
-    if (typeof audioApp !== "undefined") audioApp.tocarClique();
-    atualizarResumosConfig();
+if (gradeQtdCartas) {
+  gradeQtdCartas.querySelectorAll(".btn-qtd-3d").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      gradeQtdCartas.querySelectorAll(".btn-qtd-3d").forEach((b) => b.classList.remove("selecionado"));
+      btn.classList.add("selecionado");
+      configLocal.totalCartas = parseInt(btn.getAttribute("data-qtd"), 10) || 20;
+      if (typeof audioApp !== "undefined") audioApp.tocarClique();
+      atualizarResumosConfig();
+    });
   });
-});
+}
 
 renderizarListaBaralhosConfig();
 
-btnAbrirConfig.addEventListener("click", () => {
-  if (typeof audioApp !== "undefined") audioApp.tocarClique();
-  mostrarApenasPainel(painelConfiguracao);
-});
+if (btnAbrirConfig) {
+  btnAbrirConfig.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    mostrarApenasPainel(painelConfiguracao);
+  });
+}
 
-btnVoltarConfig.addEventListener("click", () => {
-  if (typeof audioApp !== "undefined") audioApp.tocarClique();
-  mostrarApenasPainel(painelLobby);
-});
+if (btnVoltarConfig) {
+  btnVoltarConfig.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    mostrarApenasPainel(painelLobby);
+  });
+}
 
-btnSalvarIniciarConfig.addEventListener("click", async () => {
-  if (!souHost) return;
-  btnSalvarIniciarConfig.disabled = true;
-  btnSalvarIniciarConfig.textContent = "Iniciando Partida...";
-  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+if (btnSalvarIniciarConfig) {
+  btnSalvarIniciarConfig.addEventListener("click", async () => {
+    if (!souHost) return;
+    btnSalvarIniciarConfig.disabled = true;
+    btnSalvarIniciarConfig.textContent = "Iniciando...";
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
-  try {
-    await salvarConfigLobby(codigoSala, configLocal);
-    await iniciarPartida(codigoSala, configLocal);
-  } catch (erro) {
-    console.error(erro);
-    mensagemErroLobby.textContent = "Não foi possível iniciar a partida.";
-    btnSalvarIniciarConfig.disabled = false;
-    btnSalvarIniciarConfig.textContent = "Iniciar com essa Seleção 🔥";
-  }
-});
+    try {
+      await salvarConfigLobby(codigoSala, configLocal);
+      await iniciarPartida(codigoSala, configLocal);
+    } catch (erro) {
+      console.error(erro);
+      mensagemErroLobby.textContent = "Não foi possível iniciar a partida.";
+      btnSalvarIniciarConfig.disabled = false;
+      btnSalvarIniciarConfig.textContent = "Iniciar com essa Seleção 🔥";
+    }
+  });
+}
 
 // ============================================================
 // TIMER CENTRALIZADO SINCRONIZADO
@@ -342,28 +494,27 @@ function iniciarTimerCentral(iniciadaEm, duracaoTotal) {
 
     const perc = Math.max(0, Math.min(100, (restante / duracaoTotal) * 100));
 
-    badgeTimerJogo.textContent = `⏱️ ${restante}s`;
-    barraTimerPreenchimento.style.width = `${perc}%`;
+    if (badgeTimerJogo) badgeTimerJogo.textContent = `⏱️ ${restante}s`;
+    if (barraTimerPreenchimento) barraTimerPreenchimento.style.width = `${perc}%`;
 
     if (restante <= 5 && restante > 0) {
-      badgeTimerJogo.classList.add("timer-urgente");
-      barraTimerPreenchimento.style.backgroundColor = "var(--primary)";
+      if (badgeTimerJogo) badgeTimerJogo.classList.add("timer-urgente");
+      if (barraTimerPreenchimento) barraTimerPreenchimento.style.backgroundColor = "var(--primary)";
     } else {
-      badgeTimerJogo.classList.remove("timer-urgente");
-      barraTimerPreenchimento.style.backgroundColor = "var(--accent-gold)";
+      if (badgeTimerJogo) badgeTimerJogo.classList.remove("timer-urgente");
+      if (barraTimerPreenchimento) barraTimerPreenchimento.style.backgroundColor = "var(--accent-gold)";
     }
 
     if (restante === 0) {
-      avisoTempoEsgotado.classList.remove("bloco-oculto");
-      badgeTimerJogo.textContent = "⌛ FIM";
+      if (avisoTempoEsgotado) avisoTempoEsgotado.classList.remove("bloco-oculto");
+      if (badgeTimerJogo) badgeTimerJogo.textContent = "⌛ FIM";
       
       // Revela resultados automaticamente na interface ao esgotar o tempo
       if (cartaAtualCache && !cartaAtualCache.revelada && souHost) {
-        // Host pode disparar a revelação oficial
         revelarResultadoCarta(codigoSala);
       }
     } else {
-      avisoTempoEsgotado.classList.add("bloco-oculto");
+      if (avisoTempoEsgotado) avisoTempoEsgotado.classList.add("bloco-oculto");
     }
   }
 
@@ -381,7 +532,6 @@ function criarEmojiFlutuante(emoji, autorNome) {
   const item = document.createElement("div");
   item.className = "emoji-flutuante";
   
-  // Posição horizontal aleatória no terço central da tela
   const randomX = Math.floor(Math.random() * 60) + 20;
   item.style.left = `${randomX}%`;
   
@@ -397,29 +547,29 @@ function criarEmojiFlutuante(emoji, autorNome) {
 }
 
 // Botões de Reação Rápida (Confissão / Prova)
-barraReacoes.querySelectorAll(".btn-reacao").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const emoji = btn.getAttribute("data-emoji");
-    const meuNome = (dadosJogadoresCache[idJogadorAtual] && dadosJogadoresCache[idJogadorAtual].nome) || "Jogador";
-    
-    if (typeof audioApp !== "undefined") audioApp.tocarClique();
-    enviarReacao(codigoSala, emoji, meuNome);
+if (barraReacoes) {
+  barraReacoes.querySelectorAll(".btn-reacao-hud").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const emoji = btn.getAttribute("data-emoji");
+      const meuNome = (dadosJogadoresCache[idJogadorAtual] && dadosJogadoresCache[idJogadorAtual].nome) || "Jogador";
+      
+      if (typeof audioApp !== "undefined") audioApp.tocarClique();
+      enviarReacao(codigoSala, emoji, meuNome);
 
-    // Feedback tátil imediato no botão
-    btn.classList.add("reacao-ativa");
-    setTimeout(() => btn.classList.remove("reacao-ativa"), 300);
+      btn.classList.add("reacao-ativa");
+      setTimeout(() => btn.classList.remove("reacao-ativa"), 300);
+    });
   });
-});
+}
 
 // ============================================================
-// GERENCIADOR DAS MECÂNICAS DE JOGO
+// GERENCIADOR DAS MECÂNICAS DE JOGO NO HUD
 // ============================================================
 function renderizarMecanicas(carta, interacoes, jogadores) {
   const mechanic = carta.mechanic || "CONFISSAO";
   const target = carta.target || "SELF";
   const isRevelada = carta.revelada === true;
 
-  // Oculta todos os blocos de mecânicas inicialmente
   [mecanicaAlvo, mecanicaReacoes, mecanicaEscolha, mecanicaDilema].forEach((m) => {
     if (m) m.classList.add("bloco-oculto");
   });
@@ -427,7 +577,6 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
   const idsJogadores = Object.keys(jogadores).filter((id) => jogadores[id] && jogadores[id].conectado !== false);
   const totalJogadores = idsJogadores.length;
 
-  // Botão de Revelar Resultado para o Host
   if (souHost && (mechanic === "ALVO" || mechanic === "DILEMA")) {
     btnRevelarResultado.classList.remove("bloco-oculto");
     btnRevelarResultado.textContent = isRevelada ? "✅ Resultados Revelados" : "🎯 Revelar Resultados da Roda";
@@ -449,21 +598,20 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
       ? `Você votou em ${(jogadores[meuVoto] && jogadores[meuVoto].nome) || "alguém"} • (${totalVotos}/${totalJogadores} votaram)`
       : `Clique no jogador que você escolhe • (${totalVotos}/${totalJogadores} já votaram)`;
 
-    // Renderiza botões dos jogadores para votação
     idsJogadores.forEach((id) => {
       const j = jogadores[id];
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = `btn-jogador-voto ${meuVoto === id ? "votado-por-mim" : ""}`;
+      btn.className = `btn-jogador-voto-hud ${meuVoto === id ? "votado-por-mim" : ""}`;
       btn.disabled = isRevelada;
 
       const avatar = document.createElement("span");
-      avatar.className = "jogador-voto-avatar";
+      avatar.className = "jogador-voto-avatar-hud";
       avatar.style.backgroundColor = gerarCorAvatar(id + j.nome);
       avatar.textContent = j.nome.charAt(0).toUpperCase();
 
       const nomeSpan = document.createElement("span");
-      nomeSpan.className = "jogador-voto-nome";
+      nomeSpan.className = "jogador-voto-nome-hud";
       nomeSpan.textContent = j.nome + (id === idJogadorAtual ? " (Você)" : "");
 
       btn.appendChild(avatar);
@@ -478,11 +626,9 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
       gradeVotoAlvo.appendChild(btn);
     });
 
-    // Se a carta foi revelada ou todos votaram, mostra resultado
     if (isRevelada || totalVotos >= totalJogadores) {
       resultadoVotoAlvo.classList.remove("bloco-oculto");
 
-      // Contagem dos votos
       const contagem = {};
       Object.values(votos).forEach((alvoId) => {
         contagem[alvoId] = (contagem[alvoId] || 0) + 1;
@@ -533,7 +679,6 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
   else if (mechanic === "CONFISSAO" || mechanic === "PROVA") {
     mecanicaReacoes.classList.remove("bloco-oculto");
 
-    // Atualiza contadores de reações
     const reacoes = interacoes.reacoes || {};
     const contadores = { "👏": 0, "🔥": 0, "😳": 0, "😂": 0 };
 
@@ -543,7 +688,6 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
         contadores[r.emoji]++;
       }
 
-      // Se for uma reação nova que ainda não flutuou, anima na tela!
       if (!reacoesAnimadasSet.has(rId)) {
         reacoesAnimadasSet.add(rId);
         criarEmojiFlutuante(r.emoji, r.autorNome);
@@ -578,21 +722,20 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
         : `Aguardando ${escolhedorNome} escolher alguém da roda...`;
     }
 
-    // Renderiza os botões dos jogadores
     idsJogadores.forEach((id) => {
       const j = jogadores[id];
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = `btn-jogador-voto ${escolhaFeita && escolhaFeita.alvoId === id ? "votado-por-mim" : ""}`;
+      btn.className = `btn-jogador-voto-hud ${escolhaFeita && escolhaFeita.alvoId === id ? "votado-por-mim" : ""}`;
       btn.disabled = !souOEscolhedor || !!escolhaFeita;
 
       const avatar = document.createElement("span");
-      avatar.className = "jogador-voto-avatar";
+      avatar.className = "jogador-voto-avatar-hud";
       avatar.style.backgroundColor = gerarCorAvatar(id + j.nome);
       avatar.textContent = j.nome.charAt(0).toUpperCase();
 
       const nomeSpan = document.createElement("span");
-      nomeSpan.className = "jogador-voto-nome";
+      nomeSpan.className = "jogador-voto-nome-hud";
       nomeSpan.textContent = j.nome + (id === idJogadorAtual ? " (Você)" : "");
 
       btn.appendChild(avatar);
@@ -627,12 +770,11 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
       ? `Você votou na Opção ${meuVoto} • (${totalVotosDilema}/${totalJogadores} votaram)`
       : `Escolha sua opção em segredo • (${totalVotosDilema}/${totalJogadores} já responderam)`;
 
-    btnDilemaA.className = `btn-dilema-opcao ${meuVoto === "A" ? "selecionado-dilema" : ""}`;
-    btnDilemaB.className = `btn-dilema-opcao ${meuVoto === "B" ? "selecionado-dilema" : ""}`;
+    btnDilemaA.className = `btn-dilema-hud ${meuVoto === "A" ? "selecionado-dilema" : ""}`;
+    btnDilemaB.className = `btn-dilema-hud ${meuVoto === "B" ? "selecionado-dilema" : ""}`;
     btnDilemaA.disabled = isRevelada;
     btnDilemaB.disabled = isRevelada;
 
-    // Se foi revelado ou todos votaram, mostra placar percentual
     if (isRevelada || totalVotosDilema >= totalJogadores) {
       resultadoDilema.classList.remove("bloco-oculto");
 
@@ -701,70 +843,21 @@ btnRevelarResultado.addEventListener("click", async () => {
 // ESCUTAS EM TEMPO REAL (FIREBASE)
 // ============================================================
 
-// 1. Jogadores Conectados
+// 1. Jogadores Conectados & Host Migration
 escutarJogadores(codigoSala, (jogadores) => {
   dadosJogadoresCache = jogadores || {};
-  listaJogadores.innerHTML = "";
+  
+  // Executa migração de host automática caso o host tenha saído
+  migrarHostSeNecessario(codigoSala, jogadores, idHostSala);
 
-  const ids = Object.keys(jogadores).sort((a, b) => {
-    return (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0);
-  });
+  // Renderiza a mesa do lobby com assentos 2.5D
+  renderizarLobbyMesa(dadosJogadoresCache);
 
-  let totalConectados = 0;
+  // Renderiza a zona superior dos amigos com glow
+  renderizarZonaSuperiorAmigos(dadosJogadoresCache, cartaAtualCache);
 
-  ids.forEach((id) => {
-    const jogador = jogadores[id];
-    if (!jogador.nome) return;
-
-    if (jogador.conectado !== false) totalConectados++;
-
-    const li = document.createElement("li");
-    li.className = `jogador-item ${jogador.conectado === false ? "desconectado" : ""}`;
-
-    const info = document.createElement("div");
-    info.className = "jogador-info";
-
-    const avatar = document.createElement("div");
-    avatar.className = "jogador-avatar";
-    avatar.style.backgroundColor = gerarCorAvatar(id + jogador.nome);
-    avatar.textContent = jogador.nome.charAt(0).toUpperCase();
-
-    const nome = document.createElement("span");
-    nome.className = "jogador-nome";
-    nome.textContent = jogador.nome;
-
-    info.appendChild(avatar);
-    info.appendChild(nome);
-
-    const tags = document.createElement("div");
-    tags.className = "jogador-tags";
-
-    if (id === idHostSala) {
-      const tagHost = document.createElement("span");
-      tagHost.className = "tag-badge tag-host";
-      tagHost.textContent = "HOST";
-      tags.appendChild(tagHost);
-    }
-
-    if (id === idJogadorAtual) {
-      const tagVoce = document.createElement("span");
-      tagVoce.className = "tag-badge tag-voce";
-      tagVoce.textContent = "VOCÊ";
-      tags.appendChild(tagVoce);
-    }
-
-    if (jogador.conectado === false) {
-      const tagSaiu = document.createElement("span");
-      tagSaiu.className = "tag-badge tag-saiu";
-      tagSaiu.textContent = "SAIU";
-      tags.appendChild(tagSaiu);
-    }
-
-    li.appendChild(info);
-    li.appendChild(tags);
-
-    listaJogadores.appendChild(li);
-  });
+  const ids = Object.keys(dadosJogadoresCache);
+  const totalConectados = ids.filter((id) => dadosJogadoresCache[id].conectado !== false).length;
 
   contadorJogadores.textContent = `${totalConectados} na mesa`;
 
@@ -786,10 +879,10 @@ escutarStatusSala(codigoSala, (status) => {
   if (status === "lobby") {
     mostrarApenasPainel(painelLobby);
     btnIniciarPartida.disabled = false;
-    btnIniciarPartida.textContent = "Iniciar Partida 🔥";
+    btnIniciarPartida.textContent = "🔥 Iniciar Partida na Mesa";
     if (btnSalvarIniciarConfig) {
       btnSalvarIniciarConfig.disabled = false;
-      btnSalvarIniciarConfig.textContent = "Iniciar com essa Seleção 🔥";
+      btnSalvarIniciarConfig.textContent = "🔥 Iniciar com essa Seleção";
     }
   }
 });
@@ -812,28 +905,25 @@ escutarPartida(codigoSala, (partida) => {
     const carta = partida.cartaAtual;
     cartaAtualCache = carta;
 
-    // Atualiza cabeçalho e progresso
+    // Atualiza cabeçalho e contagem
     tagDeckNome.textContent = `🔥 ${carta.deck_nome ? carta.deck_nome.toUpperCase() : "MESA QUENTE"}`;
-    contadorCartasRodada.textContent = `Carta ${partida.rodadaAtual || 1} / ${partida.totalRodadas || 20}`;
-    
-    const perc = Math.min(100, Math.round(((partida.rodadaAtual || 1) / (partida.totalRodadas || 20)) * 100));
-    barraProgressoPreenchimento.style.width = `${perc}%`;
+    contadorCartasRodada.textContent = `${partida.rodadaAtual || 1} / ${partida.totalRodadas || 20}`;
 
-    // Atualiza informações da carta
+    // Atualiza informações da carta física
     cartaDeckIcone.textContent = carta.deck_icone || "🃏";
     cartaDeckNome.textContent = carta.deck_nome || "Baralho";
     cartaMechanicTag.textContent = carta.mechanic || "DESAFIO";
-    cartaMechanicTag.className = `carta-mechanic-tag tag-mechanic-${carta.mechanic || "CONFISSAO"}`;
+    cartaMechanicTag.className = `badge-mecanica-carta tag-mechanic-${carta.mechanic || "CONFISSAO"}`;
     cartaTexto.textContent = carta.text || "";
 
-    // Leitor da Rodada
+    // Leitor da Rodada (Mestre de Cerimônias)
     const souOLeitor = carta.leitorId === idJogadorAtual;
     if (souOLeitor) {
-      boxLeitorRodada.className = "box-leitor-rodada box-leitor-voce";
+      boxLeitorRodada.className = "box-leitor-hud box-leitor-voce";
       leitorTitulo.innerHTML = "🎙️ VOCÊ É O LEITOR DA RODADA!";
       leitorInstrucao.textContent = "Leia a carta abaixo em voz alta para todos os jogadores.";
     } else {
-      boxLeitorRodada.className = "box-leitor-rodada box-leitor-outro";
+      boxLeitorRodada.className = "box-leitor-hud box-leitor-outro";
       leitorTitulo.innerHTML = `🎙️ Leitor: ${carta.leitorNome || "Jogador"}`;
       leitorInstrucao.textContent = `Aguarde ${carta.leitorNome || "o jogador"} ler a carta em voz alta.`;
     }
@@ -846,14 +936,17 @@ escutarPartida(codigoSala, (partida) => {
       blocoAlvoSorteado.classList.add("bloco-oculto");
     }
 
-    // Animação de entrada e som ao virar nova carta
+    // Atualiza zona superior dos amigos com o leitor/alvo destacados
+    renderizarZonaSuperiorAmigos(dadosJogadoresCache, carta);
+
+    // Animação 3D Flip ao puxar nova carta da mesa
     if (ultimaCartaExibidaId !== carta.id) {
       reacoesAnimadasSet.clear();
       if (typeof audioApp !== "undefined") audioApp.tocarViradaCarta();
 
-      cartaJogoElemento.classList.remove("carta-anim-entrada");
+      cartaJogoElemento.classList.remove("anim-puxar-flip");
       void cartaJogoElemento.offsetWidth; // Trigger reflow
-      cartaJogoElemento.classList.add("carta-anim-entrada");
+      cartaJogoElemento.classList.add("anim-puxar-flip");
 
       ultimaCartaExibidaId = carta.id;
     }
@@ -866,7 +959,7 @@ escutarPartida(codigoSala, (partida) => {
 
     // Libera botão de próxima carta se for Host
     btnProximaCarta.disabled = false;
-    btnProximaCarta.textContent = "Próxima Carta 🔥";
+    btnProximaCarta.textContent = "🃏 Puxar Próxima Carta 🔥";
   }
 });
 
@@ -885,10 +978,10 @@ escutarInteracoes(codigoSala, (interacoes) => {
 // Copiar código da sala
 btnCopiarCodigo.addEventListener("click", () => {
   navigator.clipboard.writeText(codigoSala).then(() => {
-    btnCopiarCodigo.innerHTML = "<span>✅</span> Código Copiado!";
+    btnCopiarCodigo.innerHTML = "<span>✅</span> Copiado!";
     if (typeof audioApp !== "undefined") audioApp.tocarClique();
     setTimeout(() => {
-      btnCopiarCodigo.innerHTML = "<span>📋</span> Copiar código";
+      btnCopiarCodigo.innerHTML = "<span>📋</span> Copiar";
     }, 1800);
   });
 });
@@ -906,19 +999,28 @@ btnIniciarPartida.addEventListener("click", async () => {
     console.error(erro);
     mensagemErroLobby.textContent = "Não foi possível iniciar a partida.";
     btnIniciarPartida.disabled = false;
-    btnIniciarPartida.textContent = "Iniciar Partida 🔥";
+    btnIniciarPartida.textContent = "🔥 Iniciar Partida na Mesa";
   }
 });
+
+// Puxar carta clicando no Maço 3D
+if (deckPilhaJogo) {
+  deckPilhaJogo.addEventListener("click", () => {
+    if (souHost && !btnProximaCarta.disabled) {
+      btnProximaCarta.click();
+    }
+  });
+}
 
 // Avançar para Próxima Carta (Host)
 btnProximaCarta.addEventListener("click", async () => {
   if (!souHost) return;
   btnProximaCarta.disabled = true;
-  btnProximaCarta.textContent = "Sorteando próxima carta...";
+  btnProximaCarta.textContent = "Puxando carta...";
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
-  // Animação de saída da carta
-  cartaJogoElemento.classList.add("carta-anim-saida");
+  // Animação de descarte deslizando para a esquerda
+  cartaJogoElemento.classList.add("anim-descarte-esquerda");
 
   try {
     await avancarProximaCarta(codigoSala);
@@ -926,8 +1028,8 @@ btnProximaCarta.addEventListener("click", async () => {
     console.error(erro);
     mensagemErroJogo.textContent = "Erro ao avançar carta. Tente novamente.";
     btnProximaCarta.disabled = false;
-    btnProximaCarta.textContent = "Próxima Carta 🔥";
-    cartaJogoElemento.classList.remove("carta-anim-saida");
+    btnProximaCarta.textContent = "🃏 Puxar Próxima Carta 🔥";
+    cartaJogoElemento.classList.remove("anim-descarte-esquerda");
   }
 });
 
@@ -935,7 +1037,7 @@ btnProximaCarta.addEventListener("click", async () => {
 btnJogarNovamente.addEventListener("click", async () => {
   if (!souHost) return;
   btnJogarNovamente.disabled = true;
-  btnJogarNovamente.textContent = "Reiniciando sala...";
+  btnJogarNovamente.textContent = "Reiniciando mesa...";
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
   try {
@@ -943,6 +1045,6 @@ btnJogarNovamente.addEventListener("click", async () => {
   } catch (erro) {
     console.error(erro);
     btnJogarNovamente.disabled = false;
-    btnJogarNovamente.textContent = "🔥 Jogar Novamente (Voltar ao Lobby)";
+    btnJogarNovamente.textContent = "🔥 Jogar Novamente (Voltar à Mesa)";
   }
 });

@@ -1,92 +1,121 @@
 /* ============================================================
-   STYLE.CSS — Mesa Quente (Etapa 3: Identidade Visual Final & Gameplay)
+   STYLE.CSS — Mesa Quente (Estética 2.5D, Mesa Vertical & Baralho Físico)
+   Versão: v1.3
    ============================================================ */
 
 :root {
-  --bg-main: #0c0b12;
-  --bg-card: rgba(22, 20, 34, 0.92);
-  --bg-card-solid: #161422;
-  --bg-card-surface: #1e1b2e;
-  --bg-glass: rgba(255, 255, 255, 0.06);
-  --border-subtle: rgba(255, 255, 255, 0.12);
-  --border-card-physical: rgba(255, 183, 3, 0.35);
+  /* Paleta Base: Grafite, Chumbo e Preto Fosco */
+  --bg-deep-space: #07070a;
+  --bg-felt-table: #100f15;
+  --bg-felt-surface: #171520;
+  --bg-surface-elevated: #1e1b28;
+  --bg-surface-card: #252233;
+  --bg-surface-light: #2f2b40;
 
-  --primary: #ff4d2e;
-  --primary-glow: #ff7849;
-  --primary-dark: #d82b12;
+  /* Bordas e Relevos */
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-highlight: rgba(255, 255, 255, 0.28);
+  --border-gold-card: rgba(255, 183, 3, 0.45);
+  --border-fire-card: rgba(255, 77, 46, 0.5);
+
+  /* Acentos de Cor */
+  --primary-fire: #ff4d2e;
+  --primary-fire-glow: #ff7849;
+  --primary-fire-dark: #b81e05;
   --accent-gold: #ffb703;
   --accent-gold-glow: #ffd166;
   --accent-purple: #9d4edd;
   --accent-teal: #06d6a0;
   --accent-blue: #3a86ff;
 
+  /* Tipografia */
   --text-main: #f8f9fa;
-  --text-muted: #a0a0b2;
-  --text-dim: #6c6c80;
+  --text-muted: #9fa0b4;
+  --text-dim: #606075;
 
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  /* Geometria e Arredondamento */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
 
-  --shadow-main: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(255, 77, 46, 0.15);
-  --shadow-card-real: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 183, 3, 0.18);
+  /* Sombras 2.5D Profundas */
+  --shadow-25d-table: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-25d-card: 0 18px 40px rgba(0, 0, 0, 0.85), 0 6px 12px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  --shadow-25d-deck: 0 20px 35px rgba(0, 0, 0, 0.9), 0 8px 16px rgba(0, 0, 0, 0.7);
+  --shadow-glow-gold: 0 0 24px rgba(255, 183, 3, 0.35);
+  --shadow-glow-fire: 0 0 28px rgba(255, 77, 46, 0.45);
+  --shadow-btn-3d: 0 6px 0 var(--primary-fire-dark), 0 12px 20px rgba(0, 0, 0, 0.6);
+  --shadow-btn-sec-3d: 0 5px 0 #121019, 0 10px 18px rgba(0, 0, 0, 0.5);
 }
 
-* {
+/* Reset Universal e Trava de Seleção Mobile */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--bg-deep-space);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+  position: relative;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-main);
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(255, 77, 46, 0.25) 0%, transparent 65%),
-    radial-gradient(circle at 15% 85%, rgba(157, 78, 221, 0.18) 0%, transparent 50%),
-    radial-gradient(circle at 85% 75%, rgba(255, 183, 3, 0.14) 0%, transparent 50%);
-  color: var(--text-main);
-  min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 16px;
-  position: relative;
-  overflow-x: hidden;
+  justify-content: flex-start;
+  padding: 12px 14px;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(255, 77, 46, 0.18) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(157, 78, 221, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(255, 183, 3, 0.1) 0%, transparent 50%);
+  background-attachment: fixed;
 }
 
-/* Fundo com brasas e partículas animadas */
+/* Fundo Dinâmico de Brasas */
 #canvas-brasas {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
   z-index: 0;
+  opacity: 0.75;
 }
 
-/* Container Principal */
-.tela {
+/* Container de Toda a Experiência */
+.tela-container {
   width: 100%;
   max-width: 440px;
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  min-height: calc(100vh - 24px);
+  min-height: calc(100dvh - 24px);
 }
 
-/* Barra Superior de Controles */
+/* ============================================================
+   BARRA SUPERIOR (HEADER)
+   ============================================================ */
 .topo-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding: 4px 2px;
 }
 
 .logo-tag {
@@ -95,10 +124,15 @@ body {
   gap: 6px;
   font-size: 13px;
   font-weight: 900;
-  letter-spacing: 1.2px;
+  letter-spacing: 1.4px;
   text-transform: uppercase;
-  color: var(--primary-glow);
-  text-shadow: 0 0 12px rgba(255, 77, 46, 0.6);
+  color: var(--primary-fire-glow);
+  text-shadow: 0 0 14px rgba(255, 77, 46, 0.6);
+}
+
+.logo-icone {
+  font-size: 16px;
+  filter: drop-shadow(0 0 8px rgba(255, 77, 46, 0.8));
 }
 
 .topo-acoes {
@@ -107,117 +141,170 @@ body {
   gap: 8px;
 }
 
-.btn-sair-sala {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border-subtle);
-  border-radius: 20px;
-  padding: 6px 12px;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.2s ease;
-}
-
-.btn-sair-sala:active {
-  transform: scale(0.94);
-  background: rgba(255, 77, 46, 0.25);
-  color: #fff;
-}
-
-.btn-audio-toggle {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border-subtle);
-  border-radius: 20px;
+.btn-sair-sala, .btn-audio-toggle {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: 24px;
   padding: 6px 12px;
   color: var(--text-main);
   font-size: 12px;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.15s ease;
 }
 
-.btn-audio-toggle:active {
-  transform: scale(0.94);
-  background: rgba(255, 255, 255, 0.15);
+.btn-sair-sala:active, .btn-audio-toggle:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* Cartão Base de UI */
-.cartao {
-  background: var(--bg-card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+/* ============================================================
+   CARTÃO BASE E PALCO 2.5D (ESTÉTICA DE MESA & FELTRO)
+   ============================================================ */
+.cartao-mesa {
+  background: linear-gradient(170deg, var(--bg-felt-surface) 0%, var(--bg-felt-table) 100%);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 24px 20px;
-  box-shadow: var(--shadow-main);
-  text-align: center;
+  border-radius: var(--radius-xl);
+  padding: 22px 18px;
+  box-shadow: var(--shadow-25d-table);
   position: relative;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   overflow: hidden;
-  transition: all 0.3s ease;
 }
 
-.cartao::before {
+.cartao-mesa::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--primary), var(--accent-gold), transparent);
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 183, 3, 0.4), rgba(255, 77, 46, 0.6), transparent);
 }
 
-/* Tipografia */
-.titulo {
-  font-size: 30px;
+/* ============================================================
+   TELA INICIAL: CARTAS HERO EM PERSPECTIVA 2.5D
+   ============================================================ */
+.palco-inicial-25d {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cartas-decorativas-hero {
+  position: relative;
+  height: 140px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  margin-top: 10px;
+}
+
+.carta-hero {
+  position: absolute;
+  width: 115px;
+  height: 155px;
+  aspect-ratio: 5 / 7;
+  border-radius: var(--radius-md);
+  padding: 10px;
+  background: linear-gradient(145deg, #2b273b 0%, #171422 100%);
+  border: 1.5px solid var(--border-gold-card);
+  box-shadow: var(--shadow-25d-card);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.carta-hero-inner {
+  height: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: calc(var(--radius-md) - 4px);
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.hero-mini-tag {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+}
+
+.hero-mini-texto {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+.hero-mini-naipe {
+  font-size: 14px;
+  align-self: flex-end;
+}
+
+.carta-hero-1 {
+  transform: translateX(-65px) translateY(8px) rotate(-14deg) scale(0.9);
+  z-index: 1;
+  opacity: 0.75;
+}
+
+.carta-hero-2 {
+  transform: translateY(-8px) scale(1.05);
+  z-index: 3;
+  border-color: var(--primary-fire-glow);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 77, 46, 0.35);
+}
+
+.carta-hero-3 {
+  transform: translateX(65px) translateY(8px) rotate(14deg) scale(0.9);
+  z-index: 2;
+  opacity: 0.75;
+}
+
+.titulo-jogo {
+  font-size: 32px;
   font-weight: 900;
   letter-spacing: -0.5px;
   color: #ffffff;
   margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  text-shadow: 0 0 20px rgba(255, 77, 46, 0.4);
+  text-shadow: 0 0 24px rgba(255, 77, 46, 0.5);
 }
 
-.subtitulo {
+.subtitulo-jogo {
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-muted);
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .subtitulo-destaque {
   color: var(--accent-gold);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 13px;
-  display: inline-block;
+  display: block;
   margin-top: 4px;
 }
 
-.emblema-fogo {
-  font-size: 42px;
-  margin-bottom: 6px;
-  filter: drop-shadow(0 0 16px rgba(255, 77, 46, 0.7));
-  animation: pulsarFogo 2.5s ease-in-out infinite alternate;
+/* ============================================================
+   BOTÕES 2.5D (TÁTEIS E ERGONÔMICOS)
+   ============================================================ */
+.acoes-iniciais-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-@keyframes pulsarFogo {
-  0% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(255, 77, 46, 0.6)); }
-  100% { transform: scale(1.1); filter: drop-shadow(0 0 24px rgba(255, 183, 3, 0.85)); }
-}
-
-/* Botões */
-.botao {
+.botao-3d {
   width: 100%;
   padding: 16px 20px;
   font-size: 16px;
@@ -229,112 +316,369 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.3px;
+  position: relative;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
 }
 
-.botao:active {
-  transform: scale(0.97);
+.botao-3d:active {
+  transform: translateY(4px);
 }
 
-.botao:disabled {
-  opacity: 0.55;
+.botao-3d:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-.botao-principal {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+.botao-primario-3d {
+  background: linear-gradient(180deg, var(--primary-fire) 0%, var(--primary-fire-dark) 100%);
   color: #ffffff;
-  box-shadow: 0 8px 24px rgba(255, 77, 46, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-btn-3d);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.botao-principal:hover:not(:disabled) {
-  box-shadow: 0 10px 30px rgba(255, 77, 46, 0.6);
-  filter: brightness(1.08);
+.botao-primario-3d:active {
+  box-shadow: 0 2px 0 var(--primary-fire-dark), 0 4px 10px rgba(0, 0, 0, 0.6);
 }
 
-.botao-secundaria {
-  background: rgba(255, 255, 255, 0.07);
+.botao-secundario-3d {
+  background: linear-gradient(180deg, var(--bg-surface-light) 0%, var(--bg-surface-elevated) 100%);
   color: var(--text-main);
+  box-shadow: var(--shadow-btn-sec-3d);
+  border: 1px solid var(--border-medium);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.botao-secundario-3d:active {
+  box-shadow: 0 2px 0 #121019, 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.botao-voltar-3d {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
   border: 1px solid var(--border-subtle);
+  padding: 12px 16px;
+  font-size: 14px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.6);
+  margin-top: 8px;
 }
 
-.botao-secundaria:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+.botao-config-3d {
+  background: linear-gradient(180deg, rgba(157, 78, 221, 0.3) 0%, rgba(157, 78, 221, 0.15) 100%);
+  color: #e0aaff;
+  border: 1px solid rgba(157, 78, 221, 0.4);
+  box-shadow: 0 4px 0 rgba(90, 24, 154, 0.6);
 }
 
-.botao-config {
-  background: rgba(157, 78, 221, 0.16);
-  color: #d8b4fe;
-  border: 1px solid rgba(157, 78, 221, 0.35);
-  margin-bottom: 10px;
+.btn-icone {
+  font-size: 18px;
 }
 
-.botao-config:hover:not(:disabled) {
-  background: rgba(157, 78, 221, 0.28);
+/* ============================================================
+   CAMPOS DE FORMULÁRIO 2.5D
+   ============================================================ */
+.form-mesa-anim {
+  animation: fadeInDown 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
-/* Campos de Formulário */
+@keyframes fadeInDown {
+  0% { opacity: 0; transform: translateY(-8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 .campo-grupo {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   text-align: left;
 }
 
 .campo-rotulo {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
 
-.input-texto {
+.input-texto-3d {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
   outline: none;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7);
   transition: all 0.2s ease;
 }
 
-.input-texto:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 77, 46, 0.25);
-  background: rgba(0, 0, 0, 0.6);
+.input-texto-3d:focus {
+  border-color: var(--primary-fire);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 77, 46, 0.35);
+  background: rgba(0, 0, 0, 0.75);
 }
 
-.input-codigo {
-  font-size: 26px;
+.input-codigo-3d {
+  font-size: 28px;
   font-weight: 900;
   letter-spacing: 8px;
   text-align: center;
   text-transform: uppercase;
   color: var(--accent-gold);
+  text-shadow: 0 0 12px rgba(255, 183, 3, 0.4);
 }
 
-/* Mensagens de Erro e Avisos */
-.mensagem-erro {
+.mensagem-erro-3d {
   color: #ff6b6b;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 12px;
   min-height: 18px;
 }
 
-.bloco-oculto {
-  display: none !important;
+/* ============================================================
+   LOBBY DINÂMICO 2.5D: MESA REDONDA E ASSENTOS
+   ============================================================ */
+.cabecalho-sala-3d {
+  margin-bottom: 14px;
 }
 
-.texto-aviso {
+.rotulo-3d {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+}
+
+.bloco-codigo-destaque {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 4px 0 10px;
+}
+
+.codigo-sala-3d {
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--accent-gold);
+  text-shadow: 0 0 22px rgba(255, 183, 3, 0.55);
+}
+
+.botao-copiar-3d {
+  background: rgba(255, 183, 3, 0.12);
+  border: 1px solid rgba(255, 183, 3, 0.4);
+  border-radius: 18px;
+  padding: 6px 14px;
+  color: var(--accent-gold);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.botao-copiar-3d:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* A Arena da Mesa Redonda */
+.mesa-redonda-arena {
+  width: 100%;
+  margin: 10px 0 16px;
+  position: relative;
+}
+
+.tapete-feltro-25d {
+  background: radial-gradient(circle at 50% 50%, #201c2e 0%, #110f18 100%);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 16px 12px;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9), 0 10px 25px rgba(0, 0, 0, 0.6);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Maço de Cartas Central 3D do Lobby */
+.deck-centro-lobby {
+  width: 80px;
+  height: 110px;
+  aspect-ratio: 5 / 7;
+  position: relative;
+  cursor: default;
+  transform: perspective(600px) rotateX(25deg);
+  margin-bottom: 6px;
+}
+
+.carta-pilha {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #2d263a 0%, #15121f 100%);
+  border: 1px solid var(--border-gold-card);
+  box-shadow: var(--shadow-25d-deck);
+}
+
+.carta-pilha-3 { transform: translate(6px, 6px) rotate(6deg); opacity: 0.6; }
+.carta-pilha-2 { transform: translate(3px, 3px) rotate(-3deg); opacity: 0.8; }
+.carta-pilha-1 {
+  transform: translate(0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--accent-gold);
+}
+
+.estampa-verso-deck {
+  border: 1px dashed rgba(255, 183, 3, 0.4);
+  border-radius: calc(var(--radius-sm) - 3px);
+  inset: 4px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--accent-gold);
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.estampa-verso-deck small {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+/* Grade de Assentos na Mesa */
+.grade-assentos-mesa {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.assento-jogador-3d {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.assento-jogador-3d.assento-meu {
+  border-color: rgba(255, 183, 3, 0.45);
+  background: linear-gradient(135deg, rgba(255, 183, 3, 0.12) 0%, var(--bg-surface-elevated) 100%);
+}
+
+.assento-jogador-3d.assento-desconectado {
+  opacity: 0.45;
+}
+
+.assento-avatar-3d {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 15px;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.assento-info-3d {
+  flex: 1;
+  overflow: hidden;
+}
+
+.assento-nome-3d {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assento-tags-3d {
+  display: flex;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.tag-3d {
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.tag-host-3d { background: rgba(255, 77, 46, 0.25); color: #ff6b4a; border: 1px solid rgba(255, 77, 46, 0.4); }
+.tag-voce-3d { background: rgba(255, 183, 3, 0.25); color: #ffd166; border: 1px solid rgba(255, 183, 3, 0.4); }
+.tag-saiu-3d { background: rgba(255, 255, 255, 0.1); color: var(--text-dim); }
+
+.assento-vazio-3d {
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.contador-mesa-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.contador-jogadores-badge {
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 12px;
+  color: var(--accent-gold);
+}
+
+.status-espera-texto {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.acoes-lobby-host {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.texto-aviso-espera {
   font-size: 13px;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.04);
@@ -343,233 +687,99 @@ body {
   padding: 12px;
 }
 
-.bloco-aviso-sozinho {
-  background: rgba(255, 183, 3, 0.12);
-  border: 1px solid rgba(255, 183, 3, 0.3);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  margin-top: 14px;
+/* ============================================================
+   TELA DE CONFIGURAÇÃO DE BARALHOS
+   ============================================================ */
+.config-cabecalho {
+  text-align: left;
+  margin-bottom: 16px;
 }
 
-.texto-aviso-alerta {
-  color: var(--accent-gold-glow);
+.titulo-config {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.subtitulo-config {
   font-size: 13px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-/* Cabeçalho do Lobby */
-.cabecalho-sala {
-  margin-bottom: 20px;
-}
-
-.rotulo {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
   color: var(--text-muted);
 }
 
-.codigo-sala {
-  font-size: 42px;
-  font-weight: 900;
-  letter-spacing: 6px;
-  color: var(--accent-gold);
-  text-shadow: 0 0 25px rgba(255, 183, 3, 0.5);
-  margin: 4px 0 10px;
-}
-
-.botao-copiar {
-  background: rgba(255, 183, 3, 0.12);
-  border: 1px solid rgba(255, 183, 3, 0.35);
-  border-radius: 20px;
-  padding: 6px 16px;
-  color: var(--accent-gold);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-
-.botao-copiar:active {
-  transform: scale(0.95);
-  background: rgba(255, 183, 3, 0.25);
-}
-
-/* Lista de Jogadores no Lobby */
-.lista-jogadores-container {
+.secao-config-3d {
+  margin-bottom: 18px;
   text-align: left;
-  margin-bottom: 20px;
 }
 
-.lista-jogadores-cabecalho {
+.secao-titulo-3d {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  padding: 0 4px;
-}
-
-.contador-jogadores {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.08);
-  padding: 2px 10px;
-  border-radius: 12px;
+  margin-bottom: 8px;
 }
 
-.lista-jogadores {
-  list-style: none;
+.tag-resumo-config {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.tag-resumo-config.destaque-dourado {
+  color: var(--accent-gold);
+}
+
+.lista-baralhos-3d {
   display: flex;
   flex-direction: column;
   gap: 8px;
   max-height: 220px;
   overflow-y: auto;
-}
-
-.jogador-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  transition: all 0.2s ease;
-}
-
-.jogador-item.desconectado {
-  opacity: 0.45;
-}
-
-.jogador-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.jogador-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 14px;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-.jogador-nome {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.jogador-tags {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tag-badge {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  padding: 3px 8px;
-  border-radius: 10px;
-  text-transform: uppercase;
-}
-
-.tag-host {
-  background: rgba(255, 77, 46, 0.2);
-  color: var(--primary-glow);
-  border: 1px solid rgba(255, 77, 46, 0.4);
-}
-
-.tag-voce {
-  background: rgba(255, 183, 3, 0.2);
-  color: var(--accent-gold);
-  border: 1px solid rgba(255, 183, 3, 0.4);
-}
-
-.tag-saiu {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-dim);
-}
-
-/* ============================================================
-   CONFIGURAÇÃO DE BARALHOS
-   ============================================================ */
-.secao-config {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.secao-titulo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--text-main);
-  margin-bottom: 10px;
-}
-
-.lista-baralhos {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 240px;
-  overflow-y: auto;
   padding-right: 4px;
 }
 
-.baralho-opcao {
+.baralho-opcao-3d {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-.baralho-opcao.selecionado {
-  background: rgba(255, 77, 46, 0.12);
-  border-color: rgba(255, 77, 46, 0.4);
+.baralho-opcao-3d.selecionado {
+  background: rgba(255, 77, 46, 0.14);
+  border-color: rgba(255, 77, 46, 0.45);
 }
 
-.baralho-checkbox {
-  accent-color: var(--primary);
+.baralho-checkbox-3d {
+  accent-color: var(--primary-fire);
   width: 18px;
   height: 18px;
   margin-top: 2px;
   cursor: pointer;
 }
 
-.baralho-corpo {
+.baralho-corpo-3d {
   flex: 1;
 }
 
-.baralho-topo {
+.baralho-topo-3d {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 4px;
 }
 
-.baralho-nome {
+.baralho-nome-3d {
   font-size: 14px;
   font-weight: 800;
   color: var(--text-main);
@@ -578,88 +788,229 @@ body {
   gap: 6px;
 }
 
-.baralho-rating {
+.baralho-rating-3d {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 900;
   padding: 2px 6px;
   border-radius: 6px;
 }
 
-.rating-18 {
+.rating-18-3d {
   background: rgba(230, 57, 70, 0.25);
   color: #ff4d6d;
   border: 1px solid rgba(230, 57, 70, 0.4);
 }
 
-.rating-geral {
+.rating-geral-3d {
   background: rgba(6, 214, 160, 0.2);
   color: #06d6a0;
   border: 1px solid rgba(6, 214, 160, 0.35);
 }
 
-.baralho-desc {
+.baralho-desc-3d {
   font-size: 12px;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
-.grade-qtd-cartas {
+.grade-qtd-cartas-3d {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
-.btn-qtd-opcao {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
+.btn-qtd-3d {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
   padding: 12px 0;
   color: var(--text-main);
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
 }
 
-.btn-qtd-opcao.selecionado {
+.btn-qtd-3d.selecionado {
   background: var(--accent-gold);
-  color: #000000;
+  color: #0c0b12;
   border-color: var(--accent-gold);
-  box-shadow: 0 4px 15px rgba(255, 183, 3, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 183, 3, 0.45);
+}
+
+.acoes-config-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 /* ============================================================
-   MESA DE JOGO — CARTA FÍSICA E PROGRESSO
+   ESTRUTURA DA MESA VERTICAL 2.5D (3 ZONAS)
    ============================================================ */
-.status-partida-topo {
+.mesa-vertical-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  flex: 1;
+}
+
+/* ------------------------------------------------------------
+   ZONA 1: SUPERIOR (OS OUTROS / RODA DE AMIGOS COM GLOW)
+   ------------------------------------------------------------ */
+.zona-superior-outros {
+  width: 100%;
+  background: rgba(16, 15, 21, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.roda-amigos-scroll {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.roda-amigos-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.amigo-topo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.amigo-avatar-wrap {
+  position: relative;
+}
+
+.amigo-avatar-3d {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 16px;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+}
+
+/* Glow e Efeitos Visuais de Vez */
+.amigo-leitor-ativo .amigo-avatar-3d {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 16px var(--accent-gold), inset 0 0 8px var(--accent-gold);
+  animation: pulsarGlowLeitor 1.5s infinite alternate;
+}
+
+@keyframes pulsarGlowLeitor {
+  0% { transform: scale(1); box-shadow: 0 0 10px var(--accent-gold); }
+  100% { transform: scale(1.08); box-shadow: 0 0 22px var(--accent-gold-glow); }
+}
+
+.amigo-alvo-ativo .amigo-avatar-3d {
+  border-color: var(--primary-fire);
+  box-shadow: 0 0 18px var(--primary-fire), inset 0 0 8px var(--primary-fire);
+  animation: pulsarGlowAlvo 1.2s infinite alternate;
+}
+
+@keyframes pulsarGlowAlvo {
+  0% { transform: scale(1); box-shadow: 0 0 12px var(--primary-fire); }
+  100% { transform: scale(1.1); box-shadow: 0 0 24px var(--primary-fire-glow); }
+}
+
+.badge-flutuante-amigo {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  font-size: 12px;
+  background: #110f18;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.amigo-nome-topo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   ZONA 2: CENTRAL (A MESA, O MAÇO E A CARTA FÍSICA 2.5D)
+   ------------------------------------------------------------ */
+.zona-central-mesa {
+  background: radial-gradient(ellipse at 50% 50%, #1e1a2b 0%, #100e17 100%);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xl);
+  padding: 16px 14px;
+  box-shadow: var(--shadow-25d-table);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-mesa-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
 }
 
-.badges-topo-jogo {
+.deck-tag-atual {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+}
+
+.badges-status-jogo {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.timer-badge {
+.timer-badge-3d {
   font-size: 12px;
   font-weight: 900;
   color: var(--accent-gold);
   background: rgba(255, 183, 3, 0.15);
-  border: 1px solid rgba(255, 183, 3, 0.35);
+  border: 1px solid rgba(255, 183, 3, 0.4);
   padding: 3px 10px;
   border-radius: 12px;
   letter-spacing: 0.5px;
-  transition: all 0.2s ease;
 }
 
 .timer-urgente {
-  color: #fff;
-  background: rgba(255, 77, 46, 0.85);
-  border-color: var(--primary);
+  color: #ffffff;
+  background: var(--primary-fire);
+  border-color: var(--primary-fire-glow);
+  box-shadow: 0 0 14px rgba(255, 77, 46, 0.8);
   animation: pulsarTimer 0.6s infinite alternate;
 }
 
@@ -668,7 +1019,7 @@ body {
   100% { transform: scale(1.08); }
 }
 
-.contador-cartas-badge {
+.contador-cartas-badge-3d {
   font-size: 12px;
   font-weight: 800;
   color: var(--text-main);
@@ -677,8 +1028,7 @@ body {
   border-radius: 12px;
 }
 
-/* Barra do Timer Central */
-.barra-timer-container {
+.barra-timer-3d-wrapper {
   width: 100%;
   height: 5px;
   background: rgba(255, 255, 255, 0.08);
@@ -686,149 +1036,204 @@ body {
   overflow: hidden;
 }
 
-.barra-timer-preenchimento {
+.barra-timer-3d-preenchimento {
   height: 100%;
   background: var(--accent-gold);
   border-radius: 4px;
   transition: width 0.3s linear, background-color 0.3s ease;
 }
 
-/* Barra de Progresso das Cartas */
-.barra-progresso {
+/* Palco das Cartas em Perspectiva */
+.palco-cartas-arena {
   width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 3px;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  perspective: 1200px;
+  margin: 6px 0;
+}
+
+/* Maço de Cartas Físico da Mesa */
+.deck-pilha-3d {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 50px;
+  height: 70px;
+  aspect-ratio: 5 / 7;
+  transform: rotate(8deg);
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.deck-pilha-3d:active {
+  transform: rotate(4deg) scale(0.95);
+}
+
+.carta-camada {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(135deg, #2b2538 0%, #13111c 100%);
+  border: 1px solid rgba(255, 183, 3, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
+
+.camada-3 { transform: translate(4px, 4px) rotate(4deg); opacity: 0.5; }
+.camada-2 { transform: translate(2px, 2px) rotate(-2deg); opacity: 0.8; }
+.camada-1 {
+  transform: translate(0, 0);
+  border: 1px solid var(--accent-gold);
+}
+
+/* A CARTA FÍSICA 2.5D (PROPORÇÃO DE BARALHO 5/7 COM FLIP 3D) */
+.carta-flip-wrapper {
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 5 / 7;
+  perspective: 1200px;
+  z-index: 5;
+}
+
+.carta-flip-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+/* Animação: Puxar e Flip 3D */
+.anim-puxar-flip {
+  animation: animPuxarCarta3D 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes animPuxarCarta3D {
+  0% {
+    opacity: 0;
+    transform: translateY(80px) rotateX(45deg) rotateY(180deg) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-15px) rotateX(10deg) rotateY(90deg) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) rotateY(0deg) scale(1);
+  }
+}
+
+/* Animação: Descarte Deslizando para a Esquerda */
+.anim-descarte-esquerda {
+  animation: animDescarteEsquerda 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes animDescarteEsquerda {
+  0% {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-120%) rotate(-25deg) scale(0.85);
+  }
+}
+
+/* Faces da Carta Física */
+.carta-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   overflow: hidden;
 }
 
-.barra-progresso-preenchimento {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--accent-gold));
-  border-radius: 3px;
-  transition: width 0.4s ease;
-}
-
-/* Leitor da Rodada */
-.box-leitor-rodada {
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  margin-bottom: 14px;
-  text-align: left;
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.box-leitor-voce {
-  background: rgba(255, 77, 46, 0.15);
-  border-color: rgba(255, 77, 46, 0.45);
-}
-
-.box-leitor-outro {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: var(--border-subtle);
-}
-
-.leitor-titulo {
-  font-size: 13px;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 2px;
-}
-
-.leitor-instrucao {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* ============================================================
-   A CARTA FÍSICA (CARD OBJECT FEEL)
-   ============================================================ */
-.mesa-carta-wrapper {
-  perspective: 1000px;
-  margin-bottom: 14px;
-}
-
-.carta-jogo {
-  background: linear-gradient(155deg, #241c2c 0%, #151120 100%);
-  border: 2px solid var(--border-card-physical);
-  border-radius: var(--radius-lg);
-  padding: 22px 18px;
-  box-shadow: var(--shadow-card-real);
-  position: relative;
-  text-align: left;
-  min-height: 190px;
+.carta-face-frente {
+  background: linear-gradient(160deg, #261f33 0%, #151120 100%);
+  border: 2px solid var(--border-gold-card);
+  box-shadow: var(--shadow-25d-card);
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
+  text-align: left;
 }
 
-.carta-jogo::after {
+.carta-face-frente::after {
   content: "";
   position: absolute;
   inset: 5px;
-  border: 1px dashed rgba(255, 183, 3, 0.2);
+  border: 1px dashed rgba(255, 183, 3, 0.22);
   border-radius: calc(var(--radius-lg) - 4px);
   pointer-events: none;
 }
 
-/* Animações da Carta */
-.carta-anim-entrada {
-  animation: animEntradaCarta 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+.carta-face-verso {
+  background: linear-gradient(135deg, #1f1a2c 0%, #0d0b14 100%);
+  border: 2px solid var(--border-gold-card);
+  box-shadow: var(--shadow-25d-card);
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
 }
 
-@keyframes animEntradaCarta {
-  0% {
-    opacity: 0;
-    transform: translateY(60px) rotateX(25deg) scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) rotateX(0deg) scale(1);
-  }
+.padrao-verso-geometrico {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(255, 183, 3, 0.4);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.carta-anim-saida {
-  animation: animSaidaCarta 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.simbolo-verso-central {
+  font-size: 42px;
+  filter: drop-shadow(0 0 14px rgba(255, 77, 46, 0.6));
 }
 
-@keyframes animSaidaCarta {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.92);
-  }
+.texto-verso-central {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
 }
 
-.carta-cabecalho {
+.carta-cabecalho-fisica {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 }
 
-.carta-deck-tag {
+.carta-naipe-tipo {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 900;
   color: var(--accent-gold);
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 
-.carta-mechanic-tag {
-  font-size: 10px;
+.badge-mecanica-carta {
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 1px;
-  padding: 3px 10px;
-  border-radius: 12px;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  border-radius: 10px;
   text-transform: uppercase;
 }
 
@@ -838,33 +1243,45 @@ body {
 .tag-mechanic-ESCOLHA { background: rgba(6, 214, 160, 0.25); color: #06d6a0; border: 1px solid rgba(6, 214, 160, 0.5); }
 .tag-mechanic-DILEMA { background: rgba(58, 134, 255, 0.25); color: #60a5fa; border: 1px solid rgba(58, 134, 255, 0.5); }
 
-.carta-conteudo {
+.carta-corpo-fisica {
   flex: 1;
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  justify-content: center;
+  padding: 8px 0;
+  position: relative;
+  z-index: 1;
 }
 
-.carta-texto {
-  font-size: 19px;
+.carta-texto-fisica {
+  font-size: 18px;
   font-weight: 800;
   line-height: 1.45;
   color: #ffffff;
   letter-spacing: -0.2px;
+  text-align: center;
+}
+
+.carta-rodape-fisica {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .bloco-alvo-sorteado {
   background: rgba(255, 77, 46, 0.18);
-  border: 1px solid rgba(255, 77, 46, 0.4);
+  border: 1px solid rgba(255, 77, 46, 0.45);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 700;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   color: #ffffff;
-  margin-top: 8px;
 }
 
 .nome-alvo-destaque {
@@ -872,186 +1289,237 @@ body {
   font-weight: 900;
 }
 
-/* ============================================================
-   ÁREA INTERATIVA DAS MECÂNICAS
-   ============================================================ */
-.area-interacoes {
-  width: 100%;
+.carta-selo-autenticidade {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.bloco-mecanica {
-  background: rgba(0, 0, 0, 0.35);
+/* ------------------------------------------------------------
+   ZONA 3: INFERIOR (HUD ANCORADO DO JOGADOR & AÇÕES)
+   ------------------------------------------------------------ */
+.zona-inferior-hud {
+  background: rgba(16, 15, 21, 0.92);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 14px;
-  text-align: left;
-  margin-bottom: 12px;
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
-.mecanica-cabecalho {
+/* Cartão do Leitor (Mestre de Cerimônias) */
+.box-leitor-hud {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  text-align: left;
 }
 
-.mecanica-icone {
-  font-size: 22px;
+.box-leitor-voce {
+  background: rgba(255, 77, 46, 0.16);
+  border-color: rgba(255, 77, 46, 0.45);
 }
 
-.mecanica-titulo {
-  font-size: 14px;
+.box-leitor-outro {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-subtle);
+}
+
+.leitor-hud-icone {
+  font-size: 20px;
+}
+
+.leitor-hud-titulo {
+  font-size: 12px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.leitor-hud-instrucao {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Blocos de Mecânicas Interativas no HUD */
+.bloco-mecanica-hud {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: left;
+}
+
+.mecanica-hud-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mecanica-icone-hud {
+  font-size: 18px;
+}
+
+.mecanica-titulo-hud {
+  font-size: 12px;
   font-weight: 800;
   color: #ffffff;
 }
 
-.mecanica-subtitulo {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* Grade de Votação de Jogadores (Mecânica ALVO e ESCOLHA) */
-.grade-jogadores-votacao {
+/* Grade de Votação (ALVO e ESCOLHA) */
+.grade-jogadores-votacao-hud {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
 
-.btn-jogador-voto {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 10px;
+.btn-jogador-voto-hud {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
   color: var(--text-main);
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
 }
 
-.btn-jogador-voto:active:not(:disabled) {
-  transform: scale(0.96);
+.btn-jogador-voto-hud:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
-.btn-jogador-voto.votado-por-mim {
-  background: rgba(255, 77, 46, 0.25);
-  border-color: var(--primary);
-  box-shadow: 0 0 14px rgba(255, 77, 46, 0.4);
+.btn-jogador-voto-hud.votado-por-mim {
+  background: rgba(255, 77, 46, 0.28);
+  border-color: var(--primary-fire);
+  box-shadow: 0 0 12px rgba(255, 77, 46, 0.45);
 }
 
-.jogador-voto-avatar {
-  width: 26px;
-  height: 26px;
+.jogador-voto-avatar-hud {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 900;
-  color: #fff;
+  color: #ffffff;
   flex-shrink: 0;
 }
 
-.jogador-voto-nome {
-  font-size: 13px;
-  font-weight: 700;
+.jogador-voto-nome-hud {
+  font-size: 12px;
+  font-weight: 800;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 /* Resultados de Votação (ALVO) */
-.resultado-votacao {
-  margin-top: 14px;
-  padding-top: 12px;
+.resultado-votacao-hud {
+  margin-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
 }
 
-.vencedor-destaque {
-  font-size: 14px;
+.vencedor-alvo-badge {
+  font-size: 13px;
   font-weight: 800;
   color: var(--accent-gold);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: rgba(255, 183, 3, 0.14);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: var(--radius-sm);
 }
 
 .lista-contagem-votos {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .item-resultado-voto {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .info-resultado-voto {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   color: var(--text-main);
+  font-weight: 700;
 }
 
 .barra-resultado-voto {
   width: 100%;
-  height: 6px;
+  height: 5px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .barra-resultado-preenchimento {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--accent-gold));
-  border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary-fire), var(--accent-gold));
+  border-radius: 3px;
   transition: width 0.4s ease;
 }
 
 /* Reações em Tempo Real (CONFISSÃO e PROVA) */
-.barra-botoes-reacao {
+.barra-botoes-reacao-hud {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
-.btn-reacao {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-subtle);
+.btn-reacao-hud {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
-  padding: 10px 4px;
+  padding: 8px 4px;
   color: var(--text-main);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
-.btn-reacao:active,
-.btn-reacao.reacao-ativa {
-  transform: scale(1.18);
+.btn-reacao-hud:active, .btn-reacao-hud.reacao-ativa {
+  transform: scale(1.15);
   background: rgba(255, 77, 46, 0.25);
-  border-color: var(--primary);
+  border-color: var(--primary-fire);
 }
 
-.reacao-emoji {
-  font-size: 22px;
+.reacao-emoji-hud {
+  font-size: 20px;
 }
 
-.reacao-rotulo {
-  font-size: 10px;
-  font-weight: 700;
+.reacao-rotulo-hud {
+  font-size: 9px;
+  font-weight: 800;
   color: var(--text-muted);
 }
 
-.reacao-count {
-  font-size: 11px;
-  font-weight: 800;
+.reacao-count-hud {
+  font-size: 10px;
+  font-weight: 900;
   color: var(--accent-gold);
 }
 
@@ -1066,7 +1534,7 @@ body {
 
 .emoji-flutuante {
   position: absolute;
-  bottom: 80px;
+  bottom: 90px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1074,165 +1542,149 @@ body {
 }
 
 .emoji-simbolo {
-  font-size: 38px;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  font-size: 36px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
 }
 
 .emoji-autor {
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 9px;
+  font-weight: 900;
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   padding: 1px 6px;
   border-radius: 8px;
-  white-space: nowrap;
 }
 
 @keyframes flutuarSubindo {
-  0% {
-    opacity: 0;
-    transform: translateY(0) scale(0.6);
-  }
-  20% {
-    opacity: 1;
-    transform: translateY(-40px) scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-260px) scale(1.4);
-  }
+  0% { opacity: 0; transform: translateY(0) scale(0.6); }
+  20% { opacity: 1; transform: translateY(-40px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-240px) scale(1.3); }
 }
 
 /* Mecânica ESCOLHA */
-.resultado-escolha-card {
+.resultado-escolha-hud {
   background: rgba(6, 214, 160, 0.15);
   border: 1px solid rgba(6, 214, 160, 0.4);
   color: #ffffff;
-  padding: 12px;
+  padding: 10px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
-  margin-top: 10px;
+  font-size: 13px;
+  margin-top: 8px;
   text-align: center;
 }
 
 /* Mecânica DILEMA */
-.botoes-dilema-container {
+.botoes-dilema-grid-hud {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-.btn-dilema-opcao {
+.btn-dilema-hud {
   width: 100%;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
+  padding: 12px 14px;
   color: var(--text-main);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
 }
 
-.btn-dilema-opcao:active:not(:disabled) {
-  transform: scale(0.97);
+.btn-dilema-hud:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
-.btn-dilema-opcao.selecionado-dilema {
-  background: rgba(58, 134, 255, 0.25);
+.btn-dilema-hud.selecionado-dilema {
+  background: rgba(58, 134, 255, 0.28);
   border-color: var(--accent-blue);
-  box-shadow: 0 0 16px rgba(58, 134, 255, 0.4);
+  box-shadow: 0 0 16px rgba(58, 134, 255, 0.45);
 }
 
-.letra-opcao {
-  width: 28px;
-  height: 28px;
+.letra-dilema-hud {
+  width: 26px;
+  height: 26px;
   background: rgba(255, 255, 255, 0.12);
   border-radius: 50%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--accent-gold);
   flex-shrink: 0;
 }
 
-.texto-opcao {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.35;
+.texto-dilema-hud {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
 }
 
-.resultado-dilema-container {
-  margin-top: 14px;
-  padding-top: 12px;
+.resultado-dilema-hud {
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
 }
 
-.placar-dilema-barras {
+.placar-dilema-barras-hud {
   display: flex;
-  height: 24px;
+  height: 22px;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.barra-dilema {
+.barra-dilema-hud {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #ffffff;
   font-weight: 900;
-  font-size: 11px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 10px;
+  transition: width 0.4s ease;
 }
 
-.barra-dilema-a {
-  background: var(--primary);
-}
-
-.barra-dilema-b {
-  background: var(--accent-blue);
-}
+.barra-dilema-a-hud { background: var(--primary-fire); }
+.barra-dilema-b-hud { background: var(--accent-blue); }
 
 .detalhes-votos-dilema {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
 .grupo-votantes-dilema {
   background: rgba(255, 255, 255, 0.03);
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  border-radius: var(--radius-xs);
+  margin-bottom: 4px;
 }
 
 .titulo-lado-dilema {
   font-weight: 800;
   color: var(--accent-gold);
-  display: block;
-  margin-bottom: 2px;
 }
 
 .nomes-lado-dilema {
   color: var(--text-muted);
 }
 
-/* Tag de Tempo Esgotado */
-.tag-tempo-esgotado {
+/* Aviso de Tempo Esgotado */
+.tag-tempo-esgotado-hud {
   background: rgba(255, 77, 46, 0.2);
   border: 1px solid rgba(255, 77, 46, 0.5);
-  color: var(--primary-glow);
-  font-size: 12px;
+  color: var(--primary-fire-glow);
+  font-size: 11px;
   font-weight: 900;
-  padding: 8px 12px;
-  border-radius: var(--radius-md);
-  margin-top: 10px;
-  letter-spacing: 0.8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
   animation: pulsarAlerta 1s infinite alternate;
 }
 
@@ -1241,37 +1693,89 @@ body {
   100% { opacity: 1; }
 }
 
-/* Troféu Fim de Partida */
-.trofeu-emoji {
-  font-size: 54px;
-  margin-bottom: 10px;
-  filter: drop-shadow(0 0 20px rgba(255, 183, 3, 0.6));
+/* Controles Finais do HUD */
+.controles-fundo-hud {
+  margin-top: 4px;
 }
 
-/* Rodapé Discreto com Versão da Entrega */
+.grid-botoes-host-hud {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aviso-roda-espera {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+
+/* ============================================================
+   PAINEL 4: FIM DE PARTIDA (PÓDIO 2.5D)
+   ============================================================ */
+.painel-fim-25d {
+  padding: 30px 20px;
+}
+
+.trofeu-emoji-3d {
+  font-size: 56px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 24px rgba(255, 183, 3, 0.6));
+}
+
+.titulo-fim-3d {
+  font-size: 26px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.subtitulo-fim-3d {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 20px;
+}
+
+.acoes-fim-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ============================================================
+   RODAPÉ E UTILITÁRIOS
+   ============================================================ */
 .rodape-versao {
   text-align: center;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-dim);
   letter-spacing: 0.8px;
-  padding-top: 4px;
-  user-select: none;
+  padding: 6px 0;
+  margin-top: auto;
 }
 
 .tag-versao {
   color: var(--text-muted);
 }
 
-/* Ajustes para Telas Pequenas */
-@media (max-width: 380px) {
-  .cartao {
-    padding: 20px 14px;
+.bloco-oculto {
+  display: none !important;
+}
+
+/* Adaptações para telas ultra-compactas */
+@media (max-width: 360px) {
+  .carta-texto-fisica {
+    font-size: 16px;
   }
-  .titulo {
-    font-size: 26px;
+  .codigo-sala-3d {
+    font-size: 32px;
   }
-  .carta-texto {
-    font-size: 17px;
+  .botao-3d {
+    padding: 14px 16px;
+    font-size: 15px;
   }
 }

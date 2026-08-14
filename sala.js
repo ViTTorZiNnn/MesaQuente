@@ -133,11 +133,49 @@ async function sairDaSala(codigo) {
 }
 
 /**
+ * Verifica se o host atual se desconectou e, caso sim, migra a liderança para o jogador conectado mais antigo.
+ */
+async function migrarHostSeNecessario(codigo, jogadores, hostIdAtual) {
+  if (!jogadores || typeof jogadores !== "object") return;
+
+  const hostExisteEConectado = jogadores[hostIdAtual] && jogadores[hostIdAtual].conectado !== false;
+
+  // Se o host atual continua ativo, nada a fazer
+  if (hostExisteEConectado) return;
+
+  // Encontra os jogadores conectados e ordena pelo timestamp de entrada (mais antigo primeiro)
+  const conectados = Object.keys(jogadores)
+    .filter((id) => jogadores[id] && jogadores[id].conectado !== false && jogadores[id].nome)
+    .sort((a, b) => (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0));
+
+  if (conectados.length === 0) return;
+
+  const novoHostId = conectados[0];
+  const meuId = obterIdJogador();
+
+  // Apenas o novo host candidato dispara a escrita para evitar corrida no Firebase
+  if (novoHostId === meuId && novoHostId !== hostIdAtual) {
+    console.log(`[Host Migration] Promovendo ${meuId} a novo Host da sala ${codigo}`);
+    try {
+      await db.ref("salas/" + codigo + "/hostId").set(novoHostId);
+    } catch (e) {
+      console.warn("Erro na migração de host:", e);
+    }
+  }
+}
+
+/**
  * Escutas em Tempo Real
  */
 function escutarJogadores(codigo, callback) {
   db.ref("salas/" + codigo + "/jogadores").on("value", (snapshot) => {
     callback(snapshot.val() || {});
+  });
+}
+
+function escutarHostId(codigo, callback) {
+  db.ref("salas/" + codigo + "/hostId").on("value", (snapshot) => {
+    callback(snapshot.val() || null);
   });
 }
 

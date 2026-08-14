@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Mesa Quente — Jogo de Cartas</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,101 +11,134 @@
   <!-- Fundo com brasas e partículas animadas -->
   <canvas id="canvas-brasas"></canvas>
 
-  <div class="tela" id="tela-inicial">
+  <div class="tela-container" id="tela-inicial">
     
     <!-- Barra Superior com Identidade e Áudio -->
-    <div class="topo-bar">
-      <div class="logo-tag">🔥 Mesa Quente</div>
+    <header class="topo-bar">
+      <div class="logo-tag">
+        <span class="logo-icone">🔥</span>
+        <span class="logo-texto">MESA QUENTE</span>
+      </div>
       <button class="btn-audio-toggle" id="btn-audio" type="button" aria-label="Controle de Áudio">
         <span>🔊</span><small>Som</small>
       </button>
-    </div>
+    </header>
 
-    <!-- Cartão Principal de Boas-Vindas -->
-    <div class="cartao">
-      <div class="emblema-fogo">🔥</div>
-      <h1 class="titulo">Mesa Quente</h1>
-      <p class="subtitulo">
-        Bem-vindo ao <strong>Mesa Quente</strong>!<br />
-        O jogo de cartas provocativo para a roda de amigos.<br />
-        <span class="subtitulo-destaque">Sem app, direto no navegador do celular.</span>
-      </p>
-
-      <!-- Modo de Visualização 1: Botões Principais de Ação -->
-      <div id="bloco-acoes-iniciais">
-        <button class="botao botao-principal" id="btn-abrir-criar" type="button">
-          🔥 Criar Partida
-        </button>
-
-        <button class="botao botao-secundaria" id="btn-abrir-entrar" type="button" style="margin-top: 12px;">
-          🚪 Entrar em um Jogo
-        </button>
+    <!-- Palco 2.5D: Cartas Flutuantes de Boas-Vindas -->
+    <main class="palco-inicial-25d">
+      
+      <!-- Mini Maço de Cartas em Perspectiva Decorativo -->
+      <div class="cartas-decorativas-hero" aria-hidden="true">
+        <div class="carta-hero carta-hero-1">
+          <div class="carta-hero-inner">
+            <span class="hero-mini-tag">CONFISSÃO</span>
+            <p class="hero-mini-texto">Conte um segredo que ninguém desconfia...</p>
+            <span class="hero-mini-naipe">🤫</span>
+          </div>
+        </div>
+        <div class="carta-hero carta-hero-2">
+          <div class="carta-hero-inner">
+            <span class="hero-mini-tag">ALVO</span>
+            <p class="hero-mini-texto">Quem na mesa seria cancelado primeiro?</p>
+            <span class="hero-mini-naipe">🎯</span>
+          </div>
+        </div>
+        <div class="carta-hero carta-hero-3">
+          <div class="carta-hero-inner">
+            <span class="hero-mini-tag">DILEMA</span>
+            <p class="hero-mini-texto">Falar gritando vs Sussurrar tudo?</p>
+            <span class="hero-mini-naipe">⚖️</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Formulário: Criar Partida -->
-      <div id="form-criar-sala" class="bloco-oculto">
-        <div class="campo-grupo">
-          <label class="campo-rotulo" for="input-nome-host">Seu Nome / Apelido</label>
-          <input
-            type="text"
-            id="input-nome-host"
-            class="input-texto"
-            placeholder="Como a galera te chama?"
-            maxlength="20"
-            autocomplete="name"
-          />
+      <!-- Card Base de Ação -->
+      <div class="cartao-mesa">
+        <h1 class="titulo-jogo">Mesa Quente</h1>
+        <p class="subtitulo-jogo">
+          O jogo de cartas provocativo para reunir a roda de amigos.<br />
+          <span class="subtitulo-destaque">Direto no navegador do celular, sem instalar app.</span>
+        </p>
+
+        <!-- Modo 1: Botões Principais de Ação -->
+        <div id="bloco-acoes-iniciais" class="acoes-iniciais-grid">
+          <button class="botao-3d botao-primario-3d" id="btn-abrir-criar" type="button">
+            <span class="btn-icone">🔥</span>
+            <span class="btn-rotulo">Criar Partida</span>
+          </button>
+
+          <button class="botao-3d botao-secundario-3d" id="btn-abrir-entrar" type="button">
+            <span class="btn-icone">🚪</span>
+            <span class="btn-rotulo">Entrar em um Jogo</span>
+          </button>
         </div>
 
-        <button class="botao botao-principal" id="btn-confirmar-criar" type="button">
-          Criar Sala Agora 🔥
-        </button>
-        <button class="botao botao-secundaria" id="btn-cancelar-criar" type="button" style="margin-top: 10px;">
-          ← Voltar ao Início
-        </button>
+        <!-- Formulário: Criar Partida -->
+        <div id="form-criar-sala" class="bloco-oculto form-mesa-anim">
+          <div class="campo-grupo">
+            <label class="campo-rotulo" for="input-nome-host">Seu Nome / Apelido</label>
+            <input
+              type="text"
+              id="input-nome-host"
+              class="input-texto-3d"
+              placeholder="Como a galera te chama?"
+              maxlength="20"
+              autocomplete="name"
+            />
+          </div>
+
+          <button class="botao-3d botao-primario-3d" id="btn-confirmar-criar" type="button">
+            <span>🔥 Criar Sala e Sentar à Mesa</span>
+          </button>
+          <button class="botao-3d botao-voltar-3d" id="btn-cancelar-criar" type="button">
+            <span>← Voltar</span>
+          </button>
+        </div>
+
+        <!-- Formulário: Entrar em um Jogo -->
+        <div id="form-entrar-sala" class="bloco-oculto form-mesa-anim">
+          <div class="campo-grupo">
+            <label class="campo-rotulo" for="input-codigo-entrar">Código da Sala (4 letras)</label>
+            <input
+              type="text"
+              id="input-codigo-entrar"
+              class="input-texto-3d input-codigo-3d"
+              placeholder="ABCD"
+              maxlength="4"
+              autocomplete="off"
+              autocapitalize="characters"
+            />
+          </div>
+
+          <div class="campo-grupo">
+            <label class="campo-rotulo" for="input-nome-entrar">Seu Nome / Apelido</label>
+            <input
+              type="text"
+              id="input-nome-entrar"
+              class="input-texto-3d"
+              placeholder="Seu apelido na roda"
+              maxlength="20"
+              autocomplete="name"
+            />
+          </div>
+
+          <button class="botao-3d botao-primario-3d" id="btn-confirmar-entrar" type="button">
+            <span>🚪 Puxar Cadeira e Entrar</span>
+          </button>
+          <button class="botao-3d botao-voltar-3d" id="btn-cancelar-entrar" type="button">
+            <span>← Voltar</span>
+          </button>
+        </div>
+
+        <p class="mensagem-erro-3d" id="mensagem-erro"></p>
       </div>
 
-      <!-- Formulário: Entrar em um Jogo -->
-      <div id="form-entrar-sala" class="bloco-oculto">
-        <div class="campo-grupo">
-          <label class="campo-rotulo" for="input-codigo-entrar">Código da Sala (4 letras)</label>
-          <input
-            type="text"
-            id="input-codigo-entrar"
-            class="input-texto input-codigo"
-            placeholder="ABCD"
-            maxlength="4"
-            autocomplete="off"
-            autocapitalize="characters"
-          />
-        </div>
-
-        <div class="campo-grupo">
-          <label class="campo-rotulo" for="input-nome-entrar">Seu Nome / Apelido</label>
-          <input
-            type="text"
-            id="input-nome-entrar"
-            class="input-texto"
-            placeholder="Seu nome"
-            maxlength="20"
-            autocomplete="name"
-          />
-        </div>
-
-        <button class="botao botao-principal" id="btn-confirmar-entrar" type="button">
-          Entrar na Sala 🚪
-        </button>
-        <button class="botao botao-secundaria" id="btn-cancelar-entrar" type="button" style="margin-top: 10px;">
-          ← Voltar ao Início
-        </button>
-      </div>
-
-      <p class="mensagem-erro" id="mensagem-erro"></p>
-    </div>
+    </main>
 
     <!-- Rodapé Discreto com Versão da Entrega -->
-    <div class="rodape-versao">
-      <span>Mesa Quente</span> • <span class="tag-versao">v1.2</span>
-    </div>
+    <footer class="rodape-versao">
+      <span>Mesa Quente</span> • <span class="tag-versao">v1.3</span>
+    </footer>
   </div>
 
   <!-- Firebase SDK (versão compat) -->
