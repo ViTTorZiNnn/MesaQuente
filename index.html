@@ -99,20 +99,20 @@
             
             <div class="grade-categorias-minigames">
               
-              <!-- CATEGORIA 1: VOTAÇÃO & JULGAMENTO -->
+              <!-- CATEGORIA 1: VOTAÇÃO -->
               <div class="categoria-bloco-jogos" id="cat-bloco-1">
                 <div class="categoria-cabecalho-card">
                   <div class="categoria-carta-wrapper">
-                    <img src="cartas-votacao.png" alt="Cartas de Votação" class="categoria-carta-img" />
+                    <img src="cartas-votação.png" alt="Cartas de Votação" class="categoria-carta-img" />
                   </div>
                   <div class="categoria-titulos">
                     <span class="categoria-rotulo-tag">CATEGORIA 1</span>
-                    <h3 class="categoria-nome-destaque">Votação & Tribunal</h3>
+                    <h3 class="categoria-nome-destaque">VOTAÇÃO</h3>
                   </div>
                 </div>
 
                 <div class="lista-minigames-radios">
-                  <!-- Minigame 1 -->
+                  <!-- Radio 1: Quem é Mais Provável? -->
                   <label class="item-minigame-radio selecionado" data-modo="quem_e_mais_provavel" for="minigame-opt-1">
                     <input type="radio" name="modo_jogo_radio" id="minigame-opt-1" value="quem_e_mais_provavel" class="minigame-radio-input" checked />
                     <span class="minigame-radio-circulo" aria-hidden="true"></span>
@@ -122,44 +122,184 @@
                     </div>
                   </label>
 
-                  <!-- Minigame 2 -->
-                  <label class="item-minigame-radio" data-modo="tribunal_da_mesa" for="minigame-opt-2">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-2" value="tribunal_da_mesa" class="minigame-radio-input" />
+                  <!-- Radio 2: Eu Nunca -->
+                  <label class="item-minigame-radio" data-modo="eu_nunca" for="minigame-opt-2">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-2" value="eu_nunca" class="minigame-radio-input" />
                     <span class="minigame-radio-circulo" aria-hidden="true"></span>
                     <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Tribunal da Mesa</strong>
-                      <p class="minigame-radio-desc">Defenda seus pontos e sofra o veredito da roda.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 3 -->
-                  <label class="item-minigame-radio" data-modo="eleicao_dos_defeitos" for="minigame-opt-3">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-3" value="eleicao_dos_defeitos" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Eleição de Famas</strong>
-                      <p class="minigame-radio-desc">Votem em quem tem os hábitos mais questionáveis.</p>
+                      <strong class="minigame-radio-titulo">Eu Nunca</strong>
+                      <p class="minigame-radio-desc">Confissões na roda: quem já fez toma um gole.</p>
                     </div>
                   </label>
                 </div>
               </div>
 
-              <!-- CATEGORIA 2: CONEXÃO & CASAIS -->
+              <!-- CATEGORIA 2: DILEMAS -->
               <div class="categoria-bloco-jogos" id="cat-bloco-2">
                 <div class="categoria-cabecalho-card">
                   <div class="categoria-carta-wrapper">
-                    <img src="cartas-casais.png" alt="Cartas de Casais" class="categoria-carta-img" />
+                    <img src="cartas-confissões.png" alt="Cartas de Dilemas" class="categoria-carta-img" />
                   </div>
                   <div class="categoria-titulos">
                     <span class="categoria-rotulo-tag">CATEGORIA 2</span>
-                    <h3 class="categoria-nome-destaque">Conexão & Casais</h3>
+                    <h3 class="categoria-nome-destaque">DILEMAS</h3>
                   </div>
                 </div>
 
                 <div class="lista-minigames-radios">
-                  <!-- Minigame 4 -->
-                  <label class="item-minigame-radio" data-modo="niveis_intimidade" for="minigame-opt-4">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-4" value="niveis_intimidade" class="minigame-radio-input" />
+                  <!-- Radio 1: O Que Você Prefere? -->
+                  <label class="item-minigame-radio" data-modo="o_que_voce_prefere" for="minigame-opt-3">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-3" value="o_que_voce_prefere" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">O Que Você Prefere?</strong>
+                      <p class="minigame-radio-desc">Escolhas difíceis e situações sem saída.</p>
+                    </div>
+                  </label>
+
+                  <!-- Radio 2: Preencha a Lacuna -->
+                  <label class="item-minigame-radio" data-modo="preencha_a_lacuna" for="minigame-opt-4">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-4" value="preencha_a_lacuna" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Preencha a Lacuna</strong>
+                      <p class="minigame-radio-desc">Cards Against Humanity com cartas ácidas e +18.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 3: BLEFE -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-3">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-surpresa.png" alt="Cartas de Blefe" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 3</span>
+                    <h3 class="categoria-nome-destaque">BLEFE</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Radio 1: Duas Verdades e Uma Mentira -->
+                  <label class="item-minigame-radio" data-modo="duas_verdades_uma_mentira" for="minigame-opt-5">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-5" value="duas_verdades_uma_mentira" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Duas Verdades e Uma Mentira</strong>
+                      <p class="minigame-radio-desc">Conte 3 fatos e a mesa tenta adivinhar o blefe.</p>
+                    </div>
+                  </label>
+
+                  <!-- Radio 2: O Espião -->
+                  <label class="item-minigame-radio" data-modo="o_espiao" for="minigame-opt-6">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-6" value="o_espiao" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">O Espião</strong>
+                      <p class="minigame-radio-desc">Descubra quem não sabe a palavra secreta da mesa.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 4: DEBATE -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-4">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-contra-o-tempo.png" alt="Cartas de Debate" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 4</span>
+                    <h3 class="categoria-nome-destaque">DEBATE</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Radio 1: Bandeiras Vermelhas -->
+                  <label class="item-minigame-radio" data-modo="bandeiras_vermelhas" for="minigame-opt-7">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-7" value="bandeiras_vermelhas" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Bandeiras Vermelhas</strong>
+                      <p class="minigame-radio-desc">Defenda o pretendente perfeito com um defeito bizarro.</p>
+                    </div>
+                  </label>
+
+                  <!-- Radio 2: Batalha de Argumentos -->
+                  <label class="item-minigame-radio" data-modo="batalha_de_argumentos" for="minigame-opt-8">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-8" value="batalha_de_argumentos" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Batalha de Argumentos</strong>
+                      <p class="minigame-radio-desc">Defenda opiniões absurdas com unhas e dentes.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 5: SINTONIA -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-5">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-picantes.png" alt="Cartas de Sintonia" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 5</span>
+                    <h3 class="categoria-nome-destaque">SINTONIA</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Radio 1: O Termômetro -->
+                  <label class="item-minigame-radio" data-modo="o_termometro" for="minigame-opt-9">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-9" value="o_termometro" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">O Termômetro</strong>
+                      <p class="minigame-radio-desc">Adivinhe a intensidade da resposta de 1 a 10.</p>
+                    </div>
+                  </label>
+
+                  <!-- Radio 2: Apenas Uma Dica -->
+                  <label class="item-minigame-radio" data-modo="apenas_uma_dica" for="minigame-opt-10">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-10" value="apenas_uma_dica" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Apenas Uma Dica</strong>
+                      <p class="minigame-radio-desc">Dicas de uma palavra para adivinhar o segredo.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 6: DESAFIO -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-6">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-desafios.png" alt="Cartas de Desafios" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 6</span>
+                    <h3 class="categoria-nome-destaque">DESAFIO</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Radio 1: Palavra Proibida -->
+                  <label class="item-minigame-radio" data-modo="palavra_proibida" for="minigame-opt-11">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-11" value="palavra_proibida" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Palavra Proibida</strong>
+                      <p class="minigame-radio-desc">Faça a mesa falar a palavra sem dizer as proibidas.</p>
+                    </div>
+                  </label>
+
+                  <!-- Radio 2: Níveis de Intimidade -->
+                  <label class="item-minigame-radio" data-modo="niveis_intimidade" for="minigame-opt-12">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-12" value="niveis_intimidade" class="minigame-radio-input" />
                     <span class="minigame-radio-circulo" aria-hidden="true"></span>
                     <div class="minigame-radio-info">
                       <strong class="minigame-radio-titulo">Níveis de Intimidade</strong>
@@ -167,203 +307,13 @@
                     </div>
                   </label>
 
-                  <!-- Minigame 5 -->
-                  <label class="item-minigame-radio" data-modo="sintonia_de_olhares" for="minigame-opt-5">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-5" value="sintonia_de_olhares" class="minigame-radio-input" />
+                  <!-- Radio 3: Verdade ou Desafio Hot -->
+                  <label class="item-minigame-radio" data-modo="verdade_ou_desafio_hot" for="minigame-opt-13">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-13" value="verdade_ou_desafio_hot" class="minigame-radio-input" />
                     <span class="minigame-radio-circulo" aria-hidden="true"></span>
                     <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Sintonia de Olhares</strong>
-                      <p class="minigame-radio-desc">Perguntas diretas de vulnerabilidade e química.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 6 -->
-                  <label class="item-minigame-radio" data-modo="pacto_secreto" for="minigame-opt-6">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-6" value="pacto_secreto" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Pacto Secreto</strong>
-                      <p class="minigame-radio-desc">Promessas, segredos e cumplicidade a dois.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 3: RODA SÁFICA & AMIGAS -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-3">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-safico.png" alt="Cartas Roda Sáfica" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 3</span>
-                    <h3 class="categoria-nome-destaque">Roda Sáfica & Amigas</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Minigame 7 -->
-                  <label class="item-minigame-radio" data-modo="eu_nunca_safico" for="minigame-opt-7">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-7" value="eu_nunca_safico" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Eu Nunca: Vale Tudo</strong>
-                      <p class="minigame-radio-desc">Esteriótipos da comunidade, confissões e goles.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 8 -->
-                  <label class="item-minigame-radio" data-modo="preencha_a_lacuna" for="minigame-opt-8">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-8" value="preencha_a_lacuna" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Preencha a Lacuna</strong>
-                      <p class="minigame-radio-desc">Cards Against Humanity com cartas ácidas e +18.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 9 -->
-                  <label class="item-minigame-radio" data-modo="fofoca_anonima" for="minigame-opt-9">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-9" value="fofoca_anonima" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Fofoca da Mesa</strong>
-                      <p class="minigame-radio-desc">Histórias bizarras e passados que vêm à tona.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 4: DESAFIOS & PROVAS -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-4">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-desafios.png" alt="Cartas de Desafios" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 4</span>
-                    <h3 class="categoria-nome-destaque">Desafios & Provas</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Minigame 10 -->
-                  <label class="item-minigame-radio" data-modo="roleta_consequencias" for="minigame-opt-10">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-10" value="roleta_consequencias" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Roleta de Consequências</strong>
-                      <p class="minigame-radio-desc">Verdade ou Desafio Hot com fotos e câmera ao vivo.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 11 -->
-                  <label class="item-minigame-radio" data-modo="fogo_no_parquinho" for="minigame-opt-11">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-11" value="fogo_no_parquinho" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Fogo no Parquinho</strong>
-                      <p class="minigame-radio-desc">Dilemas impossíveis, intrigas e discórdia.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 12 -->
-                  <label class="item-minigame-radio" data-modo="pressao_maxima" for="minigame-opt-12">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-12" value="pressao_maxima" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Pressão Máxima</strong>
-                      <p class="minigame-radio-desc">Responda em 5 segundos antes que o alarme toque.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 5: +18 & SEM FILTRO -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-5">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-picante.png" alt="Cartas +18 Picante" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 5</span>
-                    <h3 class="categoria-nome-destaque">+18 & Sem Filtro</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Minigame 13 -->
-                  <label class="item-minigame-radio" data-modo="confissoes_quentes" for="minigame-opt-13">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-13" value="confissoes_quentes" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Confissões Quentes</strong>
-                      <p class="minigame-radio-desc">Perguntas picantes e revelações sem censura.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 14 -->
-                  <label class="item-minigame-radio" data-modo="zona_de_perigo" for="minigame-opt-14">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-14" value="zona_de_perigo" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Zona de Perigo</strong>
-                      <p class="minigame-radio-desc">Fetiches, fantasias e segredos da madrugada.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 15 -->
-                  <label class="item-minigame-radio" data-modo="bebe_ou_responde" for="minigame-opt-15">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-15" value="bebe_ou_responde" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Bebe ou Responde</strong>
-                      <p class="minigame-radio-desc">Ou conta tudo na mesa ou vira a taça.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 6: ESPECIAIS & MIX -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-6">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-especial.png" alt="Cartas Especiais" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 6</span>
-                    <h3 class="categoria-nome-destaque">Especiais & Mix</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Minigame 16 -->
-                  <label class="item-minigame-radio" data-modo="personalizado" for="minigame-opt-16">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-16" value="personalizado" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Personalizado (Mix Geral)</strong>
-                      <p class="minigame-radio-desc">Cada rodada é um minigame diferente sorteado!</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 17 -->
-                  <label class="item-minigame-radio" data-modo="quebra_gelo" for="minigame-opt-17">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-17" value="quebra_gelo" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Quebra-Gelo Clássico</strong>
-                      <p class="minigame-radio-desc">Perguntas casuais e leves para soltar a galera.</p>
-                    </div>
-                  </label>
-
-                  <!-- Minigame 18 -->
-                  <label class="item-minigame-radio" data-modo="maratona_caotica" for="minigame-opt-18">
-                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-18" value="maratona_caotica" class="minigame-radio-input" />
-                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Maratona Caótica</strong>
-                      <p class="minigame-radio-desc">Ritmo acelerado com todas as dinâmicas misturadas.</p>
+                      <strong class="minigame-radio-titulo">Verdade ou Desafio Hot</strong>
+                      <p class="minigame-radio-desc">Provas audaciosas e confissões sem filtro.</p>
                     </div>
                   </label>
                 </div>

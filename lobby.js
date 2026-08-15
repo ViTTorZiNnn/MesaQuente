@@ -1716,22 +1716,66 @@ btnCopiarCodigo.addEventListener("click", () => {
   });
 });
 
-// Iniciar Partida (Abre o Tutorial & Regras do Minigame Selecionado)
-btnIniciarPartida.addEventListener("click", async () => {
+// Iniciar Partida (Transição direta para Gameplay & Cenário 2.5D)
+async function iniciarPartidaGameplay() {
   if (!souHost) return;
-  btnIniciarPartida.disabled = true;
-  btnIniciarPartida.textContent = "Abrindo regras...";
+  if (btnIniciarPartida) {
+    btnIniciarPartida.disabled = true;
+    btnIniciarPartida.textContent = "Iniciando Mesa...";
+  }
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
   try {
-    await iniciarTutorialRegras(codigoSala, configLocal);
+    // 1. Transição de Telas (Oculta Sala de Espera / Lobby e Exibe a Tela Gameplay)
+    const elSalaEspera = document.getElementById("sala-de-espera") || document.getElementById("painel-lobby");
+    const elTelaGameplay = document.getElementById("tela-gameplay") || document.getElementById("painel-mesa-jogo");
+
+    if (elSalaEspera) {
+      elSalaEspera.style.display = "none";
+      elSalaEspera.classList.add("bloco-oculto");
+    }
+    if (elTelaGameplay) {
+      elTelaGameplay.style.display = "block";
+      elTelaGameplay.classList.remove("bloco-oculto");
+    }
+
+    // 2. Inicialização do Cenário 2.5D (Parede, Mesa, Redemoinho, Baralho e Molduras)
+    const deckCentral = document.getElementById("deck-central-area") || document.getElementById("baralho-asset-wrapper");
+    if (deckCentral) {
+      deckCentral.style.display = "flex";
+      deckCentral.classList.remove("bloco-oculto");
+    }
+
+    // Renderiza molduras dos jogadores
+    renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
+
+    // 3. Feedback do Turno Inicial (Identifica Jogador 1 / Host e ativa pulso/brilho no baralho)
+    const baralhoEl = document.getElementById("baralho-asset-wrapper") || document.getElementById("img-baralho-mesa");
+    const badgeVez = document.getElementById("badge-sua-vez");
+
+    if (baralhoEl) {
+      baralhoEl.classList.add("turno-ativo", "baralho-ativo-vez");
+    }
+    if (badgeVez) {
+      badgeVez.style.display = "block";
+      badgeVez.classList.remove("bloco-oculto");
+    }
+
+    // Dispara a sincronização no Firebase para todos os outros participantes da sala
+    await iniciarTransicaoPartida(codigoSala, configLocal);
   } catch (erro) {
-    console.error(erro);
-    mensagemErroLobby.textContent = "Não foi possível iniciar a partida.";
-    btnIniciarPartida.disabled = false;
-    btnIniciarPartida.textContent = "🔥 Iniciar Partida na Mesa";
+    console.error("Erro ao iniciar gameplay:", erro);
+    if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
+    if (btnIniciarPartida) {
+      btnIniciarPartida.disabled = false;
+      btnIniciarPartida.textContent = "🔥 Iniciar Partida na Mesa";
+    }
   }
-});
+}
+
+if (btnIniciarPartida) {
+  btnIniciarPartida.addEventListener("click", iniciarPartidaGameplay);
+}
 
 // Puxar Carta
 async function executarAcaoPuxarCarta() {

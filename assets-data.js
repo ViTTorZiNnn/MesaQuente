@@ -680,11 +680,15 @@ export function criarCardCategoriaSvg(titulo, icone, corGrad1, corGrad2, corBord
 }
 
 export const cardVotacaoSvg = criarCardCategoriaSvg("VOTAÇÃO", "🎯", "#e63946", "#670710", "#ffb703");
-export const cardCasaisSvg = criarCardCategoriaSvg("CASAIS", "💜", "#7209b7", "#30034f", "#f72585");
-export const cardSaficoSvg = criarCardCategoriaSvg("SÁFICO", "👭", "#f72585", "#700438", "#ffd166");
-export const cardDesafiosSvg = criarCardCategoriaSvg("DESAFIOS", "⚡", "#ff5400", "#7a1a00", "#ffda00");
-export const cardPicanteSvg = criarCardCategoriaSvg("+18 HOT", "🔥", "#d90429", "#4a000d", "#ff758f");
-export const cardEspecialSvg = criarCardCategoriaSvg("MIX GERAL", "🃏", "#4361ee", "#101f6e", "#4cc9f0");
+export const cardDilemasSvg = criarCardCategoriaSvg("DILEMAS", "🤐", "#9d4edd", "#3a0ca3", "#f72585");
+export const cardBlefeSvg = criarCardCategoriaSvg("BLEFE", "🎭", "#4361ee", "#101f6e", "#4cc9f0");
+export const cardDebateSvg = criarCardCategoriaSvg("DEBATE", "⚔️", "#d90429", "#590d22", "#ffb703");
+export const cardSintoniaSvg = criarCardCategoriaSvg("SINTONIA", "🌡️", "#ff007f", "#7928ca", "#ffd166");
+export const cardDesafiosSvg = criarCardCategoriaSvg("DESAFIO", "⚡", "#ff5400", "#7a1a00", "#ffda00");
+export const cardCasaisSvg = cardSintoniaSvg;
+export const cardSaficoSvg = cardDilemasSvg;
+export const cardPicanteSvg = cardSintoniaSvg;
+export const cardEspecialSvg = cardBlefeSvg;
 
 // Write all assets to root filesystem so both direct file serving and routes work
 try {
@@ -703,16 +707,36 @@ try {
   fs.writeFileSync("reacoes.svg", reacoesSvg);
   fs.writeFileSync("sair-da-sala.svg", sairSalaSvg);
 
-  fs.writeFileSync("cartas-votacao.svg", cardVotacaoSvg);
+  fs.writeFileSync("cartas-votação.png", cardVotacaoSvg);
   fs.writeFileSync("cartas-votacao.png", cardVotacaoSvg);
+  fs.writeFileSync("cartas-votação.svg", cardVotacaoSvg);
+  fs.writeFileSync("cartas-votacao.svg", cardVotacaoSvg);
+
+  fs.writeFileSync("cartas-confissões.png", cardDilemasSvg);
+  fs.writeFileSync("cartas-confissoes.png", cardDilemasSvg);
+  fs.writeFileSync("cartas-confissões.svg", cardDilemasSvg);
+  fs.writeFileSync("cartas-confissoes.svg", cardDilemasSvg);
+
+  fs.writeFileSync("cartas-surpresa.png", cardBlefeSvg);
+  fs.writeFileSync("cartas-surpresa.svg", cardBlefeSvg);
+
+  fs.writeFileSync("cartas-contra-o-tempo.png", cardDebateSvg);
+  fs.writeFileSync("cartas-contra-o-tempo.svg", cardDebateSvg);
+
+  fs.writeFileSync("cartas-picantes.png", cardSintoniaSvg);
+  fs.writeFileSync("cartas-picantes.svg", cardSintoniaSvg);
+  fs.writeFileSync("cartas-picante.png", cardSintoniaSvg);
+  fs.writeFileSync("cartas-picante.svg", cardSintoniaSvg);
+
+  fs.writeFileSync("cartas-desafios.png", cardDesafiosSvg);
+  fs.writeFileSync("cartas-desafios.svg", cardDesafiosSvg);
+  fs.writeFileSync("cartas-desafio.png", cardDesafiosSvg);
+  fs.writeFileSync("cartas-desafio.svg", cardDesafiosSvg);
+
   fs.writeFileSync("cartas-casais.svg", cardCasaisSvg);
   fs.writeFileSync("cartas-casais.png", cardCasaisSvg);
   fs.writeFileSync("cartas-safico.svg", cardSaficoSvg);
   fs.writeFileSync("cartas-safico.png", cardSaficoSvg);
-  fs.writeFileSync("cartas-desafios.svg", cardDesafiosSvg);
-  fs.writeFileSync("cartas-desafios.png", cardDesafiosSvg);
-  fs.writeFileSync("cartas-picante.svg", cardPicanteSvg);
-  fs.writeFileSync("cartas-picante.png", cardPicanteSvg);
   fs.writeFileSync("cartas-especial.svg", cardEspecialSvg);
   fs.writeFileSync("cartas-especial.png", cardEspecialSvg);
 
