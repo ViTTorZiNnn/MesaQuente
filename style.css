@@ -5083,6 +5083,67 @@ body.tela-gameplay-v3 {
   transition: opacity 0.2s ease;
 }
 
+/* Categoria Especial Modo Livre */
+.categoria-bloco-livre {
+  border-color: #ffda00 !important;
+  background: linear-gradient(175deg, #2b1803 0%, #170d02 100%) !important;
+  grid-column: 1 / -1;
+  box-shadow: 0 0 16px rgba(255, 218, 0, 0.2), 4px 4px 0px #0b0b0b !important;
+}
+
+.categoria-bloco-livre.categoria-livre-ativa {
+  border-color: #06d6a0 !important;
+  background: linear-gradient(175deg, #05261d 0%, #031510 100%) !important;
+  box-shadow: 0 0 20px rgba(6, 214, 160, 0.35), 4px 4px 0px #0b0b0b !important;
+}
+
+.icone-livre-wrapper {
+  background: #ffda00 !important;
+  border-color: #0b0b0b !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icone-interrogacao-livre {
+  font-size: 20px;
+}
+
+.rotulo-tag-livre {
+  background: #ffda00 !important;
+  color: #170407 !important;
+}
+
+.categoria-bloco-livre.categoria-livre-ativa .rotulo-tag-livre {
+  background: #06d6a0 !important;
+  color: #031510 !important;
+}
+
+.item-modo-livre-card {
+  width: 100%;
+}
+
+.item-radio-livre-toggle {
+  cursor: pointer;
+  border: 2px dashed #ffda0088;
+  background: rgba(255, 218, 0, 0.08);
+}
+
+.item-radio-livre-toggle.selecionado {
+  border: 2px solid #06d6a0;
+  background: rgba(6, 214, 160, 0.15);
+}
+
+.quadrado-livre {
+  border-color: #ffda00;
+}
+
+.item-radio-livre-toggle.selecionado .quadrado-livre {
+  background: #06d6a0 !important;
+  border-color: #a7f3d0 !important;
+  color: #ffffff !important;
+}
+
 .bloco-modo-cadeado-container {
   margin-top: 14px;
   width: 100%;

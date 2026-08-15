@@ -325,18 +325,28 @@ function mostrarApenasPainel(painelAtivo) {
 // Exibe a Sala de Espera / Lobby imediatamente ao carregar
 mostrarApenasPainel(painelLobby);
 
-// Sair da Sala
+// Sair da Sala / Retornar
 async function executarSaidaSala() {
-  if (confirm("Tem certeza que deseja sair desta mesa?")) {
-    if (typeof audioApp !== "undefined") audioApp.tocarClique();
-    await sairDaSala(codigoSala);
-    window.location.href = "index.html";
+  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  try {
+    if (typeof sairDaSala === "function") {
+      await sairDaSala(codigoSala);
+    }
+  } catch (err) {
+    console.error("Erro ao sair da sala:", err);
   }
+  window.location.href = "index.html";
 }
 
-btnSairSala.addEventListener("click", executarSaidaSala);
-btnVoltarInicioSozinho.addEventListener("click", executarSaidaSala);
-btnSairPartidaFim.addEventListener("click", executarSaidaSala);
+if (btnSairSala) {
+  btnSairSala.addEventListener("click", executarSaidaSala);
+}
+if (btnVoltarInicioSozinho) {
+  btnVoltarInicioSozinho.addEventListener("click", executarSaidaSala);
+}
+if (btnSairPartidaFim) {
+  btnSairPartidaFim.addEventListener("click", executarSaidaSala);
+}
 
 // Escuta do Host
 escutarHostId(codigoSala, (hostId) => {
@@ -390,19 +400,71 @@ escutarModoInfo(codigoSala, (modoInfo) => {
 
 function atualizarVisualHost() {
   if (souHost) {
-    controlesHostLobby.classList.remove("bloco-oculto");
-    visaoJogadorEspera.classList.add("bloco-oculto");
-    controlesHostJogo.classList.remove("bloco-oculto");
-    avisoJogadorJogo.classList.add("bloco-oculto");
-    controlesHostFim.classList.remove("bloco-oculto");
-    avisoJogadorFim.classList.add("bloco-oculto");
+    if (controlesHostLobby) {
+      controlesHostLobby.classList.remove("bloco-oculto");
+      controlesHostLobby.style.display = "flex";
+    }
+    if (visaoJogadorEspera) {
+      visaoJogadorEspera.classList.add("bloco-oculto");
+      visaoJogadorEspera.style.display = "none";
+    }
+    if (btnIniciarPartida) {
+      btnIniciarPartida.style.display = "block";
+    }
+    if (btnAbrirConfig) {
+      btnAbrirConfig.style.display = "block";
+    }
+    if (controlesHostJogo) {
+      controlesHostJogo.classList.remove("bloco-oculto");
+      controlesHostJogo.style.display = "flex";
+    }
+    if (avisoJogadorJogo) {
+      avisoJogadorJogo.classList.add("bloco-oculto");
+      avisoJogadorJogo.style.display = "none";
+    }
+    if (controlesHostFim) {
+      controlesHostFim.classList.remove("bloco-oculto");
+      controlesHostFim.style.display = "flex";
+    }
+    if (avisoJogadorFim) {
+      avisoJogadorFim.classList.add("bloco-oculto");
+      avisoJogadorFim.style.display = "none";
+    }
   } else {
-    controlesHostLobby.classList.add("bloco-oculto");
-    visaoJogadorEspera.classList.remove("bloco-oculto");
-    controlesHostJogo.classList.add("bloco-oculto");
-    avisoJogadorJogo.classList.remove("bloco-oculto");
-    controlesHostFim.classList.add("bloco-oculto");
-    avisoJogadorFim.classList.remove("bloco-oculto");
+    if (controlesHostLobby) {
+      controlesHostLobby.classList.add("bloco-oculto");
+      controlesHostLobby.style.display = "none";
+    }
+    if (btnIniciarPartida) {
+      btnIniciarPartida.style.display = "none";
+    }
+    if (btnAbrirConfig) {
+      btnAbrirConfig.style.display = "none";
+    }
+    if (visaoJogadorEspera) {
+      visaoJogadorEspera.classList.remove("bloco-oculto");
+      visaoJogadorEspera.style.display = "flex";
+      const textoEspera = document.getElementById("texto-aviso-espera");
+      if (textoEspera) {
+        textoEspera.textContent = "Aguardando o anfitrião...";
+      }
+    }
+    if (controlesHostJogo) {
+      controlesHostJogo.classList.add("bloco-oculto");
+      controlesHostJogo.style.display = "none";
+    }
+    if (avisoJogadorJogo) {
+      avisoJogadorJogo.classList.remove("bloco-oculto");
+      avisoJogadorJogo.style.display = "block";
+    }
+    if (controlesHostFim) {
+      controlesHostFim.classList.add("bloco-oculto");
+      controlesHostFim.style.display = "none";
+    }
+    if (avisoJogadorFim) {
+      avisoJogadorFim.classList.remove("bloco-oculto");
+      avisoJogadorFim.style.display = "block";
+    }
   }
 }
 

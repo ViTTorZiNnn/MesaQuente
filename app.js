@@ -62,7 +62,8 @@ document.addEventListener("webkitfullscreenchange", atualizarIconeFullscreen);
 // Estado local de seleção
 let avatarHostSelecionado = AVATARES_PREDEFINIDOS[0];
 let avatarEntrarSelecionado = AVATARES_PREDEFINIDOS[0];
-let cadeadoDesbloqueado = false; // Modo Personalizado (Cadeado 🔒/🔓)
+let modoLivreAtivo = false; // Modo Livre (?): Quando ativo, desliga a exclusividade de categoria
+let cadeadoDesbloqueado = false;
 let minigamesSelecionados = ["quem_e_mais_provavel"];
 let totalRodadasSelecionado = 20;
 
@@ -77,6 +78,10 @@ const textoStatusCadeado = document.getElementById("texto-status-cadeado");
 const badgeCadeadoDica = document.getElementById("badge-cadeado-dica");
 const descCadeadoInfo = document.getElementById("desc-cadeado-info");
 const subtextoInfoModo = document.getElementById("subtexto-info-modo");
+const checkboxModoLivre = document.getElementById("checkbox-modo-livre");
+const cardToggleModoLivre = document.getElementById("card-toggle-modo-livre");
+const blocoModoLivre = document.getElementById("cat-bloco-livre");
+const labelToggleModoLivre = document.getElementById("label-toggle-modo-livre");
 
 // Recupera avatar salvo anteriormente se existir
 const avatarSalvoId = localStorage.getItem("mesaQuente_avatarId");
@@ -235,15 +240,36 @@ function inicializarGalerias() {
 }
 
 /**
- * Configura os cliques e seleção de Múltiplos Minigames e Modo Personalizado (Cadeado 🔒/🔓)
+ * Configura os cliques e seleção de Múltiplos Minigames e Modo Livre (?)
  */
 function atualizarVisualMinigames() {
   const itens = document.querySelectorAll(".item-minigame-radio");
   const blocosCategorias = document.querySelectorAll(".categoria-bloco-jogos");
 
+  const livreAtivo = modoLivreAtivo || cadeadoDesbloqueado;
+
+  // Atualiza o estado visual da nova Categoria "Modo Livre"
+  if (checkboxModoLivre) {
+    checkboxModoLivre.checked = livreAtivo;
+  }
+  if (labelToggleModoLivre) {
+    if (livreAtivo) {
+      labelToggleModoLivre.classList.add("selecionado");
+    } else {
+      labelToggleModoLivre.classList.remove("selecionado");
+    }
+  }
+  if (blocoModoLivre) {
+    if (livreAtivo) {
+      blocoModoLivre.classList.add("categoria-livre-ativa");
+    } else {
+      blocoModoLivre.classList.remove("categoria-livre-ativa");
+    }
+  }
+
   // Identifica qual categoria tem minigame selecionado atualmente
   let categoriaAtiva = null;
-  if (!cadeadoDesbloqueado && minigamesSelecionados.length > 0) {
+  if (!livreAtivo && minigamesSelecionados.length > 0) {
     const primeiroModo = minigamesSelecionados[0];
     const itemPrimeiro = document.querySelector(`.item-minigame-radio[data-modo="${primeiroModo}"]`);
     if (itemPrimeiro) {
@@ -254,6 +280,8 @@ function atualizarVisualMinigames() {
   itens.forEach((item) => {
     const modoId = item.getAttribute("data-modo");
     const cat = item.getAttribute("data-cat");
+    if (!modoId) return; // Ignora o toggle do modo livre
+
     const input = item.querySelector(".minigame-checkbox-input");
     const isMarcado = minigamesSelecionados.includes(modoId);
 
@@ -265,8 +293,11 @@ function atualizarVisualMinigames() {
       if (input) input.checked = false;
     }
 
-    // Aplica bloqueio visual se o cadeado estiver trancado e pertencer a outra categoria
-    if (!cadeadoDesbloqueado && categoriaAtiva && cat !== categoriaAtiva) {
+    // Se o Modo Livre estiver ativo, remove qualquer bloqueio ou restrição
+    if (livreAtivo) {
+      item.classList.remove("item-categoria-bloqueada");
+    } else if (categoriaAtiva && cat !== categoriaAtiva) {
+      // Sem Modo Livre: bloqueia visualmente se for de outra categoria
       item.classList.add("item-categoria-bloqueada");
     } else {
       item.classList.remove("item-categoria-bloqueada");
@@ -276,34 +307,36 @@ function atualizarVisualMinigames() {
   // Atualiza blocos de categoria
   blocosCategorias.forEach((bloco) => {
     const cat = bloco.getAttribute("data-cat");
-    if (!cadeadoDesbloqueado && categoriaAtiva && cat !== categoriaAtiva) {
+    if (cat === "livre") return;
+
+    if (!livreAtivo && categoriaAtiva && cat !== categoriaAtiva) {
       bloco.classList.add("bloco-categoria-inativa");
     } else {
       bloco.classList.remove("bloco-categoria-inativa");
     }
   });
 
-  // Atualiza o Botão do Cadeado
+  // Atualiza o Botão do Cadeado / Modo Livre
   if (btnCadeadoPersonalizado) {
-    if (cadeadoDesbloqueado) {
+    if (livreAtivo) {
       btnCadeadoPersonalizado.className = "btn-cadeado-personalizado desbloqueado";
       if (iconeCadeado) iconeCadeado.textContent = "🔓";
       if (textoStatusCadeado) {
-        textoStatusCadeado.textContent = "DESBLOQUEADO";
+        textoStatusCadeado.textContent = "ATIVADO";
         textoStatusCadeado.className = "cadeado-status-tag status-aberto";
       }
       if (badgeCadeadoDica) {
-        badgeCadeadoDica.textContent = "Mix Livre Ativo";
+        badgeCadeadoDica.textContent = "Modo Livre Ativo";
         badgeCadeadoDica.className = "badge-cadeado-dica dica-aberta";
       }
       if (descCadeadoInfo) {
-        descCadeadoInfo.innerHTML = "Liberdade total! Você pode marcar <strong>quantos minigames quiser</strong> de qualquer categoria.";
+        descCadeadoInfo.innerHTML = "Liberdade total! Você pode marcar <strong>minigames de qualquer categoria simultaneamente</strong>.";
       }
     } else {
       btnCadeadoPersonalizado.className = "btn-cadeado-personalizado bloqueado";
       if (iconeCadeado) iconeCadeado.textContent = "🔒";
       if (textoStatusCadeado) {
-        textoStatusCadeado.textContent = "BLOQUEADO";
+        textoStatusCadeado.textContent = "DESATIVADO";
         textoStatusCadeado.className = "cadeado-status-tag status-trancado";
       }
       if (badgeCadeadoDica) {
@@ -311,14 +344,14 @@ function atualizarVisualMinigames() {
         badgeCadeadoDica.className = "badge-cadeado-dica";
       }
       if (descCadeadoInfo) {
-        descCadeadoInfo.innerHTML = "Clique para <strong>desbloquear</strong> e ter liberdade total para misturar minigames de qualquer categoria!";
+        descCadeadoInfo.innerHTML = "Clique para <strong>ativar o Modo Livre</strong> e ter liberdade total para misturar minigames de qualquer categoria!";
       }
     }
   }
 
   if (subtextoInfoModo) {
-    if (cadeadoDesbloqueado) {
-      subtextoInfoModo.textContent = `🔓 Modo Personalizado: ${minigamesSelecionados.length} minigame(s) misturados livremente`;
+    if (livreAtivo) {
+      subtextoInfoModo.textContent = `✨ Modo Livre Ativo: ${minigamesSelecionados.length} minigame(s) de categorias diferentes selecionados`;
     } else {
       subtextoInfoModo.textContent = `🔒 Categoria Fixa: ${minigamesSelecionados.length} minigame(s) da mesma categoria selecionado(s)`;
     }
@@ -328,14 +361,16 @@ function atualizarVisualMinigames() {
 function tratarCliqueMinigame(modoId, cat) {
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
-  if (!cadeadoDesbloqueado) {
-    // Regra Padrão (Cadeado Bloqueado): Exclusividade de Categoria
+  const livreAtivo = modoLivreAtivo || cadeadoDesbloqueado;
+
+  if (!livreAtivo) {
+    // Regra Padrão (Modo Livre Desativado): Exclusividade de Categoria
     const primeiroModo = minigamesSelecionados[0];
     const itemPrimeiro = document.querySelector(`.item-minigame-radio[data-modo="${primeiroModo}"]`);
     const catAtual = itemPrimeiro ? itemPrimeiro.getAttribute("data-cat") : null;
 
     if (catAtual && catAtual !== cat) {
-      // Clicou em outra categoria enquanto bloqueado: desmarca a anterior e seleciona o novo
+      // Clicou em outra categoria: desmarca a anterior e seleciona o novo minigame
       minigamesSelecionados = [modoId];
     } else {
       // Mesma categoria: permite marcar/desmarcar múltiplos
@@ -348,7 +383,7 @@ function tratarCliqueMinigame(modoId, cat) {
       }
     }
   } else {
-    // Modo Personalizado (Cadeado Desbloqueado): Livre seleção entre quaisquer categorias
+    // Modo Livre (Trava Desligada): Liberdade total de marcar/desmarcar em qualquer categoria
     if (minigamesSelecionados.includes(modoId)) {
       if (minigamesSelecionados.length > 1) {
         minigamesSelecionados = minigamesSelecionados.filter((id) => id !== modoId);
@@ -361,12 +396,13 @@ function tratarCliqueMinigame(modoId, cat) {
   atualizarVisualMinigames();
 }
 
-function alternarCadeadoPersonalizado() {
+function alternarModoLivre() {
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
-  cadeadoDesbloqueado = !cadeadoDesbloqueado;
+  modoLivreAtivo = !modoLivreAtivo;
+  cadeadoDesbloqueado = modoLivreAtivo;
 
-  // Se bloqueou o cadeado e havia minigames de categorias misturadas, mantém apenas os da 1ª categoria
-  if (!cadeadoDesbloqueado && minigamesSelecionados.length > 0) {
+  // Se desativou o Modo Livre e havia minigames de categorias misturadas, mantém apenas os da 1ª categoria
+  if (!modoLivreAtivo && minigamesSelecionados.length > 0) {
     const primeiroModo = minigamesSelecionados[0];
     const itemPrimeiro = document.querySelector(`.item-minigame-radio[data-modo="${primeiroModo}"]`);
     const catPrimeiro = itemPrimeiro ? itemPrimeiro.getAttribute("data-cat") : null;
@@ -394,6 +430,10 @@ function inicializarSeletorModos() {
     const modoId = item.getAttribute("data-modo");
     const cat = item.getAttribute("data-cat");
 
+    if (item.id === "label-toggle-modo-livre" || !modoId) {
+      return; // O toggle do modo livre é tratado separadamente
+    }
+
     item.addEventListener("click", (e) => {
       if (e.target.tagName && e.target.tagName.toLowerCase() === "input") return;
       e.preventDefault();
@@ -408,8 +448,25 @@ function inicializarSeletorModos() {
     }
   });
 
+  // Event listener no Card da nova categoria Modo Livre (?)
+  if (labelToggleModoLivre) {
+    labelToggleModoLivre.addEventListener("click", (e) => {
+      if (e.target.tagName && e.target.tagName.toLowerCase() === "input") return;
+      e.preventDefault();
+      alternarModoLivre();
+    });
+  }
+
+  if (checkboxModoLivre) {
+    checkboxModoLivre.addEventListener("change", (e) => {
+      e.stopPropagation();
+      alternarModoLivre();
+    });
+  }
+
+  // Event listener no Botão do Cadeado
   if (btnCadeadoPersonalizado) {
-    btnCadeadoPersonalizado.addEventListener("click", alternarCadeadoPersonalizado);
+    btnCadeadoPersonalizado.addEventListener("click", alternarModoLivre);
   }
 
   atualizarVisualMinigames();
