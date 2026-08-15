@@ -2,7 +2,7 @@
 // SALA.JS — Lógica Compartilhada, Firebase & Motor de Gameplay
 // ============================================================
 
-// Catálogo de Avatares Pré-definidos (Cores Vibrantes de Alto Contraste)
+// Catálogo de Avatares Pré-definidos Expandido para 26 Opções
 const AVATARES_PREDEFINIDOS = [
   { id: "fox", emoji: "🦊", nome: "Raposa", cor: "#ff5400", corBorda: "#ff9e00" },
   { id: "cat", emoji: "😼", nome: "Gato", cor: "#7209b7", corBorda: "#b5179e" },
@@ -13,7 +13,23 @@ const AVATARES_PREDEFINIDOS = [
   { id: "unicorn", emoji: "🦄", nome: "Unicórnio", cor: "#f72585", corBorda: "#ff70a6" },
   { id: "bear", emoji: "🐻", nome: "Urso", cor: "#b07d62", corBorda: "#d4a373" },
   { id: "skull", emoji: "💀", nome: "Caveira", cor: "#4361ee", corBorda: "#4cc9f0" },
-  { id: "robot", emoji: "🤖", nome: "Robô", cor: "#00b4d8", corBorda: "#90e0ef" }
+  { id: "robot", emoji: "🤖", nome: "Robô", cor: "#00b4d8", corBorda: "#90e0ef" },
+  { id: "panda", emoji: "🐼", nome: "Panda", cor: "#2b2d42", corBorda: "#8d99ae" },
+  { id: "bee", emoji: "🐝", nome: "Abelhinha", cor: "#ffb703", corBorda: "#fb8500" },
+  { id: "dragon", emoji: "🐲", nome: "Dragão", cor: "#38b000", corBorda: "#70e000" },
+  { id: "lion", emoji: "🦁", nome: "Leão", cor: "#f77f00", corBorda: "#fcbf49" },
+  { id: "rabbit", emoji: "🐰", nome: "Coelho", cor: "#f4a261", corBorda: "#e76f51" },
+  { id: "rocket", emoji: "🚀", nome: "Foguete", cor: "#0077b6", corBorda: "#00b4d8" },
+  { id: "ghost", emoji: "👻", nome: "Fantasma", cor: "#5e503f", corBorda: "#a9927d" },
+  { id: "owl", emoji: "🦉", nome: "Coruja", cor: "#6f4e37", corBorda: "#a0522d" },
+  { id: "octopus", emoji: "🐙", nome: "Polvo", cor: "#d90429", corBorda: "#ef233c" },
+  { id: "shark", emoji: "🦈", nome: "Tubarão", cor: "#1d3557", corBorda: "#457b9d" },
+  { id: "dino", emoji: "🦖", nome: "Dino", cor: "#2d6a4f", corBorda: "#52b788" },
+  { id: "monkey", emoji: "🐵", nome: "Macaco", cor: "#9c6644", corBorda: "#ddb892" },
+  { id: "frog", emoji: "🐸", nome: "Sapo", cor: "#55a630", corBorda: "#80b918" },
+  { id: "bat", emoji: "🦇", nome: "Morcego", cor: "#3c096c", corBorda: "#5a189a" },
+  { id: "penguin", emoji: "🐧", nome: "Pinguim", cor: "#023e8a", corBorda: "#0096c7" },
+  { id: "fire", emoji: "🔥", nome: "Fogo", cor: "#d00000", corBorda: "#ffba08" }
 ];
 
 // Catálogo Completo de Modos de Jogo / Minigames (6 Categorias & 18 Minigames)
@@ -352,7 +368,7 @@ function obterIdJogador() {
 }
 
 /**
- * Cria uma sala nova no banco com suporte a minigames, regras e avatares.
+ * Cria uma sala nova no banco com suporte a minigames selecionados (múltiplos ou únicos), regras e avatares.
  */
 async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade", configExtra = {}) {
   let codigo;
@@ -366,31 +382,69 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade"
   } while (tentativas < 10);
 
   const idJogador = obterIdJogador();
-  const modoInfo = MODOS_DE_JOGO[modoJogoKey] || MODOS_DE_JOGO.niveis_intimidade;
   const avatarValido = avatarHost || AVATARES_PREDEFINIDOS[0];
+
+  // Processa a lista de minigames selecionados (pode ser array ou chave única)
+  let minigamesIds = [];
+  if (Array.isArray(configExtra.minigames) && configExtra.minigames.length > 0) {
+    minigamesIds = configExtra.minigames;
+  } else if (Array.isArray(modoJogoKey) && modoJogoKey.length > 0) {
+    minigamesIds = modoJogoKey;
+  } else if (typeof modoJogoKey === "string") {
+    minigamesIds = [modoJogoKey];
+  } else {
+    minigamesIds = ["quem_e_mais_provavel"];
+  }
+
+  // Coleta dados dos modos
+  const modosEncontrados = minigamesIds.map((id) => MODOS_DE_JOGO[id]).filter(Boolean);
+  const modoPrincipal = modosEncontrados[0] || MODOS_DE_JOGO.quem_e_mais_provavel;
+
+  // Reúne todos os baralhos necessários dos minigames escolhidos
+  let baralhosConsolidados = [];
+  modosEncontrados.forEach((m) => {
+    if (Array.isArray(m.baralhos)) {
+      m.baralhos.forEach((b) => {
+        if (!baralhosConsolidados.includes(b)) {
+          baralhosConsolidados.push(b);
+        }
+      });
+    }
+  });
+
+  if (baralhosConsolidados.length === 0) {
+    baralhosConsolidados = modoPrincipal.baralhos || ["quebra_gelo"];
+  }
 
   const baralhosAtivos = (configExtra.baralhosAtivos && configExtra.baralhosAtivos.length > 0)
     ? configExtra.baralhosAtivos
-    : modoInfo.baralhos;
+    : baralhosConsolidados;
 
   const totalCartas = Number(configExtra.totalCartas) || 20;
+
+  const nomesFormatados = modosEncontrados.map((m) => m.nome).join(", ");
+  const iconesFormatados = modosEncontrados.map((m) => m.icone).join(" ");
 
   await db.ref("salas/" + codigo).set({
     criadaEm: firebase.database.ServerValue.TIMESTAMP,
     hostId: idJogador,
     status: "lobby",
-    modoJogo: modoInfo.id,
+    modoJogo: modosEncontrados.length === 1 ? modoPrincipal.id : "personalizado",
+    minigames: minigamesIds,
     modoInfo: {
-      id: modoInfo.id,
-      nome: modoInfo.nome,
-      icone: modoInfo.icone,
-      categoria: modoInfo.categoria || "casal",
-      categoriaNome: modoInfo.categoriaNome || "Modo de Jogo",
-      descricao: modoInfo.descricao,
-      regras: modoInfo.regras || []
+      id: modoPrincipal.id,
+      nome: modosEncontrados.length === 1 ? modoPrincipal.nome : nomesFormatados,
+      nomesFormatados: nomesFormatados,
+      icone: modosEncontrados.length === 1 ? modoPrincipal.icone : "🔀",
+      icones: iconesFormatados,
+      categoria: modoPrincipal.categoria || "votacao",
+      categoriaNome: modosEncontrados.length === 1 ? (modoPrincipal.categoriaNome || "Modo de Jogo") : "Minigames Selecionados",
+      descricao: modosEncontrados.length === 1 ? modoPrincipal.descricao : `Minigames ativos: ${nomesFormatados}`,
+      regras: modoPrincipal.regras || []
     },
     configLobby: {
       baralhosAtivos: baralhosAtivos,
+      minigamesAtivos: minigamesIds,
       totalCartas: totalCartas
     },
     jogadores: {
@@ -448,6 +502,27 @@ async function entrarNaSala(codigo, nome, avatarEscolhido) {
 
   configurarDesconexao(codigo, idJogador);
   return codigo;
+}
+
+/**
+ * Atualiza o avatar de um jogador já presente na sala em tempo real
+ */
+async function atualizarAvatarJogador(codigo, novoAvatar) {
+  if (!codigo || !novoAvatar) return;
+  const idJogador = obterIdJogador();
+  try {
+    await db.ref("salas/" + codigo + "/jogadores/" + idJogador + "/avatar").set({
+      id: novoAvatar.id,
+      emoji: novoAvatar.emoji,
+      nome: novoAvatar.nome,
+      cor: novoAvatar.cor,
+      corBorda: novoAvatar.corBorda
+    });
+    localStorage.setItem("mesaQuente_avatarId", novoAvatar.id);
+  } catch (e) {
+    console.error("Erro ao atualizar avatar do jogador:", e);
+    throw e;
+  }
 }
 
 function configurarDesconexao(codigo, idJogador) {

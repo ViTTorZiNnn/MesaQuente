@@ -6,7 +6,7 @@
   <title>Mesa Quente — Sala</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="tela-gameplay-v3">
+<body class="tela-lobby-espera-ativa" id="corpo-pagina-sala">
 
   <!-- Fundo de brasas animadas -->
   <canvas id="canvas-brasas"></canvas>
@@ -15,50 +15,35 @@
   <div id="container-emojis-flutuantes" class="container-emojis-flutuantes" aria-hidden="true"></div>
 
   <!-- ========================================================
-       OVERLAY 0: INTRODUÇÃO & TUTORIAL DE REGRAS DO MINIGAME
+       ETAPA 3: TRANSIÇÃO CARTOON (IRIS WIPE)
        ======================================================== -->
-  <div id="overlay-tutorial-regras" class="overlay-tutorial-regras bloco-oculto" aria-live="polite">
-    <div class="tutorial-card-dialog">
+  <div class="transicao-iris-overlay bloco-oculto" id="transicao-iris-overlay" aria-hidden="true">
+    <div class="iris-curtain" id="iris-curtain"></div>
+  </div>
+
+  <!-- ========================================================
+       ETAPA 4A: POP-UP DE TUTORIAL DO MINIGAME (OVERLAY)
+       ======================================================== -->
+  <div id="overlay-tutorial-minigame" class="overlay-tutorial-cartoon bloco-oculto" aria-live="polite">
+    <div class="tutorial-card-cartoon">
       
-      <!-- Cabeçalho do Minigame -->
-      <div class="tutorial-topo">
-        <span class="tutorial-badge-categoria" id="tutorial-badge-categoria">💜 DINÂMICA PARA CASAIS</span>
-        <div class="tutorial-icone-circulo" id="tutorial-icone-circulo">💜</div>
-        <h2 class="tutorial-titulo-jogo" id="tutorial-titulo-jogo">Níveis de Intimidade</h2>
-        <p class="tutorial-descricao-jogo" id="tutorial-descricao-jogo">
-          Perguntas de vulnerabilidade e flerte em 3 níveis progressivos.
-        </p>
+      <div class="tutorial-carta-preview-box">
+        <img id="tutorial-carta-img" src="cartas-votação.png" alt="Carta do Minigame" class="tutorial-carta-destaque-img" />
       </div>
 
-      <!-- Caixa com os Passos das Regras -->
-      <div class="tutorial-regras-caixa">
-        <span class="tutorial-regras-subtitulo">📜 Regras da Rodada:</span>
-        <div class="tutorial-passos-lista" id="tutorial-passos-lista">
-          <!-- Renderizado dinamicamente via JS com passos numerados 1, 2, 3 -->
+      <div class="tutorial-conteudo-textos">
+        <span class="tutorial-categoria-tag" id="tutorial-categoria-tag">CATEGORIA 1 • VOTAÇÃO</span>
+        <h2 class="tutorial-boas-vindas" id="tutorial-boas-vindas">Bem-vindos ao Minigame!</h2>
+        
+        <div class="tutorial-regras-box">
+          <span class="tutorial-regras-titulo">📜 Como Jogar:</span>
+          <div class="tutorial-regras-lista" id="tutorial-regras-lista">
+            <!-- Injetado dinamicamente com as regras do modo ativo -->
+          </div>
         </div>
-      </div>
 
-      <!-- Barra de Status dos Jogadores Prontos -->
-      <div class="tutorial-status-jogadores">
-        <div class="tutorial-prontos-cabecalho">
-          <span class="tutorial-prontos-label">Jogadores Prontos:</span>
-          <span class="tutorial-prontos-contador" id="tutorial-prontos-contador">0 / 0</span>
-        </div>
-        <div class="tutorial-jogadores-chips-grade" id="tutorial-jogadores-chips">
-          <!-- Avatares dos jogadores com indicador de check verde -->
-        </div>
-      </div>
-
-      <!-- Barra de Progresso / Contagem de Fallback (35 segundos) -->
-      <div class="tutorial-timer-barra-wrapper">
-        <div class="tutorial-timer-barra-preenchimento" id="tutorial-timer-barra"></div>
-        <span class="tutorial-timer-texto" id="tutorial-timer-texto">Iniciando em 35s...</span>
-      </div>
-
-      <!-- Botão de Confirmação do Jogador -->
-      <div class="tutorial-botoes-acao">
-        <button class="botao-3d botao-primario-3d btn-entendi-tutorial" id="btn-entendi-tutorial" type="button">
-          <span>✅ Entendi! Estou Pronto(a)</span>
+        <button class="botao-3d botao-primario-3d btn-ok-entendi-tutorial" id="btn-ok-entendi-tutorial" type="button">
+          <span>👍 Ok, Entendi!</span>
         </button>
       </div>
 
@@ -66,54 +51,62 @@
   </div>
 
   <!-- ========================================================
-       OVERLAY 1: CONTAGEM REGRESSIVA (4, 3, 2, 1)
+       ETAPA 4B: SORTEIO DE QUEM COMEÇA (CONTAGEM 5..1 & ROLETA)
        ======================================================== -->
-  <div id="overlay-contagem-regressiva" class="overlay-contagem-regressiva bloco-oculto" aria-live="assertive">
-    <div class="contagem-fundo-brilho"></div>
-    <div class="contagem-conteudo-central">
-      <span class="contagem-tag-preparando">TODOS PRONTOS! A MESA VAI COMEÇAR</span>
-      <div class="contagem-numero-wrapper">
-        <div id="contagem-numero-display" class="contagem-numero-zoom">4</div>
+  <div id="overlay-sorteio-roleta" class="overlay-sorteio-roleta bloco-oculto" aria-live="assertive">
+    <div class="sorteio-roleta-card">
+      
+      <span class="sorteio-fase-tag" id="sorteio-fase-tag">🎯 PRIMEIRO TURNO</span>
+      <h2 class="sorteio-titulo-chamada" id="sorteio-titulo-chamada">Vamos ver quem vai começar...</h2>
+
+      <!-- Fase 1: Contador Regressivo (5, 4, 3, 2, 1) -->
+      <div class="sorteio-contador-area" id="sorteio-contador-area">
+        <div class="sorteio-numero-zoom" id="sorteio-numero-display">5</div>
+        <p class="sorteio-subtexto-contagem">Preparando a roleta da mesa...</p>
       </div>
-      <p class="contagem-subtexto" id="contagem-subtexto">Preparando a disputa do dado...</p>
+
+      <!-- Fase 2: A Roleta Passando pelos Jogadores -->
+      <div class="sorteio-roleta-area bloco-oculto" id="sorteio-roleta-area">
+        <div class="roleta-destaque-moldura">
+          <div class="roleta-avatar-circulo" id="roleta-avatar-destaque">🦊</div>
+          <strong class="roleta-nome-destaque" id="roleta-nome-destaque">Jogador</strong>
+        </div>
+        <p class="roleta-status-texto" id="roleta-status-texto">Girando a sorte entre a roda...</p>
+      </div>
+
+      <!-- Fase 3: Jogador Sorteado Revelado -->
+      <div class="sorteio-vencedor-anuncio bloco-oculto" id="sorteio-vencedor-anuncio">
+        <span class="vencedor-tag-coroa">👑 VAI COMEÇAR A JOGAR:</span>
+        <div class="vencedor-nome-box">
+          <span class="vencedor-emoji-icone" id="vencedor-sorteado-emoji">🦊</span>
+          <strong class="vencedor-sorteado-nome" id="vencedor-sorteado-nome">Jogador</strong>
+        </div>
+        <p class="vencedor-sorteado-desc">puxará a primeira carta da mesa!</p>
+      </div>
+
     </div>
   </div>
 
   <!-- ========================================================
-       OVERLAY 2: O SORTEIO DO DADO (A DISPUTA DO 1º TURNO 1 A 9)
+       MODAL DE TROCAR AVATAR NO LOBBY (26 OPÇÕES EXPANDIDAS)
        ======================================================== -->
-  <div id="overlay-sorteio-dado" class="overlay-sorteio-dado bloco-oculto" aria-live="polite">
-    <div class="dado-arena-cenario">
-      
-      <!-- Topo: Título da Disputa -->
-      <div class="dado-arena-topo">
-        <span class="dado-tag-fase">🎲 DISPUTA DO 1º TURNO (1 a 9)</span>
-        <h2 class="dado-titulo-fase">Quem tira a maior sorte na mesa?</h2>
+  <div class="modal-backdrop-troca-avatar bloco-oculto" id="modal-trocar-avatar">
+    <div class="modal-trocar-avatar-card">
+      <div class="modal-avatar-topo">
+        <h3 class="modal-avatar-titulo">🎨 Escolha seu Novo Avatar</h3>
+        <button class="btn-fechar-modal-avatar" id="btn-fechar-modal-avatar" type="button">✕</button>
+      </div>
+      <p class="modal-avatar-subtexto">Selecione o avatar que representará você na mesa:</p>
+
+      <div class="grade-avatares-26-opcoes" id="grade-avatares-26-opcoes">
+        <!-- Renderizado dinamicamente com os 26 avatares -->
       </div>
 
-      <!-- A Roda: Jogadores posicionados -->
-      <div class="roda-sorteio-jogadores-landscape" id="roda-sorteio-jogadores">
-        <!-- Renderizado dinamicamente via JS com os avatares e nomes -->
+      <div class="modal-avatar-acoes">
+        <button class="botao-3d botao-primario-3d" id="btn-confirmar-novo-avatar" type="button">
+          <span>✅ Confirmar Avatar</span>
+        </button>
       </div>
-
-      <!-- Palco Central do Dado 2.5D com Efeito de Rotação Rápida -->
-      <div class="palco-central-dado">
-        <div class="dado-3d-wrapper" id="dado-3d-wrapper">
-          <div class="dado-cubo-animado" id="dado-cubo-animado">
-            <span class="dado-face-numero" id="dado-face-display">7</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Banner Notificação de Vitória Sincronizada -->
-      <div class="banner-anuncio-vencedor-dado bloco-oculto" id="banner-vencedor-dado">
-        <div class="vencedor-dado-avatar-box" id="vencedor-dado-avatar">🦊</div>
-        <div class="vencedor-dado-texto-box">
-          <strong class="vencedor-dado-nome" id="vencedor-dado-nome">Jogador</strong>
-          <p class="vencedor-dado-mensagem" id="vencedor-dado-mensagem">tirou o número mais alto e começa puxando a 1ª carta!</p>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -156,85 +149,87 @@
     </header>
 
     <!-- ========================================================
-         PAINEL 1: LOBBY DINÂMICO (MESA REDONDA 2.5D)
+         ETAPA 2: SALA DE ESPERA (O LOBBY REAL CLÁSSICO)
+         FUNDO: background-lobby.png COM PAINEL CENTRAL ESCURO/AVERMELHADO
          ======================================================== -->
-    <section class="cartao-mesa painel-lobby-25d painel-scroll-interno" id="painel-lobby" style="display: flex;">
-      
-      <!-- Cabeçalho com Código da Sala -->
-      <div class="cabecalho-sala-3d">
-        <span class="rotulo-3d">Código da Sala</span>
-        <div class="bloco-codigo-destaque">
-          <h1 class="codigo-sala-3d" id="texto-codigo-sala">----</h1>
-          <button class="botao-copiar-3d" id="btn-copiar-codigo" type="button">
-            <span>📋</span> Copiar
+    <section class="painel-sala-espera-real" id="painel-lobby">
+      <div class="card-lobby-real-central">
+        
+        <!-- Topo: Título da Sala de Espera -->
+        <div class="lobby-real-cabecalho">
+          <span class="lobby-tag-status">SALA ABERTA</span>
+          <h1 class="lobby-real-titulo">Aguardando Jogadores...</h1>
+          
+          <!-- Banner com os Minigames Escolhidos -->
+          <div class="banner-minigames-lobby" id="banner-modo-jogo">
+            <span class="banner-minigames-icone" id="modo-jogo-icone">🎮</span>
+            <div class="banner-minigames-textos">
+              <span class="banner-minigames-sub">Minigames Selecionados:</span>
+              <strong class="banner-minigames-nome" id="modo-jogo-nome">Carregando...</strong>
+            </div>
+          </div>
+          <p class="banner-minigames-desc" id="modo-jogo-desc"></p>
+        </div>
+
+        <!-- 2. Código da Sala bem visível com Botão Copiar -->
+        <div class="lobby-real-codigo-box">
+          <span class="rotulo-codigo-lobby">Código da Sala para Amigos:</span>
+          <div class="linha-codigo-copia">
+            <h2 class="codigo-sala-destaque" id="texto-codigo-sala">----</h2>
+            <button class="botao-3d botao-copiar-codigo" id="btn-copiar-codigo" type="button" title="Copiar código">
+              <span>📋</span> Copiar Código
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Lista de Quem Já Entrou -->
+        <div class="lobby-real-jogadores-secao">
+          <div class="jogadores-secao-topo">
+            <strong class="jogadores-secao-titulo">Jogadores na Sala (<span id="contador-jogadores">0</span>)</strong>
+            <button class="btn-trocar-avatar-acao" id="btn-abrir-trocar-avatar" type="button">
+              🎨 Trocar Meu Avatar
+            </button>
+          </div>
+
+          <div class="grade-jogadores-lobby-real" id="lista-jogadores-lobby">
+            <!-- Cards de jogadores renderizados dinamicamente via JS -->
+          </div>
+        </div>
+
+        <!-- Aviso se o jogador ficar sozinho -->
+        <div id="aviso-sozinho-sala" class="bloco-aviso-sozinho bloco-oculto">
+          <p class="texto-aviso-alerta">
+            ⚠️ Você está sozinho na sala ou os outros saíram.
+          </p>
+          <button class="botao-3d botao-secundario-3d" id="btn-voltar-inicio-sozinho" type="button" style="margin-top: 8px;">
+            ← Voltar à Tela Inicial
           </button>
         </div>
-      </div>
 
-      <!-- Banner Destaque do Modo de Jogo Selecionado -->
-      <div class="banner-modo-jogo-3d" id="banner-modo-jogo">
-        <div class="modo-jogo-icone-box" id="modo-jogo-icone">💜</div>
-        <div class="modo-jogo-detalhes">
-          <span class="modo-jogo-subrotulo" id="modo-jogo-subrotulo">Minigame Selecionado</span>
-          <strong class="modo-jogo-nome" id="modo-jogo-nome">Níveis de Intimidade</strong>
-          <p class="modo-jogo-descricao" id="modo-jogo-desc">Perguntas em 3 níveis (Percepção, Conexão e +18 Íntimo).</p>
+        <!-- 5. Controles do Host (Iniciar Partida / Ajustar Minigames) -->
+        <div id="controles-host-lobby" class="bloco-oculto acoes-lobby-host-grid">
+          <button class="botao-3d botao-primario-3d btn-iniciar-partida-real" id="btn-iniciar-partida" type="button">
+            <span>🔥 Iniciar Partida</span>
+          </button>
+          <button class="botao-3d botao-config-3d" id="btn-abrir-config" type="button">
+            <span>⚙️ Ajustar Minigames</span>
+          </button>
         </div>
-      </div>
 
-      <!-- A Mesa 2.5D com os Assentos dos Jogadores -->
-      <div class="mesa-redonda-arena">
-        <div class="tapete-feltro-25d">
-          
-          <!-- Maço de Cartas Central 3D do Lobby -->
-          <div class="deck-centro-lobby" id="deck-centro-lobby" title="Baralho da Mesa">
-            <img src="baralho.png" alt="Baralho da Mesa" class="deck-lobby-img" />
-          </div>
-
-          <!-- Roda de Jogadores Sentando à Mesa (Grid de Cards com Avatar 2.5D) -->
-          <div class="grade-assentos-mesa" id="grade-assentos-mesa">
-            <!-- Renderizado dinamicamente via JS como assentos da mesa -->
-          </div>
+        <!-- Visão dos Convidados (Esperando o Host) -->
+        <div id="visao-jogador-espera" class="bloco-oculto box-visao-convidado">
+          <div class="spinner-ampulheta">⏳</div>
+          <p class="texto-aviso-espera" id="texto-aviso-espera">
+            Aguardando o anfitrião iniciar a partida...
+          </p>
         </div>
-      </div>
 
-      <!-- Resumo de Contagem -->
-      <div class="contador-mesa-barra">
-        <span class="contador-jogadores-badge" id="contador-jogadores">0 na mesa</span>
-        <span class="status-espera-texto">Convide seus amigos para sentar à mesa</span>
+        <p class="mensagem-erro-3d" id="mensagem-erro-lobby"></p>
       </div>
-
-      <!-- Aviso se o jogador ficar sozinho -->
-      <div id="aviso-sozinho-sala" class="bloco-aviso-sozinho bloco-oculto">
-        <p class="texto-aviso-alerta">
-          ⚠️ Você está sozinho na mesa ou os outros saíram.
-        </p>
-        <button class="botao-3d botao-secundario-3d" id="btn-voltar-inicio-sozinho" type="button" style="margin-top: 8px;">
-          ← Voltar à Tela Inicial
-        </button>
-      </div>
-
-      <!-- Controles do Host no Lobby -->
-      <div id="controles-host-lobby" class="bloco-oculto acoes-lobby-host">
-        <button class="botao-3d botao-config-3d" id="btn-abrir-config" type="button">
-          ⚙️ Escolher Minigames & Cartas
-        </button>
-        <button class="botao-3d botao-primario-3d" id="btn-iniciar-partida" type="button">
-          <span>🔥 Iniciar Partida na Mesa</span>
-        </button>
-      </div>
-
-      <!-- Visão do Convidado / Jogador -->
-      <div id="visao-jogador-espera" class="bloco-oculto">
-        <p class="texto-aviso-espera" id="texto-aviso-espera">
-          ⏳ Aguardando o anfitrião configurar e iniciar a rodada...
-        </p>
-      </div>
-
-      <p class="mensagem-erro-3d" id="mensagem-erro-lobby"></p>
     </section>
 
     <!-- ========================================================
-         PAINEL 2: CONFIGURAÇÃO DE MINIGAMES E BARALHOS (HOST)
+         PAINEL DE CONFIGURAÇÃO DE MINIGAMES E BARALHOS (HOST)
          ======================================================== -->
     <section class="cartao-mesa bloco-oculto painel-configuracao painel-scroll-interno" id="painel-configuracao" style="display: none;">
       <div class="config-cabecalho">
@@ -342,18 +337,19 @@
     </section>
 
     <!-- ========================================================
-         PAINEL 3: A MESA DE JOGO PRINCIPAL 2.5D (PAREDE + MESA + REDEMOINHO + BARALHO)
+         ETAPA 4: A MESA DE GAMEPLAY PRINCIPAL 2.5D
+         PAREDE.PNG (FUNDO) + MESA.PNG (SOBREPOSTA) + BARALHO & JOGADORES
          ======================================================== -->
-    <section class="cartao-mesa bloco-oculto painel-mesa-jogo-v3" id="painel-mesa-jogo" style="display: none;">
+    <section class="cartao-mesa painel-mesa-jogo-v3 bloco-oculto" id="painel-mesa-jogo" style="display: none;">
       
       <!-- Cabeçalho Compacto da Rodada -->
       <div class="cabecalho-rodada-mesa">
-        <div class="tag-deck-discreta" id="tag-deck-nome">🔥 NÍVEIS DE INTIMIDADE</div>
+        <div class="tag-deck-discreta" id="tag-deck-nome">🔥 MESA QUENTE</div>
         <div class="contador-rodada-discreto" id="contador-cartas-rodada">Rodada 1 / 20</div>
       </div>
 
       <!-- Tag Discreta do Jogador da Vez -->
-      <div class="tag-leitor-vez-discreta" id="box-leitor-rodada">
+      <div class="tag-leitor-vez-discreta bloco-oculto" id="box-leitor-rodada">
         <span class="leitor-hud-icone" id="leitor-hud-icone">🎙️</span>
         <strong id="leitor-titulo">Sua vez de ler!</strong>
         <span class="leitor-instrucao-curta" id="leitor-instrucao">Puxe a carta e leia em voz alta para todos.</span>
@@ -374,7 +370,7 @@
           
           <img src="mesa.png" alt="Mesa de Jogo" class="mesa-bg-img" />
 
-          <!-- Camada dos Jogadores Sentados ao Redor da Mesa com Molduras -->
+          <!-- Camada dos Jogadores Sentados ao Redor da Mesa com Molduras (Renderizada em Tempo Real) -->
           <div class="camada-jogadores-radial" id="camada-jogadores-radial">
             <!-- Renderizado dinamicamente via JS com moldura-playeres.png -->
           </div>
@@ -401,7 +397,7 @@
               </div>
 
               <!-- Botão de Puxar Carta (Exclusivo do Leitor da Rodada) -->
-              <button class="botao-puxar-carta-3d" id="btn-puxar-carta-mesa" type="button">
+              <button class="botao-puxar-carta-3d bloco-oculto" id="btn-puxar-carta-mesa" type="button">
                 <span>🃏 PUXAR CARTA</span>
               </button>
 

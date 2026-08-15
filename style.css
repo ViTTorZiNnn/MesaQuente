@@ -3188,28 +3188,122 @@ body.tela-inicio {
   z-index: -999 !important;
 }
 
-/* Garante que o Painel do Lobby / Sala de Espera fique sempre acima de qualquer cenário */
-#painel-lobby,
-#sala-de-espera,
-.painel-lobby-25d {
-  position: relative;
-  z-index: 100 !important;
+/* Garante que o Painel do Lobby / Sala de Espera funcione como Overlay Flutuante elegante sobre a Mesa 2.5D */
+.overlay-sala-espera-mesa,
+#painel-lobby {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 55 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.5vh, 20px) 12px;
+  pointer-events: none;
+  background: rgba(8, 6, 14, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeInModal 0.3s ease-out;
+}
+
+.card-espera-mesa-flutuante {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(175deg, rgba(28, 22, 42, 0.95) 0%, rgba(16, 12, 24, 0.96) 100%);
+  border: 2px solid rgba(255, 183, 3, 0.45);
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 
+    0 16px 45px rgba(0, 0, 0, 0.92),
+    0 0 30px rgba(255, 77, 46, 0.28),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+  max-height: 88dvh;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.card-espera-mesa-flutuante::-webkit-scrollbar {
+  display: none;
+}
+
+.cabecalho-codigo-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.rotulo-overlay {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+}
+
+.banner-modo-jogo-overlay {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.banner-modo-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modo-icone-tag {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.modo-textos-col {
   display: flex;
   flex-direction: column;
 }
 
-/* Garante que a Mesa / Gameplay venha OCULTA por padrão com display: none */
+.banner-modo-jogo-overlay .modo-jogo-subrotulo {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  letter-spacing: 0.5px;
+}
+
+.banner-modo-jogo-overlay .modo-jogo-nome {
+  font-size: 14px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.banner-modo-jogo-overlay .modo-jogo-descricao {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Garante que o container principal da Mesa / Gameplay fique sempre montado e visível */
 #painel-mesa-jogo,
 #tela-gameplay,
 .painel-mesa-jogo-v3 {
-  display: none;
+  display: block;
   z-index: 10;
-}
-
-#painel-mesa-jogo:not(.bloco-oculto),
-#tela-gameplay:not(.bloco-oculto),
-.painel-mesa-jogo-v3:not(.bloco-oculto) {
-  display: flex;
+  position: relative;
+  width: 100%;
 }
 
 /* ============================================================
@@ -4945,5 +5039,993 @@ body.tela-gameplay-v3 {
   margin: 0 auto;
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8));
 }
+
+/* ============================================================
+   ETAPA 1: CADEADO E CHECKBOXES DE MINIGAMES
+   ============================================================ */
+.minigame-checkbox-input {
+  display: none;
+}
+
+.minigame-checkbox-quadrado {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid #3d101a;
+  border-radius: 6px;
+  background: #190509;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: transparent;
+  transition: all 0.15s ease;
+}
+
+.item-minigame-radio.selecionado .minigame-checkbox-quadrado {
+  background: #ff4d2e;
+  border-color: #ffb703;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 77, 46, 0.6);
+}
+
+.item-minigame-radio.item-categoria-bloqueada {
+  opacity: 0.38;
+  filter: grayscale(0.8);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.categoria-bloco-jogos.bloco-categoria-inativa {
+  opacity: 0.45;
+  filter: grayscale(0.7);
+  transition: opacity 0.2s ease;
+}
+
+.bloco-modo-cadeado-container {
+  margin-top: 14px;
+  width: 100%;
+}
+
+.btn-cadeado-personalizado {
+  width: 100%;
+  background: linear-gradient(175deg, #26060c 0%, #150205 100%);
+  border: 3px solid #0b0b0b;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0px #0b0b0b;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-cadeado-personalizado:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(175deg, #380a13 0%, #1e0308 100%);
+}
+
+.btn-cadeado-personalizado:active {
+  transform: scale(0.97) !important;
+}
+
+.btn-cadeado-personalizado.desbloqueado {
+  border-color: #06d6a0;
+  background: linear-gradient(175deg, #05261d 0%, #031510 100%);
+  box-shadow: 4px 4px 0px #0b0b0b, 0 0 16px rgba(6, 214, 160, 0.25);
+}
+
+.cadeado-icone-wrapper {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.btn-cadeado-personalizado.desbloqueado .cadeado-icone-wrapper {
+  background: #063d2f;
+  border-color: #06d6a0;
+}
+
+.cadeado-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.cadeado-topo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cadeado-titulo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.cadeado-status-tag {
+  color: #ff4d2e;
+  font-weight: 900;
+}
+
+.btn-cadeado-personalizado.desbloqueado .cadeado-status-tag {
+  color: #06d6a0;
+}
+
+.badge-cadeado-dica {
+  font-size: 10px;
+  font-weight: 800;
+  background: #3d0a14;
+  color: #ffb703;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #ffb70344;
+}
+
+.btn-cadeado-personalizado.desbloqueado .badge-cadeado-dica {
+  background: #064030;
+  color: #a7f3d0;
+  border-color: #06d6a066;
+}
+
+.cadeado-desc {
+  font-size: 12px;
+  line-height: 1.35;
+  color: #fca5a5;
+}
+
+.btn-cadeado-personalizado.desbloqueado .cadeado-desc {
+  color: #d1fae5;
+}
+
+/* ============================================================
+   ETAPA 2: SALA DE ESPERA (LOBBY REAL CLÁSSICO)
+   ============================================================ */
+.tela-lobby-espera-ativa {
+  background-image: url('background-lobby.png'), url('background-lobby.svg'), url('bg.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #120103;
+}
+
+.painel-sala-espera-real {
+  width: 100%;
+  height: calc(100dvh - 58px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.card-lobby-real-central {
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(176deg, #25060c 0%, #140205 100%);
+  border: 3px solid #0b0b0b;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px #0b0b0b, 0 16px 36px rgba(0, 0, 0, 0.85);
+  padding: clamp(14px, 3.5vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: slideUpLobby 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpLobby {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lobby-real-cabecalho {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.lobby-tag-status {
+  background: #ff4d2e;
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 10px;
+  border-radius: 6px;
+  border: 2px solid #0b0b0b;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.lobby-real-titulo {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(20px, 4.5vw, 24px);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.banner-minigames-lobby {
+  width: 100%;
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.banner-minigames-icone {
+  font-size: 22px;
+}
+
+.banner-minigames-textos {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.banner-minigames-sub {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fca5a5;
+  text-transform: uppercase;
+}
+
+.banner-minigames-nome {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffda00;
+}
+
+.banner-minigames-desc {
+  font-size: 11.5px;
+  color: #fca5a5;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.lobby-real-codigo-box {
+  background: #170407;
+  border: 2px dashed #ff4d2e88;
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.rotulo-codigo-lobby {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fca5a5;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.linha-codigo-copia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.codigo-sala-destaque {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(24px, 6vw, 32px);
+  font-weight: 900;
+  color: #ffda00;
+  letter-spacing: 4px;
+  text-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.botao-copiar-codigo {
+  background: #2b0b14;
+  border: 2px solid #0b0b0b;
+  border-radius: 10px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.botao-copiar-codigo:hover {
+  background: #440f1f;
+  transform: translateY(-1px);
+}
+
+.botao-copiar-codigo:active {
+  transform: scale(0.94) !important;
+}
+
+.lobby-real-jogadores-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jogadores-secao-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jogadores-secao-titulo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.btn-trocar-avatar-acao {
+  background: #20060c;
+  border: 2px solid #0b0b0b;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffda00;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.btn-trocar-avatar-acao:hover {
+  background: #350b16;
+  transform: translateY(-1px);
+}
+
+.grade-jogadores-lobby-real {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+
+.card-jogador-espera {
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 12px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s ease;
+}
+
+.card-jogador-espera.is-me {
+  border-color: #ffda00;
+  background: #230810;
+}
+
+.card-jogador-espera.desconectado {
+  opacity: 0.45;
+  filter: grayscale(0.8);
+}
+
+.avatar-espera-circulo {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  border: 2px solid #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.info-jogador-espera {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.nome-jogador-espera {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tags-jogador-espera {
+  display: flex;
+  gap: 4px;
+}
+
+.tag-espera-host {
+  background: #ffda00;
+  color: #140205;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.tag-espera-voce {
+  background: #ff4d2e;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.tag-espera-saiu {
+  background: #475569;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.acoes-lobby-host-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-iniciar-partida-real {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
+}
+
+.box-visao-convidado {
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.spinner-ampulheta {
+  font-size: 20px;
+  animation: girarAmpulheta 2s infinite ease-in-out;
+}
+
+@keyframes girarAmpulheta {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+}
+
+.texto-aviso-espera {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fca5a5;
+}
+
+/* ============================================================
+   MODAL DE TROCA DE AVATAR (26 OPÇÕES)
+   ============================================================ */
+.modal-backdrop-troca-avatar {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+.modal-trocar-avatar-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(176deg, #26060c 0%, #150205 100%);
+  border: 3px solid #0b0b0b;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px #0b0b0b, 0 16px 40px rgba(0, 0, 0, 0.9);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: popAvatarModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popAvatarModal {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-avatar-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-avatar-titulo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.btn-fechar-modal-avatar {
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.modal-avatar-subtexto {
+  font-size: 12px;
+  color: #fca5a5;
+}
+
+.grade-avatares-26-opcoes {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px 4px;
+}
+
+.item-avatar-opcao {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid #0b0b0b;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+}
+
+.item-avatar-opcao:hover {
+  transform: scale(1.15) translateY(-2px);
+  z-index: 2;
+}
+
+.item-avatar-opcao.selecionado {
+  border-color: #ffda00;
+  box-shadow: 0 0 14px #ffda00, 3px 3px 0px #0b0b0b;
+  transform: scale(1.18);
+  z-index: 3;
+}
+
+.emoji-avatar-grande {
+  font-size: clamp(20px, 4vw, 24px);
+  user-select: none;
+}
+
+.modal-avatar-acoes {
+  margin-top: 4px;
+}
+
+/* ============================================================
+   ETAPA 3: TRANSIÇÃO CARTOON (IRIS WIPE)
+   ============================================================ */
+.transicao-iris-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: all;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transicao-iris-overlay.iris-wipe-fechar {
+  background: radial-gradient(circle at center, transparent 0%, #080203 0%);
+  animation: irisFechar 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.transicao-iris-overlay.iris-wipe-abrir {
+  background: radial-gradient(circle at center, transparent 0%, #080203 100%);
+  animation: irisAbrir 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes irisFechar {
+  0% {
+    clip-path: circle(150% at 50% 50%);
+    background-color: #080203;
+  }
+  100% {
+    clip-path: circle(0% at 50% 50%);
+    background-color: #080203;
+  }
+}
+
+@keyframes irisAbrir {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    background-color: #080203;
+  }
+  100% {
+    clip-path: circle(150% at 50% 50%);
+    background-color: #080203;
+  }
+}
+
+/* ============================================================
+   ETAPA 4A: POP-UP TUTORIAL CARTOON
+   ============================================================ */
+.overlay-tutorial-cartoon {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.tutorial-card-cartoon {
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(176deg, #29060d 0%, #150205 100%);
+  border: 4px solid #0b0b0b;
+  border-radius: 22px;
+  box-shadow: 8px 8px 0px #0b0b0b, 0 20px 48px rgba(0, 0, 0, 0.95);
+  padding: clamp(16px, 4vw, 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: popTutorialIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popTutorialIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.tutorial-carta-preview-box {
+  width: clamp(90px, 22vw, 120px);
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.85));
+}
+
+.tutorial-carta-destaque-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.tutorial-conteudo-textos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.tutorial-categoria-tag {
+  background: #ff4d2e;
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 2px solid #0b0b0b;
+  letter-spacing: 0.5px;
+}
+
+.tutorial-boas-vindas {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(18px, 4.5vw, 22px);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.tutorial-regras-box {
+  width: 100%;
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.tutorial-regras-titulo {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffda00;
+  text-transform: uppercase;
+}
+
+.tutorial-regras-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tutorial-regra-passo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.regra-passo-num {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 50%;
+  background: #ff4d2e;
+  border: 2px solid #0b0b0b;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.regra-passo-texto {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #fca5a5;
+}
+
+.btn-ok-entendi-tutorial {
+  width: 100%;
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+/* ============================================================
+   ETAPA 4B: SORTEIO ROLETA DE QUEM COMEÇA
+   ============================================================ */
+.overlay-sorteio-roleta {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+  z-index: 130;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.sorteio-roleta-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(176deg, #2a070e 0%, #150205 100%);
+  border: 4px solid #0b0b0b;
+  border-radius: 22px;
+  box-shadow: 8px 8px 0px #0b0b0b, 0 20px 48px rgba(0, 0, 0, 0.95);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.sorteio-fase-tag {
+  background: #ffda00;
+  color: #150205;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 12px;
+  border-radius: 6px;
+  border: 2px solid #0b0b0b;
+  letter-spacing: 0.5px;
+}
+
+.sorteio-titulo-chamada {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(18px, 4.5vw, 22px);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.sorteio-contador-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.sorteio-numero-zoom {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(56px, 16vw, 76px);
+  font-weight: 900;
+  color: #ffda00;
+  text-shadow: 4px 4px 0px #0b0b0b;
+}
+
+.sorteio-numero-zoom.zoom-pulsante {
+  animation: zoomPulsanteNum 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zoomPulsanteNum {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.sorteio-subtexto-contagem {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fca5a5;
+}
+
+.sorteio-roleta-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.roleta-destaque-moldura {
+  background: #170407;
+  border: 3px solid #ffda00;
+  border-radius: 18px;
+  box-shadow: 0 0 20px rgba(255, 218, 0, 0.4), 4px 4px 0px #0b0b0b;
+  padding: 14px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.roleta-avatar-circulo {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 3px solid #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.roleta-nome-destaque {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.roleta-status-texto {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fca5a5;
+}
+
+.sorteio-vencedor-anuncio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  animation: vencedorPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vencedorPopIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.vencedor-tag-coroa {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: #ffda00;
+  letter-spacing: 0.5px;
+}
+
+.vencedor-nome-box {
+  background: #2b0b14;
+  border: 3px solid #ffda00;
+  border-radius: 14px;
+  box-shadow: 0 0 20px rgba(255, 218, 0, 0.5), 4px 4px 0px #0b0b0b;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vencedor-emoji-icone {
+  font-size: 26px;
+}
+
+.vencedor-sorteado-nome {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.vencedor-sorteado-desc {
+  font-size: 12px;
+  color: #fca5a5;
+}
+
 
 

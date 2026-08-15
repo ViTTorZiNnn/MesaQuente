@@ -62,8 +62,8 @@ document.addEventListener("webkitfullscreenchange", atualizarIconeFullscreen);
 // Estado local de seleção
 let avatarHostSelecionado = AVATARES_PREDEFINIDOS[0];
 let avatarEntrarSelecionado = AVATARES_PREDEFINIDOS[0];
-let modoJogoSelecionado = "niveis_intimidade";
-let baralhosPersonalizadosAtivos = ["niveis_intimidade", "roleta_consequencias", "eu_nunca_safico", "quem_e_mais_provavel", "preencha_a_lacuna"];
+let cadeadoDesbloqueado = false; // Modo Personalizado (Cadeado 🔒/🔓)
+let minigamesSelecionados = ["quem_e_mais_provavel"];
 let totalRodadasSelecionado = 20;
 
 const painelBaralhosPersonalizados = document.getElementById("painel-baralhos-personalizados");
@@ -71,6 +71,12 @@ const listaCheckboxesBaralhosIndex = document.getElementById("lista-checkboxes-b
 const seletorRodadasHost = document.getElementById("seletor-rodadas-host");
 const campoRodadasCustom = document.getElementById("campo-rodadas-custom");
 const inputRodadasCustom = document.getElementById("input-rodadas-custom");
+const btnCadeadoPersonalizado = document.getElementById("btn-cadeado-modo-personalizado");
+const iconeCadeado = document.getElementById("icone-cadeado");
+const textoStatusCadeado = document.getElementById("texto-status-cadeado");
+const badgeCadeadoDica = document.getElementById("badge-cadeado-dica");
+const descCadeadoInfo = document.getElementById("desc-cadeado-info");
+const subtextoInfoModo = document.getElementById("subtexto-info-modo");
 
 // Recupera avatar salvo anteriormente se existir
 const avatarSalvoId = localStorage.getItem("mesaQuente_avatarId");
@@ -229,50 +235,184 @@ function inicializarGalerias() {
 }
 
 /**
- * Configura os cliques e seleção de todos os 18 Minigames & Modos de Jogo
+ * Configura os cliques e seleção de Múltiplos Minigames e Modo Personalizado (Cadeado 🔒/🔓)
  */
-function inicializarSeletorModos() {
-  const radioItens = document.querySelectorAll(".item-minigame-radio, .card-modo-opcao");
+function atualizarVisualMinigames() {
+  const itens = document.querySelectorAll(".item-minigame-radio");
+  const blocosCategorias = document.querySelectorAll(".categoria-bloco-jogos");
 
-  radioItens.forEach((item) => {
-    const radioInput = item.querySelector(".minigame-radio-input");
+  // Identifica qual categoria tem minigame selecionado atualmente
+  let categoriaAtiva = null;
+  if (!cadeadoDesbloqueado && minigamesSelecionados.length > 0) {
+    const primeiroModo = minigamesSelecionados[0];
+    const itemPrimeiro = document.querySelector(`.item-minigame-radio[data-modo="${primeiroModo}"]`);
+    if (itemPrimeiro) {
+      categoriaAtiva = itemPrimeiro.getAttribute("data-cat");
+    }
+  }
 
-    item.addEventListener("click", (e) => {
-      if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  itens.forEach((item) => {
+    const modoId = item.getAttribute("data-modo");
+    const cat = item.getAttribute("data-cat");
+    const input = item.querySelector(".minigame-checkbox-input");
+    const isMarcado = minigamesSelecionados.includes(modoId);
 
-      radioItens.forEach((el) => {
-        el.classList.remove("selecionado");
-        const r = el.querySelector(".minigame-radio-input");
-        if (r) r.checked = false;
-      });
-
+    if (isMarcado) {
       item.classList.add("selecionado");
-      if (radioInput) radioInput.checked = true;
+      if (input) input.checked = true;
+    } else {
+      item.classList.remove("selecionado");
+      if (input) input.checked = false;
+    }
 
-      modoJogoSelecionado = item.getAttribute("data-modo") || (radioInput ? radioInput.value : "quem_e_mais_provavel");
+    // Aplica bloqueio visual se o cadeado estiver trancado e pertencer a outra categoria
+    if (!cadeadoDesbloqueado && categoriaAtiva && cat !== categoriaAtiva) {
+      item.classList.add("item-categoria-bloqueada");
+    } else {
+      item.classList.remove("item-categoria-bloqueada");
+    }
+  });
 
-      if (modoJogoSelecionado === "personalizado") {
-        if (painelBaralhosPersonalizados) {
-          painelBaralhosPersonalizados.classList.remove("bloco-oculto");
-          renderizarBaralhosPersonalizados();
+  // Atualiza blocos de categoria
+  blocosCategorias.forEach((bloco) => {
+    const cat = bloco.getAttribute("data-cat");
+    if (!cadeadoDesbloqueado && categoriaAtiva && cat !== categoriaAtiva) {
+      bloco.classList.add("bloco-categoria-inativa");
+    } else {
+      bloco.classList.remove("bloco-categoria-inativa");
+    }
+  });
+
+  // Atualiza o Botão do Cadeado
+  if (btnCadeadoPersonalizado) {
+    if (cadeadoDesbloqueado) {
+      btnCadeadoPersonalizado.className = "btn-cadeado-personalizado desbloqueado";
+      if (iconeCadeado) iconeCadeado.textContent = "🔓";
+      if (textoStatusCadeado) {
+        textoStatusCadeado.textContent = "DESBLOQUEADO";
+        textoStatusCadeado.className = "cadeado-status-tag status-aberto";
+      }
+      if (badgeCadeadoDica) {
+        badgeCadeadoDica.textContent = "Mix Livre Ativo";
+        badgeCadeadoDica.className = "badge-cadeado-dica dica-aberta";
+      }
+      if (descCadeadoInfo) {
+        descCadeadoInfo.innerHTML = "Liberdade total! Você pode marcar <strong>quantos minigames quiser</strong> de qualquer categoria.";
+      }
+    } else {
+      btnCadeadoPersonalizado.className = "btn-cadeado-personalizado bloqueado";
+      if (iconeCadeado) iconeCadeado.textContent = "🔒";
+      if (textoStatusCadeado) {
+        textoStatusCadeado.textContent = "BLOQUEADO";
+        textoStatusCadeado.className = "cadeado-status-tag status-trancado";
+      }
+      if (badgeCadeadoDica) {
+        badgeCadeadoDica.textContent = "Categoria Única";
+        badgeCadeadoDica.className = "badge-cadeado-dica";
+      }
+      if (descCadeadoInfo) {
+        descCadeadoInfo.innerHTML = "Clique para <strong>desbloquear</strong> e ter liberdade total para misturar minigames de qualquer categoria!";
+      }
+    }
+  }
+
+  if (subtextoInfoModo) {
+    if (cadeadoDesbloqueado) {
+      subtextoInfoModo.textContent = `🔓 Modo Personalizado: ${minigamesSelecionados.length} minigame(s) misturados livremente`;
+    } else {
+      subtextoInfoModo.textContent = `🔒 Categoria Fixa: ${minigamesSelecionados.length} minigame(s) da mesma categoria selecionado(s)`;
+    }
+  }
+}
+
+function tratarCliqueMinigame(modoId, cat) {
+  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+
+  if (!cadeadoDesbloqueado) {
+    // Regra Padrão (Cadeado Bloqueado): Exclusividade de Categoria
+    const primeiroModo = minigamesSelecionados[0];
+    const itemPrimeiro = document.querySelector(`.item-minigame-radio[data-modo="${primeiroModo}"]`);
+    const catAtual = itemPrimeiro ? itemPrimeiro.getAttribute("data-cat") : null;
+
+    if (catAtual && catAtual !== cat) {
+      // Clicou em outra categoria enquanto bloqueado: desmarca a anterior e seleciona o novo
+      minigamesSelecionados = [modoId];
+    } else {
+      // Mesma categoria: permite marcar/desmarcar múltiplos
+      if (minigamesSelecionados.includes(modoId)) {
+        if (minigamesSelecionados.length > 1) {
+          minigamesSelecionados = minigamesSelecionados.filter((id) => id !== modoId);
         }
       } else {
-        if (painelBaralhosPersonalizados) {
-          painelBaralhosPersonalizados.classList.add("bloco-oculto");
-        }
+        minigamesSelecionados.push(modoId);
       }
+    }
+  } else {
+    // Modo Personalizado (Cadeado Desbloqueado): Livre seleção entre quaisquer categorias
+    if (minigamesSelecionados.includes(modoId)) {
+      if (minigamesSelecionados.length > 1) {
+        minigamesSelecionados = minigamesSelecionados.filter((id) => id !== modoId);
+      }
+    } else {
+      minigamesSelecionados.push(modoId);
+    }
+  }
+
+  atualizarVisualMinigames();
+}
+
+function alternarCadeadoPersonalizado() {
+  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  cadeadoDesbloqueado = !cadeadoDesbloqueado;
+
+  // Se bloqueou o cadeado e havia minigames de categorias misturadas, mantém apenas os da 1ª categoria
+  if (!cadeadoDesbloqueado && minigamesSelecionados.length > 0) {
+    const primeiroModo = minigamesSelecionados[0];
+    const itemPrimeiro = document.querySelector(`.item-minigame-radio[data-modo="${primeiroModo}"]`);
+    const catPrimeiro = itemPrimeiro ? itemPrimeiro.getAttribute("data-cat") : null;
+
+    if (catPrimeiro) {
+      minigamesSelecionados = minigamesSelecionados.filter((id) => {
+        const el = document.querySelector(`.item-minigame-radio[data-modo="${id}"]`);
+        return el && el.getAttribute("data-cat") === catPrimeiro;
+      });
+    }
+  }
+
+  if (minigamesSelecionados.length === 0) {
+    minigamesSelecionados = ["quem_e_mais_provavel"];
+  }
+
+  atualizarVisualMinigames();
+}
+
+function inicializarSeletorModos() {
+  const itens = document.querySelectorAll(".item-minigame-radio");
+
+  itens.forEach((item) => {
+    const input = item.querySelector(".minigame-checkbox-input");
+    const modoId = item.getAttribute("data-modo");
+    const cat = item.getAttribute("data-cat");
+
+    item.addEventListener("click", (e) => {
+      if (e.target.tagName && e.target.tagName.toLowerCase() === "input") return;
+      e.preventDefault();
+      tratarCliqueMinigame(modoId, cat);
     });
 
-    if (radioInput) {
-      radioInput.addEventListener("change", () => {
-        if (radioInput.checked) {
-          radioItens.forEach((el) => el.classList.remove("selecionado"));
-          item.classList.add("selecionado");
-          modoJogoSelecionado = radioInput.value;
-        }
+    if (input) {
+      input.addEventListener("change", (e) => {
+        e.stopPropagation();
+        tratarCliqueMinigame(modoId, cat);
       });
     }
   });
+
+  if (btnCadeadoPersonalizado) {
+    btnCadeadoPersonalizado.addEventListener("click", alternarCadeadoPersonalizado);
+  }
+
+  atualizarVisualMinigames();
 }
 
 function alternarModo(modo) {
@@ -284,8 +424,8 @@ function alternarModo(modo) {
   if (modo === "criar") {
     formCriarSala.classList.remove("bloco-oculto");
     inicializarGalerias();
+    inicializarSeletorModos();
     inicializarSeletorRodadas();
-    renderizarBaralhosPersonalizados();
     inputNomeHost.focus();
   } else if (modo === "entrar") {
     formEntrarSala.classList.remove("bloco-oculto");
@@ -345,8 +485,8 @@ btnConfirmarCriar.addEventListener("click", async () => {
     return;
   }
 
-  if (modoJogoSelecionado === "personalizado" && baralhosPersonalizadosAtivos.length === 0) {
-    mostrarErro("Selecione ao menos 1 minigame no modo Personalizado.");
+  if (!minigamesSelecionados || minigamesSelecionados.length === 0) {
+    mostrarErro("Selecione ao menos 1 minigame para jogar.");
     return;
   }
 
@@ -358,14 +498,28 @@ btnConfirmarCriar.addEventListener("click", async () => {
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
   try {
+    let baralhosConsolidados = [];
+    minigamesSelecionados.forEach((id) => {
+      const modo = typeof MODOS_DE_JOGO !== "undefined" ? MODOS_DE_JOGO[id] : null;
+      if (modo && Array.isArray(modo.baralhos)) {
+        modo.baralhos.forEach((b) => {
+          if (!baralhosConsolidados.includes(b)) baralhosConsolidados.push(b);
+        });
+      }
+    });
+
+    if (baralhosConsolidados.length === 0) {
+      baralhosConsolidados = ["quebra_gelo", "niveis_intimidade"];
+    }
+
     const configExtra = {
-      baralhosAtivos: modoJogoSelecionado === "personalizado"
-        ? baralhosPersonalizadosAtivos
-        : (MODOS_DE_JOGO[modoJogoSelecionado]?.baralhos || ["niveis_intimidade"]),
+      minigames: minigamesSelecionados,
+      modoMix: cadeadoDesbloqueado,
+      baralhosAtivos: baralhosConsolidados,
       totalCartas: totalRodadasSelecionado || 20
     };
 
-    const codigo = await criarSala(nome, avatarHostSelecionado, modoJogoSelecionado, configExtra);
+    const codigo = await criarSala(nome, avatarHostSelecionado, minigamesSelecionados, configExtra);
     localStorage.setItem("mesaQuente_codigoSalaAtual", codigo);
 
     // 1. Esconde o modal de criação
