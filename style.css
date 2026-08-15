@@ -3167,8 +3167,49 @@ body.tela-inicio {
   color: var(--text-muted);
 }
 
+/* ============================================================
+   CANVAS DE FUNDO: BRASAS & PARTÍCULAS ANIMADAS
+   ============================================================ */
+#canvas-brasas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1 !important;
+  pointer-events: none;
+}
+
 .bloco-oculto {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -999 !important;
+}
+
+/* Garante que o Painel do Lobby / Sala de Espera fique sempre acima de qualquer cenário */
+#painel-lobby,
+#sala-de-espera,
+.painel-lobby-25d {
+  position: relative;
+  z-index: 100 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Garante que a Mesa / Gameplay venha OCULTA por padrão com display: none */
+#painel-mesa-jogo,
+#tela-gameplay,
+.painel-mesa-jogo-v3 {
+  display: none;
+  z-index: 10;
+}
+
+#painel-mesa-jogo:not(.bloco-oculto),
+#tela-gameplay:not(.bloco-oculto),
+.painel-mesa-jogo-v3:not(.bloco-oculto) {
+  display: flex;
 }
 
 /* ============================================================

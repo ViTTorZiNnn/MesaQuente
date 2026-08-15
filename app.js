@@ -367,6 +367,31 @@ btnConfirmarCriar.addEventListener("click", async () => {
 
     const codigo = await criarSala(nome, avatarHostSelecionado, modoJogoSelecionado, configExtra);
     localStorage.setItem("mesaQuente_codigoSalaAtual", codigo);
+
+    // 1. Esconde o modal de criação
+    if (formCriarSala) {
+      formCriarSala.style.display = "none";
+      formCriarSala.classList.add("bloco-oculto");
+    }
+
+    // 2. Remove qualquer tela ou overlay de loading
+    const loadings = document.querySelectorAll(".overlay-loading, .spinner-loading, #overlay-loading");
+    loadings.forEach((el) => {
+      el.style.display = "none";
+      el.classList.add("bloco-oculto");
+    });
+
+    // 3. Mostra a Sala de Espera / Redireciona para o Lobby da Sala
+    const elSalaEspera = document.getElementById("sala-de-espera") || document.getElementById("painel-lobby");
+    if (elSalaEspera) {
+      elSalaEspera.style.display = "flex";
+      elSalaEspera.classList.remove("bloco-oculto");
+      
+      const elCodigo = document.getElementById("texto-codigo-sala") || document.getElementById("codigo-sala");
+      if (elCodigo) elCodigo.textContent = codigo;
+    }
+
+    // Redireciona para a página do lobby caso não seja uma SPA de tela única
     window.location.href = "lobby.html?sala=" + encodeURIComponent(codigo);
   } catch (erro) {
     console.error(erro);

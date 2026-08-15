@@ -10,10 +10,48 @@ if (!codigoSala) {
   window.location.href = "index.html";
 }
 
+// Inicialização e remoção imediata da classe bloco-oculto do Lobby
+function inicializarVisualLobby() {
+  const elLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
+  const elMesa = document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
+  const elConfig = document.getElementById("painel-configuracao");
+  const elFim = document.getElementById("painel-fim-partida");
+
+  if (elLobby) {
+    elLobby.classList.remove("bloco-oculto");
+    elLobby.style.display = "flex";
+  }
+
+  if (elMesa) {
+    elMesa.classList.add("bloco-oculto");
+    elMesa.style.display = "none";
+  }
+
+  if (elConfig) {
+    elConfig.classList.add("bloco-oculto");
+    elConfig.style.display = "none";
+  }
+
+  if (elFim) {
+    elFim.classList.add("bloco-oculto");
+    elFim.style.display = "none";
+  }
+
+  const elAppLayout = document.querySelector(".app-layout") || document.querySelector(".gameplay-viewport-container");
+  if (elAppLayout) {
+    elAppLayout.classList.remove("bloco-oculto");
+  }
+}
+
+// Execução imediata e no carregamento completo do DOM
+inicializarVisualLobby();
+document.addEventListener("DOMContentLoaded", inicializarVisualLobby);
+window.addEventListener("load", inicializarVisualLobby);
+
 // Elementos da UI — Painéis
-const painelLobby = document.getElementById("painel-lobby");
+const painelLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
 const painelConfiguracao = document.getElementById("painel-configuracao");
-const painelMesaJogo = document.getElementById("painel-mesa-jogo");
+const painelMesaJogo = document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
 const painelFimPartida = document.getElementById("painel-fim-partida");
 
 // Elementos — Topo & Navegação
@@ -252,13 +290,33 @@ let configLocal = {
 
 // Alternância de Telas
 function mostrarApenasPainel(painelAtivo) {
-  [painelLobby, painelConfiguracao, painelMesaJogo, painelFimPartida].forEach((p) => {
-    if (p) p.classList.add("bloco-oculto");
+  const paineis = [
+    painelLobby, 
+    painelConfiguracao, 
+    painelMesaJogo, 
+    painelFimPartida,
+    document.getElementById("painel-lobby"),
+    document.getElementById("sala-de-espera"),
+    document.getElementById("painel-mesa-jogo"),
+    document.getElementById("tela-gameplay")
+  ].filter(Boolean);
+
+  const paineisUnicos = [...new Set(paineis)];
+
+  paineisUnicos.forEach((p) => {
+    p.classList.add("bloco-oculto");
+    p.style.display = "none";
   });
-  if (painelAtivo) {
-    painelAtivo.classList.remove("bloco-oculto");
+
+  const ativo = painelAtivo || painelLobby || document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
+  if (ativo) {
+    ativo.classList.remove("bloco-oculto");
+    ativo.style.display = (ativo.id === "painel-mesa-jogo" || ativo.id === "tela-gameplay") ? "block" : "flex";
   }
 }
+
+// Exibe a Sala de Espera / Lobby imediatamente ao carregar
+mostrarApenasPainel(painelLobby);
 
 // Sair da Sala
 async function executarSaidaSala() {
