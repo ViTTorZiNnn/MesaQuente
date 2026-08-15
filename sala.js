@@ -1,5 +1,5 @@
 // ============================================================
-// SALA.JS — Lógica Compartilhada, Firebase & Motor de Gameplay (Etapa 1 & 3)
+// SALA.JS — Lógica Compartilhada, Firebase & Motor de Gameplay
 // ============================================================
 
 // Catálogo de Avatares Pré-definidos (Cores Vibrantes de Alto Contraste)
@@ -16,43 +16,140 @@ const AVATARES_PREDEFINIDOS = [
   { id: "robot", emoji: "🤖", nome: "Robô", cor: "#00b4d8", corBorda: "#90e0ef" }
 ];
 
-// Catálogo de Modos de Jogo
+// Catálogo Completo de Modos de Jogo / Minigames
 const MODOS_DE_JOGO = {
-  quebra_gelo: {
-    id: "quebra_gelo",
-    nome: "Quebra-Gelo",
-    icone: "🧊",
-    descricao: "Perguntas leves e curiosas para esquentar a conversa e soltar a galera.",
-    baralhos: ["quebra_gelo"],
-    cor: "#00b4d8",
-    corGlow: "rgba(0, 180, 216, 0.45)"
+  // --- GRUPO 1: DINÂMICAS PARA CASAIS / 1x1 ---
+  niveis_intimidade: {
+    id: "niveis_intimidade",
+    nome: "Níveis de Intimidade",
+    icone: "💜",
+    categoria: "casal",
+    categoriaNome: "Dinâmicas para Casais (1x1)",
+    descricao: "Vulnerabilidade e flerte em 3 níveis (Percepção, Conexão e +18 Íntimo).",
+    baralhos: ["niveis_intimidade"],
+    cor: "#b5179e",
+    corGlow: "rgba(181, 23, 158, 0.45)",
+    regras: [
+      "Uma troca profunda de perguntas focada em vulnerabilidade, conexão e flerte.",
+      "Dividido em 3 níveis: Nível 1 (Percepção), Nível 2 (Conexão) e Nível 3 (+18 Íntimo).",
+      "Puxem a carta na mesa e respondam com total sinceridade no áudio ou olhando nos olhos!"
+    ]
+  },
+  roleta_consequencias: {
+    id: "roleta_consequencias",
+    nome: "Roleta de Consequências",
+    icone: "🎭",
+    categoria: "casal",
+    categoriaNome: "Dinâmicas para Casais (1x1)",
+    descricao: "Verdade ou Desafio Hot adaptado para celular, fotos e câmera.",
+    baralhos: ["roleta_consequencias"],
+    cor: "#e63946",
+    corGlow: "rgba(230, 57, 70, 0.45)",
+    regras: [
+      "O jogador da vez escolhe entre 'Verdade 🗣️' ou 'Desafio ⚡'.",
+      "Se escolher Verdade: responda uma pergunta indiscreta e sem filtro sobre seu passado ou desejos.",
+      "Se escolher Desafio: cumpra a prova online ao vivo (fotos da lixeira, histórico de buscas, áudios).",
+      "Se recusar a cumprir, sofra o castigo decretado pela mesa!"
+    ]
+  },
+
+  // --- GRUPO 2: DINÂMICAS PARA GRUPOS DE AMIGAS (FOCO SÁFICO) ---
+  eu_nunca_safico: {
+    id: "eu_nunca_safico",
+    nome: "Eu Nunca: Vale Tudo",
+    icone: "🍷",
+    categoria: "amigas",
+    categoriaNome: "Dinâmicas para Amigas (Sáfico)",
+    descricao: "O clássico Eu Nunca com esteriótipos da comunidade e confissões ao vivo.",
+    baralhos: ["eu_nunca_safico"],
+    cor: "#7209b7",
+    corGlow: "rgba(114, 9, 183, 0.45)",
+    regras: [
+      "A afirmação aparece na tela para todas as jogadoras da sala.",
+      "Cada participante clica em 'Já Fiz 🍷' ou 'Sou Inocente 😇'.",
+      "O sistema revela as porcentagens e votos de todas em tempo real.",
+      "Quem clicou em 'Já Fiz' toma um gole de bebida ou conta a história no áudio!"
+    ]
+  },
+  quem_e_mais_provavel: {
+    id: "quem_e_mais_provavel",
+    nome: "Quem é Mais Provável?",
+    icone: "🎯",
+    categoria: "amigas",
+    categoriaNome: "Dinâmicas para Amigas (Sáfico)",
+    descricao: "Coloque as amigas na fogueira apontando a pessoa mais provável da situação.",
+    baralhos: ["quem_e_mais_provavel"],
+    cor: "#ff5400",
+    corGlow: "rgba(255, 84, 0, 0.45)",
+    regras: [
+      "A carta lança uma situação extrema, hilária ou picante.",
+      "Todas as jogadoras votam anonimamente no avatar de quem mais se encaixa na situação.",
+      "O sistema acende o holofote na pessoa mais votada, que sofre a penalidade ou explica a fama!"
+    ]
+  },
+  preencha_a_lacuna: {
+    id: "preencha_a_lacuna",
+    nome: "Preencha a Lacuna",
+    icone: "🃏",
+    categoria: "amigas",
+    categoriaNome: "Dinâmicas para Amigas (Sáfico)",
+    descricao: "Cards Against Humanity com referências sáficas, ácidas e +18.",
+    baralhos: ["preencha_a_lacuna"],
+    cor: "#4361ee",
+    corGlow: "rgba(67, 97, 238, 0.45)",
+    regras: [
+      "Uma Carta Preta traz uma lacuna para completar (________).",
+      "Cada jogadora escolhe uma resposta branca bizarra, ácida ou romântica da mão.",
+      "A Juíza da rodada lê as respostas anônimas e elege a vencedora da rodada!"
+    ]
+  },
+
+  // --- GRUPO 3: MODOS ESPECIAIS & MIX ---
+  personalizado: {
+    id: "personalizado",
+    nome: "Personalizado (Mix de Minigames)",
+    icone: "🛠️",
+    categoria: "especial",
+    categoriaNome: "Modos Especiais & Mix",
+    descricao: "Cada rodada é um minigame diferente! Escolha quais entram na mistura.",
+    baralhos: ["niveis_intimidade", "roleta_consequencias", "eu_nunca_safico", "quem_e_mais_provavel", "preencha_a_lacuna"],
+    cor: "#ffb703",
+    corGlow: "rgba(255, 183, 3, 0.45)",
+    regras: [
+      "Cada rodada da partida sorteia um minigame específico entre os baralhos ativos.",
+      "A mecânica se adapta instantaneamente à carta sorteada (Verdade ou Desafio, Eu Nunca, etc.).",
+      "Muita variedade, surpresas e dinamismo para a mesa!"
+    ]
   },
   fogo_no_parquinho: {
     id: "fogo_no_parquinho",
     nome: "Fogo no Parquinho",
     icone: "🔥",
+    categoria: "especial",
+    categoriaNome: "Modos Especiais & Mix",
     descricao: "Desafios, intrigas, votos polêmicos e verdades sem filtro.",
-    baralhos: ["fogo_no_parquinho", "confissoes_segredos"],
+    baralhos: ["fogo_no_parquinho", "roleta_consequencias"],
     cor: "#ff4d2e",
-    corGlow: "rgba(255, 77, 46, 0.45)"
+    corGlow: "rgba(255, 77, 46, 0.45)",
+    regras: [
+      "Votos diretos, dilemas impossíveis e verdades provocativas sem filtro.",
+      "Estejam preparadas para defender suas opiniões na roda!"
+    ]
   },
-  caos_total: {
-    id: "caos_total",
-    nome: "Caos Total",
-    icone: "⚡",
-    descricao: "Todas as cartas e baralhos misturados na mesa sem limites!",
-    baralhos: ["quebra_gelo", "confissoes_segredos", "fogo_no_parquinho", "desafio_na_mesa", "dilemas_impossiveis"],
-    cor: "#9d4edd",
-    corGlow: "rgba(157, 78, 221, 0.45)"
-  },
-  personalizado: {
-    id: "personalizado",
-    nome: "Personalizado",
-    icone: "🛠️",
-    descricao: "Escolha e combine os baralhos que você quiser para a mesa.",
-    baralhos: ["quebra_gelo", "fogo_no_parquinho"],
-    cor: "#ffb703",
-    corGlow: "rgba(255, 183, 3, 0.45)"
+  quebra_gelo: {
+    id: "quebra_gelo",
+    nome: "Quebra-Gelo Clássico",
+    icone: "🧊",
+    categoria: "especial",
+    categoriaNome: "Modos Especiais & Mix",
+    descricao: "Perguntas leves e curiosas para esquentar a conversa e soltar a galera.",
+    baralhos: ["quebra_gelo"],
+    cor: "#00b4d8",
+    corGlow: "rgba(0, 180, 216, 0.45)",
+    regras: [
+      "Perguntas casuais, leves e divertidas para quebrar o gelo.",
+      "Respondam sem pressão e descubram curiosidades uns sobre os outros."
+    ]
   }
 };
 
@@ -84,7 +181,7 @@ function obterAvatarJogador(jogador) {
   };
 }
 
-// Inicializa o Firebase (config vem de firebase-config.js)
+// Inicializa o Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -95,16 +192,10 @@ offsetRef.on("value", (snap) => {
   serverTimeOffset = snap.val() || 0;
 });
 
-/**
- * Retorna o timestamp estimado do servidor sincronizado.
- */
 function obterTimestampServidor() {
   return Date.now() + serverTimeOffset;
 }
 
-/**
- * Gera um código de sala curto (4 caracteres), sem caracteres ambíguos.
- */
 function gerarCodigoSala() {
   const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let codigo = "";
@@ -114,9 +205,6 @@ function gerarCodigoSala() {
   return codigo;
 }
 
-/**
- * Gera ou recupera o ID único de jogador para este navegador.
- */
 function obterIdJogador() {
   let id = localStorage.getItem("mesaQuente_idJogador");
   if (!id) {
@@ -127,9 +215,9 @@ function obterIdJogador() {
 }
 
 /**
- * Cria uma sala nova no banco com suporte a modo de jogo, baralhos customizados e avatar.
+ * Cria uma sala nova no banco com suporte a minigames, regras e avatares.
  */
-async function criarSala(nomeHost, avatarHost, modoJogoKey = "fogo_no_parquinho", configExtra = {}) {
+async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade", configExtra = {}) {
   let codigo;
   let tentativas = 0;
 
@@ -141,7 +229,7 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "fogo_no_parquinho"
   } while (tentativas < 10);
 
   const idJogador = obterIdJogador();
-  const modoInfo = MODOS_DE_JOGO[modoJogoKey] || MODOS_DE_JOGO.fogo_no_parquinho;
+  const modoInfo = MODOS_DE_JOGO[modoJogoKey] || MODOS_DE_JOGO.niveis_intimidade;
   const avatarValido = avatarHost || AVATARES_PREDEFINIDOS[0];
 
   const baralhosAtivos = (configExtra.baralhosAtivos && configExtra.baralhosAtivos.length > 0)
@@ -159,7 +247,10 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "fogo_no_parquinho"
       id: modoInfo.id,
       nome: modoInfo.nome,
       icone: modoInfo.icone,
-      descricao: modoInfo.descricao
+      categoria: modoInfo.categoria || "casal",
+      categoriaNome: modoInfo.categoriaNome || "Modo de Jogo",
+      descricao: modoInfo.descricao,
+      regras: modoInfo.regras || []
     },
     configLobby: {
       baralhosAtivos: baralhosAtivos,
@@ -222,17 +313,11 @@ async function entrarNaSala(codigo, nome, avatarEscolhido) {
   return codigo;
 }
 
-/**
- * Marca desconexão automática se fechar o navegador.
- */
 function configurarDesconexao(codigo, idJogador) {
   const refConectado = db.ref("salas/" + codigo + "/jogadores/" + idJogador + "/conectado");
   refConectado.onDisconnect().set(false);
 }
 
-/**
- * Remove ou desativa o jogador ao clicar explicitamente em Sair.
- */
 async function sairDaSala(codigo) {
   const idJogador = obterIdJogador();
   try {
@@ -242,18 +327,11 @@ async function sairDaSala(codigo) {
   }
 }
 
-/**
- * Verifica se o host atual se desconectou e, caso sim, migra a liderança para o jogador conectado mais antigo.
- */
 async function migrarHostSeNecessario(codigo, jogadores, hostIdAtual) {
   if (!jogadores || typeof jogadores !== "object") return;
-
   const hostExisteEConectado = jogadores[hostIdAtual] && jogadores[hostIdAtual].conectado !== false;
-
-  // Se o host atual continua ativo, nada a fazer
   if (hostExisteEConectado) return;
 
-  // Encontra os jogadores conectados e ordena pelo timestamp de entrada (mais antigo primeiro)
   const conectados = Object.keys(jogadores)
     .filter((id) => jogadores[id] && jogadores[id].conectado !== false && jogadores[id].nome)
     .sort((a, b) => (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0));
@@ -263,9 +341,7 @@ async function migrarHostSeNecessario(codigo, jogadores, hostIdAtual) {
   const novoHostId = conectados[0];
   const meuId = obterIdJogador();
 
-  // Apenas o novo host candidato dispara a escrita para evitar corrida no Firebase
   if (novoHostId === meuId && novoHostId !== hostIdAtual) {
-    console.log(`[Host Migration] Promovendo ${meuId} a novo Host da sala ${codigo}`);
     try {
       await db.ref("salas/" + codigo + "/hostId").set(novoHostId);
     } catch (e) {
@@ -274,9 +350,7 @@ async function migrarHostSeNecessario(codigo, jogadores, hostIdAtual) {
   }
 }
 
-/**
- * Escutas em Tempo Real
- */
+// Escutas em Tempo Real
 function escutarJogadores(codigo, callback) {
   db.ref("salas/" + codigo + "/jogadores").on("value", (snapshot) => {
     callback(snapshot.val() || {});
@@ -315,12 +389,18 @@ function escutarConfigLobby(codigo, callback) {
 
 function escutarModoJogo(codigo, callback) {
   db.ref("salas/" + codigo + "/modoJogo").on("value", (snapshot) => {
-    callback(snapshot.val() || "fogo_no_parquinho");
+    callback(snapshot.val() || "niveis_intimidade");
   });
 }
 
 function escutarModoInfo(codigo, callback) {
   db.ref("salas/" + codigo + "/modoInfo").on("value", (snapshot) => {
+    callback(snapshot.val() || null);
+  });
+}
+
+function escutarTutorialRegras(codigo, callback) {
+  db.ref("salas/" + codigo + "/tutorial").on("value", (snapshot) => {
     callback(snapshot.val() || null);
   });
 }
@@ -334,37 +414,35 @@ function escutarTransicaoInicio(codigo, callback) {
 async function salvarConfigLobby(codigo, config) {
   const updates = {
     ["salas/" + codigo + "/configLobby"]: {
-      baralhosAtivos: config.baralhosAtivos || ["quebra_gelo"],
+      baralhosAtivos: config.baralhosAtivos || ["niveis_intimidade"],
       totalCartas: Number(config.totalCartas) || 20
     }
   };
 
   if (config.modoJogo) {
-    const modoInfo = MODOS_DE_JOGO[config.modoJogo] || MODOS_DE_JOGO.fogo_no_parquinho;
+    const modoInfo = MODOS_DE_JOGO[config.modoJogo] || MODOS_DE_JOGO.niveis_intimidade;
     updates["salas/" + codigo + "/modoJogo"] = modoInfo.id;
     updates["salas/" + codigo + "/modoInfo"] = {
       id: modoInfo.id,
       nome: modoInfo.nome,
       icone: modoInfo.icone,
-      descricao: modoInfo.descricao
+      categoria: modoInfo.categoria || "casal",
+      categoriaNome: modoInfo.categoriaNome || "Modo de Jogo",
+      descricao: modoInfo.descricao,
+      regras: modoInfo.regras || []
     };
   }
 
   await db.ref().update(updates);
 }
 
-async function obterHostId(codigo) {
-  const snapshot = await db.ref("salas/" + codigo + "/hostId").get();
-  return snapshot.val();
-}
-
 /**
- * Sorteia uma nova carta do pool ativo com mecânicas, durações e opções
+ * Sorteia uma nova carta do pool ativo com mecânicas específicas
  */
-function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadoresConectados, sacolaLeitoresAtual, sacolaAlvosAtual) {
+function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadoresConectados, sacolaLeitoresAtual, sacolaAlvosAtual, rodadaAtual = 1) {
   const idsValidos = (baralhosAtivosIds && baralhosAtivosIds.length > 0)
     ? baralhosAtivosIds
-    : ["quebra_gelo"];
+    : ["niveis_intimidade"];
 
   let baralhosCandidatos = idsValidos;
   if (idsValidos.length > 1 && ultimoBaralhoId) {
@@ -376,7 +454,27 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
 
   const deckIdSorteado = baralhosCandidatos[Math.floor(Math.random() * baralhosCandidatos.length)];
   const baralhoObj = obterBaralhoPorId(deckIdSorteado) || BARALHOS_DISPONIVEIS[0];
-  const cartaSorteada = baralhoObj.cartas[Math.floor(Math.random() * baralhoObj.cartas.length)];
+  
+  let poolCartas = baralhoObj.cartas || [];
+
+  // Se for Níveis de Intimidade, ajusta a progressão conforme a rodada
+  if (deckIdSorteado === "niveis_intimidade") {
+    if (rodadaAtual <= 3) {
+      // Rodadas iniciais: Nível 1 Percepção
+      const n1 = poolCartas.filter((c) => c.nivel === 1);
+      if (n1.length > 0) poolCartas = n1;
+    } else if (rodadaAtual <= 8) {
+      // Rodadas médias: Nível 2 Conexão
+      const n2 = poolCartas.filter((c) => c.nivel === 2);
+      if (n2.length > 0) poolCartas = n2;
+    } else {
+      // Rodadas avançadas: Nível 3 +18 Íntimo
+      const n3 = poolCartas.filter((c) => c.nivel === 3);
+      if (n3.length > 0) poolCartas = n3;
+    }
+  }
+
+  const cartaSorteada = poolCartas[Math.floor(Math.random() * poolCartas.length)];
 
   // Lista de jogadores conectados
   const idsJogadores = Object.keys(jogadoresConectados).filter(
@@ -388,7 +486,7 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
   const { itemPuxado: leitorId, novaSacola: novaSacolaLeitores } = puxarDaSacola(sacolaLeitoresAtual, listaBaseJogadores);
   const leitorNome = (jogadoresConectados[leitorId] && jogadoresConectados[leitorId].nome) || "Jogador";
 
-  // Sorteio do Alvo da Rodada (para cartas RANDOM de CONFISSÃO / PROVA)
+  // Sorteio de Alvo
   let alvoId = null;
   let alvoNome = null;
   let novaSacolaAlvos = sacolaAlvosAtual || [];
@@ -412,8 +510,12 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
       target: cartaSorteada.target,
       age_rating: cartaSorteada.age_rating,
       subtype: cartaSorteada.subtype || "",
+      nivel: cartaSorteada.nivel || null,
+      verdadeTexto: cartaSorteada.verdadeTexto || null,
+      desafioTexto: cartaSorteada.desafioTexto || null,
       opcoes: cartaSorteada.opcoes || null,
-      duracao: cartaSorteada.duration || 30,
+      respostasBrancas: cartaSorteada.respostasBrancas || null,
+      duracao: cartaSorteada.duration || 35,
       iniciadaEm: firebase.database.ServerValue.TIMESTAMP,
       revelada: false,
       leitorId: leitorId,
@@ -428,7 +530,58 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
 }
 
 /**
- * Inicia a Transição de Início da Partida (Contagem 5..1 + Sorteio do Dado Sincronizado)
+ * Inicia a Tela de Introdução & Tutorial de Regras Claras
+ */
+async function iniciarTutorialRegras(codigo, configPersonalizada = null) {
+  const refSala = db.ref("salas/" + codigo);
+  const snapshot = await refSala.get();
+
+  if (!snapshot.exists()) {
+    throw new Error("Sala não encontrada.");
+  }
+
+  const dadosSala = snapshot.val();
+  const modoKey = (configPersonalizada && configPersonalizada.modoJogo) || dadosSala.modoJogo || "niveis_intimidade";
+  const modoInfo = MODOS_DE_JOGO[modoKey] || MODOS_DE_JOGO.niveis_intimidade;
+  const config = configPersonalizada || dadosSala.configLobby || {
+    baralhosAtivos: modoInfo.baralhos,
+    totalCartas: 20
+  };
+
+  const tutorialData = {
+    iniciadoEm: firebase.database.ServerValue.TIMESTAMP,
+    modoId: modoInfo.id,
+    modoNome: modoInfo.nome,
+    modoIcone: modoInfo.icone,
+    categoriaNome: modoInfo.categoriaNome || "Minigame",
+    descricao: modoInfo.descricao,
+    regras: modoInfo.regras || [
+      "Leiam as instruções da carta na mesa.",
+      "Participem das votações ou desafios ao vivo.",
+      "Divirtam-se com honestidade e respeito na roda!"
+    ],
+    duracaoSegundos: 35,
+    prontos: {},
+    configTemp: config
+  };
+
+  await refSala.update({
+    status: "tutorial_regras",
+    tutorial: tutorialData
+  });
+}
+
+/**
+ * Marca que o jogador atual leu as regras e clicou em "Entendi / Estou Pronto"
+ */
+async function marcarProntoTutorial(codigo) {
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/tutorial/prontos/" + idJogador).set(true);
+}
+
+/**
+ * Inicia a Transição do Dado Sincronizado (TOTALMENTE JUSTO E ALEATÓRIO 1 A 9)
+ * Sorteio com probabilidade uniforme para qualquer pessoa conectada (host não tem privilégio).
  */
 async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
   const refSala = db.ref("salas/" + codigo);
@@ -440,14 +593,14 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
 
   const dadosSala = snapshot.val();
   const jogadores = dadosSala.jogadores || {};
-  const config = configPersonalizada || dadosSala.configLobby || {
-    baralhosAtivos: ["quebra_gelo", "confissoes_segredos"],
+  const config = configPersonalizada || (dadosSala.tutorial && dadosSala.tutorial.configTemp) || dadosSala.configLobby || {
+    baralhosAtivos: ["niveis_intimidade"],
     totalCartas: 20
   };
 
   const baralhosAtivos = (config.baralhosAtivos && config.baralhosAtivos.length > 0)
     ? config.baralhosAtivos
-    : ["quebra_gelo"];
+    : ["niveis_intimidade"];
 
   const totalRodadas = Number(config.totalCartas) || 20;
 
@@ -457,25 +610,25 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
   );
   const idsParaSorteio = idsConectados.length > 0 ? idsConectados : Object.keys(jogadores);
 
-  // Sorteia o jogador vencedor da disputa do dado para abrir a 1ª rodada
+  // Sorteio verdadeiramente aleatório e imparcial (igual probabilidade para todos)
   const vencedorId = idsParaSorteio[Math.floor(Math.random() * idsParaSorteio.length)];
   const vencedorObj = jogadores[vencedorId] || { nome: "Jogador" };
   const vencedorNome = vencedorObj.nome || "Jogador";
   const vencedorAvatar = obterAvatarJogador(vencedorObj);
 
-  // Número vencedor do dado sincronizado (número alto entre 6 e 9)
-  const numeroDado = Math.floor(Math.random() * 4) + 6;
+  // Número do dado entre 1 e 9 com distribuição uniforme
+  const numeroDado = Math.floor(Math.random() * 9) + 1;
 
   // Prepara a 1ª carta onde o leitor inicial é o vencedor do sorteio do dado
   const { cartaAtual, ultimoBaralhoId, novaSacolaLeitores, novaSacolaAlvos } = sortearProximaCartaDoPool(
     baralhosAtivos,
     null,
     jogadores,
-    [vencedorId], // Garante que o vencedor lê primeiro
-    []
+    [vencedorId],
+    [],
+    1
   );
 
-  // Força o leitor da 1ª carta a ser o vencedor do dado
   cartaAtual.leitorId = vencedorId;
   cartaAtual.leitorNome = vencedorNome;
 
@@ -492,6 +645,9 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
       votos: {},
       dilema: {},
       escolha: null,
+      euNunca: {},
+      verdadeDesafio: null,
+      lacuna: {},
       reacoes: {}
     },
     iniciadaEm: firebase.database.ServerValue.TIMESTAMP
@@ -499,7 +655,7 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
 
   const transicaoData = {
     iniciadaEm: firebase.database.ServerValue.TIMESTAMP,
-    duracaoContagemMs: 5000,
+    duracaoContagemMs: 4000,
     duracaoDadoMs: 2800,
     vencedorId: vencedorId,
     vencedorNome: vencedorNome,
@@ -519,9 +675,6 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
   });
 }
 
-/**
- * Finaliza a transição do dado e coloca a sala oficialmente em jogo
- */
 async function concluirTransicaoParaPartida(codigo) {
   const refSala = db.ref("salas/" + codigo);
   await refSala.update({
@@ -529,16 +682,10 @@ async function concluirTransicaoParaPartida(codigo) {
   });
 }
 
-/**
- * Inicia a partida diretamente (retrocompatibilidade)
- */
 async function iniciarPartida(codigo, configPersonalizada = null) {
-  return iniciarTransicaoPartida(codigo, configPersonalizada);
+  return iniciarTutorialRegras(codigo, configPersonalizada);
 }
 
-/**
- * Puxa a carta da mesa (acionado pelo jogador da vez ao tocar no maço central)
- */
 async function puxarCartaDaMesa(codigo) {
   const refPartida = db.ref("salas/" + codigo + "/partida/cartaAtual");
   await refPartida.update({
@@ -547,9 +694,6 @@ async function puxarCartaDaMesa(codigo) {
   });
 }
 
-/**
- * Avança para a próxima carta da partida (passando a vez na roda)
- */
 async function avancarProximaCarta(codigo) {
   const refSala = db.ref("salas/" + codigo);
   const snapshot = await refSala.get();
@@ -570,17 +714,15 @@ async function avancarProximaCarta(codigo) {
     return;
   }
 
-  const baralhosAtivos = partida.baralhosAtivos || ["quebra_gelo"];
+  const baralhosAtivos = partida.baralhosAtivos || ["niveis_intimidade"];
   const ultimoBaralhoId = partida.ultimoBaralhoId || null;
   const sacolaAlvosAtual = partida.sacolaAlvos || [];
 
-  // Lista ordenada de jogadores conectados na mesa para a roda de turnos
   const idsConectados = Object.keys(jogadores).filter(
     (id) => jogadores[id] && jogadores[id].conectado !== false
   );
   const listaOrdem = idsConectados.length > 0 ? idsConectados : Object.keys(jogadores);
 
-  // Próximo leitor na roda de turnos
   const leitorAnteriorId = partida.cartaAtual ? partida.cartaAtual.leitorId : null;
   const idxAnterior = listaOrdem.indexOf(leitorAnteriorId);
   const proximoIdx = idxAnterior >= 0 ? (idxAnterior + 1) % listaOrdem.length : 0;
@@ -592,10 +734,10 @@ async function avancarProximaCarta(codigo) {
     ultimoBaralhoId,
     jogadores,
     [],
-    sacolaAlvosAtual
+    sacolaAlvosAtual,
+    rodadaAtual
   );
 
-  // Define o novo jogador da vez e inicia a rodada com a carta fechada na mesa
   cartaAtual.leitorId = proximoLeitorId;
   cartaAtual.leitorNome = proximoLeitorNome;
   cartaAtual.revelada = false;
@@ -609,30 +751,50 @@ async function avancarProximaCarta(codigo) {
       votos: {},
       dilema: {},
       escolha: null,
+      euNunca: {},
+      verdadeDesafio: null,
+      lacuna: {},
       reacoes: {}
     }
   });
 }
 
-/**
- * Votar em Alvo (Mecânica ALVO - target: VOTE)
- */
+// Mecânicas de Voto e Interações
 async function votarEmAlvo(codigo, idAlvoEscolhido) {
   const idJogador = obterIdJogador();
   await db.ref("salas/" + codigo + "/partida/interacoes/votos/" + idJogador).set(idAlvoEscolhido);
 }
 
-/**
- * Votar em Opção de Dilema (Mecânica DILEMA - target: ALL)
- */
 async function votarDilema(codigo, opcaoEscolhida) {
   const idJogador = obterIdJogador();
   await db.ref("salas/" + codigo + "/partida/interacoes/dilema/" + idJogador).set(opcaoEscolhida);
 }
 
-/**
- * Escolher Jogador (Mecânica ESCOLHA - target: CHOOSE)
- */
+async function votarEuNunca(codigo, voto) {
+  // voto: "JA_FIZ" | "INOCENTE"
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/partida/interacoes/euNunca/" + idJogador).set(voto);
+}
+
+async function escolherVerdadeDesafio(codigo, escolha) {
+  // escolha: "VERDADE" | "DESAFIO"
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/partida/interacoes/verdadeDesafio").set({
+    autorId: idJogador,
+    escolha: escolha,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
+async function submeterRespostaLacuna(codigo, textoResposta) {
+  const idJogador = obterIdJogador();
+  await db.ref("salas/" + codigo + "/partida/interacoes/lacuna/" + idJogador).set({
+    texto: textoResposta,
+    autorId: idJogador,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
 async function escolherJogador(codigo, idEscolhido, nomeEscolhido) {
   const idJogador = obterIdJogador();
   await db.ref("salas/" + codigo + "/partida/interacoes/escolha").set({
@@ -643,9 +805,6 @@ async function escolherJogador(codigo, idEscolhido, nomeEscolhido) {
   });
 }
 
-/**
- * Enviar Reação Emoji em tempo real (Mecânica CONFISSAO / PROVA)
- */
 async function enviarReacao(codigo, emoji, nomeJogador) {
   const idJogador = obterIdJogador();
   const reacaoRef = db.ref("salas/" + codigo + "/partida/interacoes/reacoes").push();
@@ -657,16 +816,10 @@ async function enviarReacao(codigo, emoji, nomeJogador) {
   });
 }
 
-/**
- * Revelar Resultados da Rodada
- */
 async function revelarResultadoCarta(codigo) {
   await db.ref("salas/" + codigo + "/partida/cartaAtual/revelada").set(true);
 }
 
-/**
- * Reinicia a partida e traz todos os jogadores de volta ao Lobby.
- */
 async function reiniciarPartida(codigo) {
   const refSala = db.ref("salas/" + codigo);
   await refSala.update({

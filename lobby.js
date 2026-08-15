@@ -1,5 +1,5 @@
 // ============================================================
-// LOBBY.JS — Mesa Quente (2.5D Physical Card Table & Multiplayer)
+// LOBBY.JS — Mesa Quente (Minigames, Tutorial de Regras & Gameplay)
 // ============================================================
 
 // Pega o código da sala pela URL (?sala=ABCD)
@@ -19,6 +19,43 @@ const painelFimPartida = document.getElementById("painel-fim-partida");
 // Elementos — Topo & Navegação
 const btnSairSala = document.getElementById("btn-sair-sala");
 const btnAudio = document.getElementById("btn-audio");
+const btnFullscreen = document.getElementById("btn-fullscreen");
+const iconeFullscreen = document.getElementById("icone-fullscreen");
+const textoFullscreen = document.getElementById("texto-fullscreen");
+const hudCodigoSalaTopo = document.getElementById("hud-codigo-sala-topo");
+const btnAbrirConfigHud = document.getElementById("btn-abrir-config-hud");
+
+// Controle de Tela Cheia Opcional
+function alternarTelaCheia() {
+  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+function atualizarIconeFullscreen() {
+  const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  if (iconeFullscreen) iconeFullscreen.textContent = isFull ? "🗗" : "⛶";
+  if (textoFullscreen) textoFullscreen.textContent = isFull ? "Sair" : "Tela Cheia";
+}
+
+if (btnFullscreen) {
+  btnFullscreen.addEventListener("click", alternarTelaCheia);
+}
+
+document.addEventListener("fullscreenchange", atualizarIconeFullscreen);
+document.addEventListener("webkitfullscreenchange", atualizarIconeFullscreen);
 
 // Elementos — Lobby 2.5D
 const textoCodigoSala = document.getElementById("texto-codigo-sala");
@@ -52,6 +89,19 @@ const resumoTotalCartas = document.getElementById("resumo-total-cartas");
 const btnSalvarIniciarConfig = document.getElementById("btn-salvar-iniciar-config");
 const btnVoltarConfig = document.getElementById("btn-voltar-config");
 
+// Elementos — OVERLAY 0: Tutorial de Regras & Introdução
+const overlayTutorialRegras = document.getElementById("overlay-tutorial-regras");
+const tutorialBadgeCategoria = document.getElementById("tutorial-badge-categoria");
+const tutorialIconeCirculo = document.getElementById("tutorial-icone-circulo");
+const tutorialTituloJogo = document.getElementById("tutorial-titulo-jogo");
+const tutorialDescricaoJogo = document.getElementById("tutorial-descricao-jogo");
+const tutorialPassosLista = document.getElementById("tutorial-passos-lista");
+const tutorialProntosContador = document.getElementById("tutorial-prontos-contador");
+const tutorialJogadoresChips = document.getElementById("tutorial-jogadores-chips");
+const tutorialTimerBarra = document.getElementById("tutorial-timer-barra");
+const tutorialTimerTexto = document.getElementById("tutorial-timer-texto");
+const btnEntendiTutorial = document.getElementById("btn-entendi-tutorial");
+
 // Elementos — Overlays de Transição (Contagem e Sorteio do Dado)
 const overlayContagemRegressiva = document.getElementById("overlay-contagem-regressiva");
 const contagemNumeroDisplay = document.getElementById("contagem-numero-display");
@@ -66,17 +116,15 @@ const vencedorDadoAvatar = document.getElementById("vencedor-dado-avatar");
 const vencedorDadoNome = document.getElementById("vencedor-dado-nome");
 const vencedorDadoMensagem = document.getElementById("vencedor-dado-mensagem");
 
-// Elementos — Zona Superior e Radial (Mesa Uno Style)
-const camadaJogadoresRadial = document.getElementById("camada-jogadores-radial");
-const rodaAmigosTopo = document.getElementById("roda-amigos-topo");
-
 // Elementos — Zona Central (A Mesa e o Baralho 2.5D)
+const camadaJogadoresRadial = document.getElementById("camada-jogadores-radial");
 const tagDeckNome = document.getElementById("tag-deck-nome");
-const badgeTimerJogo = document.getElementById("badge-timer-jogo");
-const barraTimerPreenchimento = document.getElementById("barra-timer-preenchimento");
 const contadorCartasRodada = document.getElementById("contador-cartas-rodada");
 const deckCentralArea = document.getElementById("deck-central-area");
 const deckPilhaJogo = document.getElementById("deck-pilha-jogo");
+const baralhoAssetWrapper = document.getElementById("baralho-asset-wrapper");
+const imgBaralhoMesa = document.getElementById("img-baralho-mesa");
+const badgeSuaVez = document.getElementById("badge-sua-vez");
 const btnPuxarCartaMesa = document.getElementById("btn-puxar-carta-mesa");
 const boxEsperaPuxar = document.getElementById("box-espera-puxar");
 const textoEsperaPuxar = document.getElementById("texto-espera-puxar");
@@ -96,9 +144,11 @@ const nomeAlvoDestaque = document.getElementById("nome-alvo-destaque");
 
 // Elementos — Zona Inferior (HUD & Mecânicas)
 const boxLeitorRodada = document.getElementById("box-leitor-rodada");
+const leitorHudIcone = document.getElementById("leitor-hud-icone");
 const leitorTitulo = document.getElementById("leitor-titulo");
 const leitorInstrucao = document.getElementById("leitor-instrucao");
 
+// Mecânica 1: Alvo (target: VOTE / QUEM É MAIS PROVÁVEL)
 const mecanicaAlvo = document.getElementById("mecanica-alvo");
 const gradeVotoAlvo = document.getElementById("grade-voto-alvo");
 const statusVotoAlvo = document.getElementById("status-voto-alvo");
@@ -106,16 +156,42 @@ const resultadoVotoAlvo = document.getElementById("resultado-voto-alvo");
 const nomeVencedorAlvo = document.getElementById("nome-vencedor-alvo");
 const listaContagemAlvo = document.getElementById("lista-contagem-alvo");
 
-const mecanicaReacoes = document.getElementById("mecanica-reacoes");
-const barraReacoes = document.getElementById("barra-reacoes");
-const containerEmojisFlutuantes = document.getElementById("container-emojis-flutuantes");
+// Mecânica 2: Verdade ou Desafio (Roleta de Consequências)
+const mecanicaVerdadeDesafio = document.getElementById("mecanica-verdade-desafio");
+const statusVerdadeDesafio = document.getElementById("status-verdade-desafio");
+const btnEscolhaVerdade = document.getElementById("btn-escolha-verdade");
+const btnEscolhaDesafio = document.getElementById("btn-escolha-desafio");
+const revelacaoVdBox = document.getElementById("revelacao-vd-box");
+const vdTipoTag = document.getElementById("vd-tipo-tag");
+const vdTextoDesafio = document.getElementById("vd-texto-desafio");
 
+// Mecânica 3: Eu Nunca
+const mecanicaEuNunca = document.getElementById("mecanica-eu-nunca");
+const statusEuNunca = document.getElementById("status-eu-nunca");
+const btnEuNuncaFiz = document.getElementById("btn-eu-nunca-fiz");
+const btnEuNuncaInocente = document.getElementById("btn-eu-nunca-inocente");
+const resultadoEuNunca = document.getElementById("resultado-eu-nunca");
+const barraEnFiz = document.getElementById("barra-en-fiz");
+const barraEnInocente = document.getElementById("barra-en-inocente");
+const percEnFiz = document.getElementById("perc-en-fiz");
+const percEnInocente = document.getElementById("perc-en-inocente");
+const detalhesVotosEuNunca = document.getElementById("detalhes-votos-eu-nunca");
+
+// Mecânica 4: Preencha a Lacuna
+const mecanicaLacuna = document.getElementById("mecanica-lacuna");
+const statusLacuna = document.getElementById("status-lacuna");
+const gradeCartasBrancas = document.getElementById("grade-cartas-brancas");
+const resultadoLacunaBox = document.getElementById("resultado-lacuna-box");
+const textoVencedoraLacuna = document.getElementById("texto-vencedora-lacuna");
+
+// Mecânica 5: Escolha (target: CHOOSE)
 const mecanicaEscolha = document.getElementById("mecanica-escolha");
 const statusEscolha = document.getElementById("status-escolha");
 const gradeEscolhaJogador = document.getElementById("grade-escolha-jogador");
 const resultadoEscolhaBox = document.getElementById("resultado-escolha-box");
 const textoEscolhaFeita = document.getElementById("texto-escolha-feita");
 
+// Mecânica 6: Dilema (target: ALL)
 const mecanicaDilema = document.getElementById("mecanica-dilema");
 const statusDilemaVotos = document.getElementById("status-dilema-votos");
 const btnDilemaA = document.getElementById("btn-dilema-a");
@@ -129,7 +205,13 @@ const percDilemaA = document.getElementById("perc-dilema-a");
 const percDilemaB = document.getElementById("perc-dilema-b");
 const detalhesVotosDilema = document.getElementById("detalhes-votos-dilema");
 
-const avisoTempoEsgotado = document.getElementById("aviso-tempo-esgotado");
+// Reações
+const mecanicaReacoes = document.getElementById("mecanica-reacoes");
+const btnTriggerReacoes = document.getElementById("btn-trigger-reacoes");
+const barraReacoes = document.getElementById("barra-reacoes");
+const containerEmojisFlutuantes = document.getElementById("container-emojis-flutuantes");
+
+// Controles de Avanço
 const controlesAvancoJogo = document.getElementById("controles-avanco-jogo");
 const controlesHostJogo = document.getElementById("controles-host-jogo") || controlesAvancoJogo;
 const avisoJogadorJogo = document.getElementById("aviso-jogador-jogo");
@@ -147,7 +229,8 @@ const btnJogarNovamente = document.getElementById("btn-jogar-novamente");
 const btnSairPartidaFim = document.getElementById("btn-sair-partida-fim");
 
 // Estado Local
-textoCodigoSala.textContent = codigoSala;
+if (textoCodigoSala) textoCodigoSala.textContent = codigoSala;
+if (hudCodigoSalaTopo) hudCodigoSalaTopo.textContent = codigoSala;
 const idJogadorAtual = obterIdJogador();
 let souHost = false;
 let idHostSala = null;
@@ -155,24 +238,17 @@ let ultimaCartaExibidaId = null;
 let dadosJogadoresCache = {};
 let cartaAtualCache = null;
 let interacoesCache = {};
-let timerInterval = null;
 let reacoesAnimadasSet = new Set();
+let timerTutorialInterval = null;
+let tutorialDataCache = null;
+let transicaoEmExecucao = false;
 
 // Configuração padrão da partida
 let configLocal = {
-  baralhosAtivos: ["quebra_gelo", "confissoes_segredos"],
+  modoJogo: "niveis_intimidade",
+  baralhosAtivos: ["niveis_intimidade"],
   totalCartas: 20
 };
-
-// Gerador de cor estável para avatar baseado no ID/Nome
-function gerarCorAvatar(texto) {
-  let hash = 0;
-  for (let i = 0; i < texto.length; i++) {
-    hash = texto.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const matiz = Math.abs(hash % 360);
-  return `hsl(${matiz}, 75%, 45%)`;
-}
 
 // Alternância de Telas
 function mostrarApenasPainel(painelAtivo) {
@@ -182,15 +258,6 @@ function mostrarApenasPainel(painelAtivo) {
   if (painelAtivo) {
     painelAtivo.classList.remove("bloco-oculto");
   }
-}
-
-// Botão de Áudio
-if (btnAudio) {
-  btnAudio.addEventListener("click", () => {
-    if (typeof audioApp !== "undefined") {
-      audioApp.alternarMudo();
-    }
-  });
 }
 
 // Sair da Sala
@@ -206,18 +273,18 @@ btnSairSala.addEventListener("click", executarSaidaSala);
 btnVoltarInicioSozinho.addEventListener("click", executarSaidaSala);
 btnSairPartidaFim.addEventListener("click", executarSaidaSala);
 
-// Escuta e verificação contínua do Host (com suporte a Host Migration)
+// Escuta do Host
 escutarHostId(codigoSala, (hostId) => {
   idHostSala = hostId;
   souHost = hostId === idJogadorAtual;
   atualizarVisualHost();
   if (dadosJogadoresCache) {
     renderizarLobbyMesa(dadosJogadoresCache);
-    renderizarZonaSuperiorAmigos(dadosJogadoresCache, cartaAtualCache);
+    renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
   }
 });
 
-// Escuta contínua das informações do Modo de Jogo
+// Escuta do ModoInfo
 escutarModoInfo(codigoSala, (modoInfo) => {
   if (modoInfo && bannerModoJogo) {
     if (modoJogoIcone) modoJogoIcone.textContent = modoInfo.icone || "🔥";
@@ -225,18 +292,7 @@ escutarModoInfo(codigoSala, (modoInfo) => {
     if (modoJogoDesc) modoJogoDesc.textContent = modoInfo.descricao || "";
     if (deckCentroIcone) deckCentroIcone.textContent = modoInfo.icone || "🔥";
     if (deckCentroTag) deckCentroTag.textContent = (modoInfo.nome || "MESA").toUpperCase().slice(0, 10);
-  }
-});
-
-// Fallback para chave de modo simples se modoInfo ainda não existir
-escutarModoJogo(codigoSala, (modoKey) => {
-  if (MODOS_DE_JOGO && MODOS_DE_JOGO[modoKey]) {
-    const info = MODOS_DE_JOGO[modoKey];
-    if (modoJogoIcone) modoJogoIcone.textContent = info.icone;
-    if (modoJogoNome) modoJogoNome.textContent = info.nome;
-    if (modoJogoDesc) modoJogoDesc.textContent = info.descricao;
-    if (deckCentroIcone) deckCentroIcone.textContent = info.icone;
-    if (deckCentroTag) deckCentroTag.textContent = info.nome.toUpperCase().slice(0, 10);
+    configLocal.modoJogo = modoInfo.id;
   }
 });
 
@@ -244,19 +300,15 @@ function atualizarVisualHost() {
   if (souHost) {
     controlesHostLobby.classList.remove("bloco-oculto");
     visaoJogadorEspera.classList.add("bloco-oculto");
-
     controlesHostJogo.classList.remove("bloco-oculto");
     avisoJogadorJogo.classList.add("bloco-oculto");
-
     controlesHostFim.classList.remove("bloco-oculto");
     avisoJogadorFim.classList.add("bloco-oculto");
   } else {
     controlesHostLobby.classList.add("bloco-oculto");
     visaoJogadorEspera.classList.remove("bloco-oculto");
-
     controlesHostJogo.classList.add("bloco-oculto");
     avisoJogadorJogo.classList.remove("bloco-oculto");
-
     controlesHostFim.classList.add("bloco-oculto");
     avisoJogadorFim.classList.remove("bloco-oculto");
   }
@@ -285,7 +337,6 @@ function renderizarLobbyMesa(jogadores) {
     const assento = document.createElement("div");
     assento.className = `assento-jogador-3d ${isDesconectado ? "assento-desconectado" : ""} ${isMe ? "assento-meu" : ""}`;
 
-    // Círculo de Avatar Vibrante com Emoji Grande
     const avatar = document.createElement("div");
     avatar.className = "assento-avatar-3d";
     avatar.style.backgroundColor = avatarData.cor;
@@ -331,7 +382,6 @@ function renderizarLobbyMesa(jogadores) {
     gradeAssentosMesa.appendChild(assento);
   });
 
-  // Mostra assentos vazios amigáveis se houver poucos jogadores
   const totalConectados = ids.filter((id) => jogadores[id].conectado !== false).length;
   if (totalConectados < 4) {
     const faltam = 4 - totalConectados;
@@ -348,7 +398,7 @@ function renderizarLobbyMesa(jogadores) {
 }
 
 // ============================================================
-// MESA CIRCULAR RADIAL (ESTILO UNO / 2 A 8 JOGADORES AO REDOR)
+// MESA CIRCULAR RADIAL (JOGADORES AO REDOR COM MOLDURA CARTOON)
 // ============================================================
 function renderizarJogadoresRadial(jogadores, cartaAtual) {
   if (!camadaJogadoresRadial) return;
@@ -364,9 +414,8 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
   const alvoId = cartaAtual ? cartaAtual.alvoId : null;
   const total = ids.length;
 
-  // Raio elíptico da mesa (percentual da largura/altura do palco)
-  const raioX = 41; // 41% em horizontal
-  const raioY = 38; // 38% em vertical
+  const raioX = 40;
+  const raioY = 36;
 
   ids.forEach((id, index) => {
     const j = jogadores[id];
@@ -375,19 +424,14 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
     const isMe = id === idJogadorAtual;
     const avatarData = obterAvatarJogador(j);
 
-    // Ângulo de rotação na mesa
     let angulo;
     if (total === 2) {
-      // 2 Jogadores: Topo e Base
       angulo = index === 0 ? -Math.PI / 2 : Math.PI / 2;
     } else if (total === 3) {
-      // 3 Jogadores: Triângulo
       angulo = -Math.PI / 2 + (index * 2 * Math.PI) / 3;
     } else if (total === 4) {
-      // 4 Jogadores: Cruz (Topo, Direita, Baixo, Esquerda)
       angulo = -Math.PI / 2 + (index * 2 * Math.PI) / 4;
     } else {
-      // 5 a 8 Jogadores: Distribuição circular uniforme
       angulo = -Math.PI / 2 + (index * 2 * Math.PI) / total;
     }
 
@@ -400,14 +444,23 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
     seat.style.top = `${posY}%`;
     seat.id = `seat-radial-${id}`;
 
-    // Avatar 2.5D com glow e halo
-    const avatar = document.createElement("div");
-    avatar.className = `avatar-radial-3d ${isLeitor ? "avatar-radial-glow-vez" : ""} ${isAlvo ? "avatar-radial-glow-alvo" : ""}`;
-    avatar.style.backgroundColor = avatarData.cor;
-    avatar.style.borderColor = isLeitor ? "var(--accent-gold)" : (isAlvo ? "var(--accent-fire)" : avatarData.corBorda);
-    avatar.textContent = avatarData.emoji;
+    // Wrapper com avatar sob a moldura e a moldura PNG por cima
+    const molduraWrapper = document.createElement("div");
+    molduraWrapper.className = `avatar-radial-wrapper ${isLeitor ? "avatar-radial-glow-vez" : ""} ${isAlvo ? "avatar-radial-glow-alvo" : ""}`;
 
-    // Badges de Status Flutuante
+    const avatarFundo = document.createElement("div");
+    avatarFundo.className = "avatar-radial-fundo";
+    avatarFundo.style.backgroundColor = avatarData.cor;
+    avatarFundo.textContent = avatarData.emoji;
+
+    const molduraImg = document.createElement("img");
+    molduraImg.src = "moldura-playeres.png";
+    molduraImg.alt = "Moldura";
+    molduraImg.className = "moldura-player-img";
+
+    molduraWrapper.appendChild(avatarFundo);
+    molduraWrapper.appendChild(molduraImg);
+
     if (isLeitor) {
       const badgeLeitor = document.createElement("span");
       badgeLeitor.className = "badge-radial-status badge-radial-leitor";
@@ -420,19 +473,18 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
       seat.appendChild(badgeAlvo);
     }
 
-    // Nome do Jogador
+    // Nome posicionado na tag sobre a base da moldura
     const nome = document.createElement("div");
     nome.className = "nome-radial-jogador";
     nome.textContent = isMe ? `${j.nome} (Você)` : j.nome;
 
-    seat.appendChild(avatar);
+    seat.appendChild(molduraWrapper);
     seat.appendChild(nome);
 
     camadaJogadoresRadial.appendChild(seat);
   });
 }
 
-// Renderiza a galeria de avatares no Fim de Partida
 function renderizarAvataresFim(jogadores) {
   if (!gradeAvataresFim) return;
   gradeAvataresFim.innerHTML = "";
@@ -464,7 +516,7 @@ function renderizarAvataresFim(jogadores) {
 }
 
 // ============================================================
-// CONFIGURAÇÃO DE BARALHOS
+// CONFIGURAÇÃO DE BARALHOS NO LOBBY
 // ============================================================
 function renderizarListaBaralhosConfig() {
   if (!listaBaralhosConfig) return;
@@ -482,64 +534,53 @@ function renderizarListaBaralhosConfig() {
     checkbox.className = "baralho-checkbox-3d";
     checkbox.checked = isAtivo;
 
-    const corpo = document.createElement("div");
-    corpo.className = "baralho-corpo-3d";
+    const icone = document.createElement("span");
+    icone.className = "baralho-icone-3d";
+    icone.textContent = baralho.icone || "🃏";
 
-    const topo = document.createElement("div");
-    topo.className = "baralho-topo-3d";
+    const info = document.createElement("div");
+    info.className = "baralho-info-3d";
 
-    const nome = document.createElement("span");
-    nome.className = "baralho-nome-3d";
-    nome.innerHTML = `<span>${baralho.icone || "🃏"}</span> ${baralho.nome}`;
-
-    const rating = document.createElement("span");
-    rating.className = `baralho-rating-3d ${baralho.age_rating === "18+" ? "rating-18-3d" : "rating-geral-3d"}`;
-    rating.textContent = baralho.age_rating;
-
-    topo.appendChild(nome);
-    topo.appendChild(rating);
+    const titulo = document.createElement("strong");
+    titulo.className = "baralho-titulo-3d";
+    titulo.textContent = baralho.nome;
 
     const desc = document.createElement("p");
     desc.className = "baralho-desc-3d";
     desc.textContent = baralho.descricao;
 
-    corpo.appendChild(topo);
-    corpo.appendChild(desc);
+    info.appendChild(titulo);
+    info.appendChild(desc);
 
     divOpcao.appendChild(checkbox);
-    divOpcao.appendChild(corpo);
+    divOpcao.appendChild(icone);
+    divOpcao.appendChild(info);
 
     divOpcao.addEventListener("click", (e) => {
       if (e.target !== checkbox) {
         checkbox.checked = !checkbox.checked;
       }
-      alternarSelecaoBaralho(baralho.id, checkbox.checked, divOpcao);
-    });
-
-    checkbox.addEventListener("change", () => {
-      alternarSelecaoBaralho(baralho.id, checkbox.checked, divOpcao);
+      alternarBaralhoConfig(baralho.id, checkbox.checked, divOpcao);
     });
 
     listaBaralhosConfig.appendChild(divOpcao);
   });
-
-  atualizarResumosConfig();
 }
 
-function alternarSelecaoBaralho(deckId, ativo, elementoOpcao) {
+function alternarBaralhoConfig(baralhoId, ativo, elementoOpcao) {
   if (ativo) {
-    if (!configLocal.baralhosAtivos.includes(deckId)) {
-      configLocal.baralhosAtivos.push(deckId);
+    if (!configLocal.baralhosAtivos.includes(baralhoId)) {
+      configLocal.baralhosAtivos.push(baralhoId);
     }
     elementoOpcao.classList.add("selecionado");
   } else {
-    if (configLocal.baralhosAtivos.length === 1 && configLocal.baralhosAtivos.includes(deckId)) {
-      alert("A partida precisa de pelo menos 1 baralho ativo!");
-      const cb = elementoOpcao.querySelector(".baralho-checkbox-3d");
-      if (cb) cb.checked = true;
+    if (configLocal.baralhosAtivos.length <= 1) {
+      alert("A mesa precisa de pelo menos 1 minigame ativo!");
+      const chk = elementoOpcao.querySelector(".baralho-checkbox-3d");
+      if (chk) chk.checked = true;
       return;
     }
-    configLocal.baralhosAtivos = configLocal.baralhosAtivos.filter((id) => id !== deckId);
+    configLocal.baralhosAtivos = configLocal.baralhosAtivos.filter((id) => id !== baralhoId);
     elementoOpcao.classList.remove("selecionado");
   }
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
@@ -552,7 +593,6 @@ function atualizarResumosConfig() {
   if (resumoTotalCartas) resumoTotalCartas.textContent = `${configLocal.totalCartas} cartas`;
 }
 
-// Inicializa seletor de Modos na Configuração do Lobby
 function inicializarSeletorModosConfig() {
   if (!seletorModosConfig) return;
   const cards = seletorModosConfig.querySelectorAll(".card-modo-opcao");
@@ -563,7 +603,7 @@ function inicializarSeletorModosConfig() {
       cards.forEach((c) => c.classList.remove("selecionado"));
       card.classList.add("selecionado");
 
-      const modoKey = card.getAttribute("data-modo") || "fogo_no_parquinho";
+      const modoKey = card.getAttribute("data-modo") || "niveis_intimidade";
       configLocal.modoJogo = modoKey;
 
       if (modoKey !== "personalizado" && MODOS_DE_JOGO[modoKey]) {
@@ -575,7 +615,6 @@ function inicializarSeletorModosConfig() {
   });
 }
 
-// Botoes de quantidade de cartas (10, 20, 40, custom)
 if (gradeQtdCartas) {
   gradeQtdCartas.querySelectorAll(".btn-qtd-3d").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -618,6 +657,17 @@ if (btnAbrirConfig) {
   });
 }
 
+if (btnAbrirConfigHud) {
+  btnAbrirConfigHud.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    if (souHost) {
+      mostrarApenasPainel(painelConfiguracao);
+    } else {
+      alert("Apenas o anfitrião (Host) pode alterar as configurações da mesa.");
+    }
+  });
+}
+
 if (btnVoltarConfig) {
   btnVoltarConfig.addEventListener("click", () => {
     if (typeof audioApp !== "undefined") audioApp.tocarClique();
@@ -634,21 +684,173 @@ if (btnSalvarIniciarConfig) {
 
     try {
       await salvarConfigLobby(codigoSala, configLocal);
-      await iniciarTransicaoPartida(codigoSala, configLocal);
+      await iniciarTutorialRegras(codigoSala, configLocal);
     } catch (erro) {
       console.error(erro);
       mensagemErroLobby.textContent = "Não foi possível iniciar a partida.";
       btnSalvarIniciarConfig.disabled = false;
-      btnSalvarIniciarConfig.textContent = "Iniciar com essa Seleção 🔥";
+      btnSalvarIniciarConfig.textContent = "🔥 Iniciar com essa Seleção";
     }
   });
 }
 
 // ============================================================
-// TRANSIÇÃO DE INÍCIO: CONTAGEM REGRESSIVA + SORTEIO DO DADO
+// OVERLAY 0: TUTORIAL DE REGRAS & BOAS-VINDAS (INTRODUÇÃO)
 // ============================================================
-let transicaoEmExecucao = false;
+let tutorialJaDisparadoSorteio = false;
 
+function renderizarTutorialRegras(tutorialData, jogadores) {
+  if (!tutorialData) return;
+  tutorialDataCache = tutorialData;
+
+  if (overlayTutorialRegras) {
+    overlayTutorialRegras.classList.remove("bloco-oculto");
+  }
+
+  // Preenche textos do Minigame
+  if (tutorialBadgeCategoria) {
+    tutorialBadgeCategoria.textContent = (tutorialData.categoriaNome || "MINIGAME").toUpperCase();
+  }
+  if (tutorialIconeCirculo) {
+    tutorialIconeCirculo.textContent = tutorialData.modoIcone || "💜";
+  }
+  if (tutorialTituloJogo) {
+    tutorialTituloJogo.textContent = `Bem-vindo(a) ao ${tutorialData.modoNome || "Minigame"}!`;
+  }
+  if (tutorialDescricaoJogo) {
+    tutorialDescricaoJogo.textContent = tutorialData.descricao || "";
+  }
+
+  // Preenche os Passos das Regras
+  if (tutorialPassosLista) {
+    tutorialPassosLista.innerHTML = "";
+    const regras = tutorialData.regras || [
+      "Leiam as instruções da carta na mesa com atenção.",
+      "Participem das escolhas e desafios em tempo real.",
+      "Divirtam-se com honestidade e química!"
+    ];
+
+    regras.forEach((regra, index) => {
+      const item = document.createElement("div");
+      item.className = "tutorial-passo-item";
+      item.innerHTML = `
+        <span class="tutorial-passo-num">${index + 1}</span>
+        <p class="tutorial-passo-texto">${regra}</p>
+      `;
+      tutorialPassosLista.appendChild(item);
+    });
+  }
+
+  // Lista dos Jogadores e Estado de Prontos
+  const idsConectados = Object.keys(jogadores || {}).filter(
+    (id) => jogadores[id] && jogadores[id].conectado !== false
+  );
+  const totalConectados = idsConectados.length;
+  const prontosObj = tutorialData.prontos || {};
+  const totalProntos = idsConectados.filter((id) => prontosObj[id] === true).length;
+
+  if (tutorialProntosContador) {
+    tutorialProntosContador.textContent = `${totalProntos} / ${totalConectados}`;
+  }
+
+  if (tutorialJogadoresChips) {
+    tutorialJogadoresChips.innerHTML = "";
+    idsConectados.forEach((id) => {
+      const jog = jogadores[id];
+      const av = obterAvatarJogador(jog);
+      const isPronto = prontosObj[id] === true;
+      const isMe = id === idJogadorAtual;
+
+      const chip = document.createElement("div");
+      chip.className = `tutorial-jogador-chip ${isPronto ? "pronto" : ""}`;
+      chip.innerHTML = `
+        <div class="chip-avatar-mini" style="background-color: ${av.cor}; border-color: ${av.corBorda};">
+          <span>${av.emoji}</span>
+        </div>
+        <span class="chip-nome-mini">${jog.nome || "Jogador"} ${isMe ? "(Você)" : ""}</span>
+        <span class="chip-status-check">${isPronto ? "✅" : "⏳"}</span>
+      `;
+      tutorialJogadoresChips.appendChild(chip);
+    });
+  }
+
+  // Atualiza botão "Entendi"
+  const euJaPronto = prontosObj[idJogadorAtual] === true;
+  if (btnEntendiTutorial) {
+    if (euJaPronto) {
+      btnEntendiTutorial.disabled = true;
+      btnEntendiTutorial.classList.add("ja-confirmado");
+      btnEntendiTutorial.innerHTML = "<span>✅ Você já confirmou! Aguardando os outros...</span>";
+    } else {
+      btnEntendiTutorial.disabled = false;
+      btnEntendiTutorial.classList.remove("ja-confirmado");
+      btnEntendiTutorial.innerHTML = "<span>✅ Entendi! Estou Pronto(a)</span>";
+    }
+  }
+
+  // Se TODOS os jogadores conectados confirmaram (ou se estiver 1 sozinho e já confirmou)
+  const todosProntos = totalConectados > 0 && totalProntos >= totalConectados;
+  if (todosProntos && !tutorialJaDisparadoSorteio) {
+    tutorialJaDisparadoSorteio = true;
+    if (souHost) {
+      setTimeout(async () => {
+        try {
+          await iniciarTransicaoPartida(codigoSala, tutorialData.configTemp || configLocal);
+        } catch (e) {
+          console.error(e);
+        }
+      }, 600);
+    }
+  }
+
+  // Inicia contador de Fallback (35s)
+  iniciarTimerTutorial(tutorialData.iniciadoEm, tutorialData.duracaoSegundos || 35);
+}
+
+function iniciarTimerTutorial(iniciadoEm, duracaoTotal = 35) {
+  if (timerTutorialInterval) clearInterval(timerTutorialInterval);
+
+  function atualizarTimer() {
+    if (!iniciadoEm) return;
+    const agora = obterTimestampServidor();
+    const decorrido = Math.floor(Math.max(0, agora - iniciadoEm) / 1000);
+    const restante = Math.max(0, duracaoTotal - decorrido);
+    const perc = Math.max(0, Math.min(100, (restante / duracaoTotal) * 100));
+
+    if (tutorialTimerBarra) tutorialTimerBarra.style.width = `${perc}%`;
+    if (tutorialTimerTexto) tutorialTimerTexto.textContent = `Avançando em ${restante}s...`;
+
+    if (restante <= 0) {
+      clearInterval(timerTutorialInterval);
+      if (souHost && !tutorialJaDisparadoSorteio) {
+        tutorialJaDisparadoSorteio = true;
+        iniciarTransicaoPartida(codigoSala, tutorialDataCache?.configTemp || configLocal);
+      }
+    }
+  }
+
+  atualizarTimer();
+  timerTutorialInterval = setInterval(atualizarTimer, 500);
+}
+
+// Botão "Entendi! Estou Pronto(a)"
+if (btnEntendiTutorial) {
+  btnEntendiTutorial.addEventListener("click", async () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    btnEntendiTutorial.disabled = true;
+    btnEntendiTutorial.textContent = "Confirmando...";
+    try {
+      await marcarProntoTutorial(codigoSala);
+    } catch (e) {
+      console.error(e);
+      btnEntendiTutorial.disabled = false;
+    }
+  });
+}
+
+// ============================================================
+// TRANSIÇÃO DE INÍCIO: CONTAGEM + SORTEIO DO DADO (1 A 9)
+// ============================================================
 function renderizarJogadoresDisputaDado(vencedorId) {
   if (!rodaSorteioJogadores) return;
   rodaSorteioJogadores.innerHTML = "";
@@ -678,21 +880,21 @@ function executarAnimacaoTransicao(transicaoData) {
   if (transicaoEmExecucao) return;
   transicaoEmExecucao = true;
 
-  // Esconde qualquer painel ativo
+  if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
   mostrarApenasPainel(null);
 
-  // FASE 1: CONTAGEM REGRESSIVA (5 .. 1)
+  // FASE 1: CONTAGEM REGRESSIVA (4 .. 1)
   if (overlayContagemRegressiva) {
     overlayContagemRegressiva.classList.remove("bloco-oculto");
   }
 
-  let segundosRestantes = 5;
+  let segundosRestantes = 4;
 
   function pulsarNumeroContagem(num) {
     if (!contagemNumeroDisplay) return;
     contagemNumeroDisplay.textContent = num;
     contagemNumeroDisplay.classList.remove("contagem-numero-zoom");
-    void contagemNumeroDisplay.offsetWidth; // Força reflow
+    void contagemNumeroDisplay.offsetWidth;
     contagemNumeroDisplay.classList.add("contagem-numero-zoom");
 
     if (typeof audioApp !== "undefined") {
@@ -728,7 +930,7 @@ function iniciarFaseSorteioDado(transicaoData) {
 
   renderizarJogadoresDisputaDado(transicaoData.vencedorId);
 
-  // Inicia rotação frenética do dado 3D
+  // Inicia rotação do dado
   if (dadoCuboAnimado) {
     dadoCuboAnimado.classList.remove("revelado");
     dadoCuboAnimado.classList.add("rolando");
@@ -738,7 +940,7 @@ function iniciarFaseSorteioDado(transicaoData) {
     audioApp.tocarDadoRolando();
   }
 
-  // Efeito de números aleatórios rápidos no dado (1-9)
+  // Flicker rápido de números 1 a 9
   let tick = 0;
   const intervaloFlicker = setInterval(() => {
     tick++;
@@ -748,7 +950,7 @@ function iniciarFaseSorteioDado(transicaoData) {
     }
   }, 80);
 
-  // Após 2.6 segundos, para exatamente no número sorteado sincronizado
+  // Para exatamente no número sorteado (1 a 9)
   setTimeout(() => {
     clearInterval(intervaloFlicker);
 
@@ -757,23 +959,20 @@ function iniciarFaseSorteioDado(transicaoData) {
       dadoCuboAnimado.classList.add("revelado");
     }
 
-    const numeroFinal = transicaoData.numeroDado || 7;
+    const numeroFinal = transicaoData.numeroDado || Math.floor(Math.random() * 9) + 1;
     if (dadoFaceDisplay) {
       dadoFaceDisplay.textContent = numeroFinal;
     }
 
-    // Som de Vitória do Dado
     if (typeof audioApp !== "undefined") {
       audioApp.tocarDadoVencedor();
     }
 
-    // Destaque visual dourado para o chip do vencedor
     const chipVencedor = document.getElementById(`chip-sorteio-${transicaoData.vencedorId}`);
     if (chipVencedor) {
       chipVencedor.classList.add("vencedor-destaque");
     }
 
-    // Anúncio do Vencedor da Disputa
     if (bannerVencedorDado) {
       if (vencedorDadoNome) vencedorDadoNome.textContent = transicaoData.vencedorNome || "Jogador";
       if (vencedorDadoAvatar) vencedorDadoAvatar.textContent = transicaoData.vencedorAvatar?.emoji || "👑";
@@ -783,7 +982,7 @@ function iniciarFaseSorteioDado(transicaoData) {
       bannerVencedorDado.classList.remove("bloco-oculto");
     }
 
-    // Após 2.8 segundos exibindo o vencedor, entra oficialmente na mesa de jogo!
+    // Entra na mesa de jogo após o anúncio do dado
     setTimeout(async () => {
       if (overlaySorteioDado) {
         overlaySorteioDado.classList.add("bloco-oculto");
@@ -798,54 +997,11 @@ function iniciarFaseSorteioDado(transicaoData) {
       }
 
       transicaoEmExecucao = false;
+      tutorialJaDisparadoSorteio = false;
       mostrarApenasPainel(painelMesaJogo);
     }, 2800);
 
   }, 2600);
-}
-
-// ============================================================
-// TIMER CENTRALIZADO SINCRONIZADO
-// ============================================================
-function iniciarTimerCentral(iniciadaEm, duracaoTotal) {
-  if (timerInterval) clearInterval(timerInterval);
-
-  function atualizarTimer() {
-    if (!iniciadaEm) return;
-
-    const agora = obterTimestampServidor();
-    const decorridoMs = Math.max(0, agora - iniciadaEm);
-    const decorridoSeg = Math.floor(decorridoMs / 1000);
-    const restante = Math.max(0, duracaoTotal - decorridoSeg);
-
-    const perc = Math.max(0, Math.min(100, (restante / duracaoTotal) * 100));
-
-    if (badgeTimerJogo) badgeTimerJogo.textContent = `⏱️ ${restante}s`;
-    if (barraTimerPreenchimento) barraTimerPreenchimento.style.width = `${perc}%`;
-
-    if (restante <= 5 && restante > 0) {
-      if (badgeTimerJogo) badgeTimerJogo.classList.add("timer-urgente");
-      if (barraTimerPreenchimento) barraTimerPreenchimento.style.backgroundColor = "var(--primary)";
-    } else {
-      if (badgeTimerJogo) badgeTimerJogo.classList.remove("timer-urgente");
-      if (barraTimerPreenchimento) barraTimerPreenchimento.style.backgroundColor = "var(--accent-gold)";
-    }
-
-    if (restante === 0) {
-      if (avisoTempoEsgotado) avisoTempoEsgotado.classList.remove("bloco-oculto");
-      if (badgeTimerJogo) badgeTimerJogo.textContent = "⌛ FIM";
-      
-      // Revela resultados automaticamente na interface ao esgotar o tempo
-      if (cartaAtualCache && !cartaAtualCache.revelada && souHost) {
-        revelarResultadoCarta(codigoSala);
-      }
-    } else {
-      if (avisoTempoEsgotado) avisoTempoEsgotado.classList.add("bloco-oculto");
-    }
-  }
-
-  atualizarTimer();
-  timerInterval = setInterval(atualizarTimer, 300);
 }
 
 // ============================================================
@@ -872,10 +1028,24 @@ function criarEmojiFlutuante(emoji, autorNome) {
   }, 2200);
 }
 
-// Botões de Reação Rápida (Confissão / Prova)
+if (btnTriggerReacoes && barraReacoes) {
+  btnTriggerReacoes.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    barraReacoes.classList.toggle("bloco-oculto");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (barraReacoes && !barraReacoes.contains(e.target) && e.target !== btnTriggerReacoes && !btnTriggerReacoes.contains(e.target)) {
+      barraReacoes.classList.add("bloco-oculto");
+    }
+  });
+}
+
 if (barraReacoes) {
   barraReacoes.querySelectorAll(".btn-reacao-hud").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       const emoji = btn.getAttribute("data-emoji");
       const meuNome = (dadosJogadoresCache[idJogadorAtual] && dadosJogadoresCache[idJogadorAtual].nome) || "Jogador";
       
@@ -883,7 +1053,10 @@ if (barraReacoes) {
       enviarReacao(codigoSala, emoji, meuNome);
 
       btn.classList.add("reacao-ativa");
-      setTimeout(() => btn.classList.remove("reacao-ativa"), 300);
+      setTimeout(() => {
+        btn.classList.remove("reacao-ativa");
+        if (barraReacoes) barraReacoes.classList.add("bloco-oculto");
+      }, 220);
     });
   });
 }
@@ -896,14 +1069,14 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
   const target = carta.target || "SELF";
   const isRevelada = carta.revelada === true;
 
-  [mecanicaAlvo, mecanicaReacoes, mecanicaEscolha, mecanicaDilema].forEach((m) => {
+  [mecanicaAlvo, mecanicaVerdadeDesafio, mecanicaEuNunca, mecanicaLacuna, mecanicaEscolha, mecanicaDilema].forEach((m) => {
     if (m) m.classList.add("bloco-oculto");
   });
 
   const idsJogadores = Object.keys(jogadores).filter((id) => jogadores[id] && jogadores[id].conectado !== false);
   const totalJogadores = idsJogadores.length;
 
-  if (souHost && (mechanic === "ALVO" || mechanic === "DILEMA")) {
+  if (souHost && (mechanic === "ALVO" || mechanic === "DILEMA" || mechanic === "EU_NUNCA")) {
     btnRevelarResultado.classList.remove("bloco-oculto");
     btnRevelarResultado.textContent = isRevelada ? "✅ Resultados Revelados" : "🎯 Revelar Resultados da Roda";
     btnRevelarResultado.disabled = isRevelada;
@@ -911,7 +1084,7 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
     btnRevelarResultado.classList.add("bloco-oculto");
   }
 
-  // 1. MECÂNICA: ALVO (target: VOTE)
+  // 1. MECÂNICA: ALVO (target: VOTE / QUEM É MAIS PROVÁVEL)
   if (mechanic === "ALVO" || target === "VOTE") {
     mecanicaAlvo.classList.remove("bloco-oculto");
     gradeVotoAlvo.innerHTML = "";
@@ -1003,32 +1176,129 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
     }
   }
 
-  // 2 & 3. MECÂNICA: CONFISSÃO & PROVA (Reações em Tempo Real)
-  else if (mechanic === "CONFISSAO" || mechanic === "PROVA") {
-    mecanicaReacoes.classList.remove("bloco-oculto");
+  // 2. MECÂNICA: ROLETA DE CONSEQUÊNCIAS (VERDADE OU DESAFIO)
+  else if (mechanic === "VERDADE_DESAFIO") {
+    mecanicaVerdadeDesafio.classList.remove("bloco-oculto");
+    const souOLeitor = carta.leitorId === idJogadorAtual;
+    const escolhaData = interacoes.verdadeDesafio;
 
-    const reacoes = interacoes.reacoes || {};
-    const contadores = { "👏": 0, "🔥": 0, "😳": 0, "😂": 0 };
-
-    Object.keys(reacoes).forEach((rId) => {
-      const r = reacoes[rId];
-      if (r && contadores[r.emoji] !== undefined) {
-        contadores[r.emoji]++;
+    if (escolhaData) {
+      revelacaoVdBox.classList.remove("bloco-oculto");
+      if (escolhaData.escolha === "VERDADE") {
+        vdTipoTag.textContent = "🗣️ VERDADE SELECIONADA:";
+        vdTextoDesafio.textContent = carta.verdadeTexto || "Conte a história mais picante que já aconteceu com você!";
+        btnEscolhaVerdade.classList.add("selecionado");
+        btnEscolhaDesafio.classList.remove("selecionado");
+      } else {
+        vdTipoTag.textContent = "⚡ DESAFIO SELECIONADO:";
+        vdTextoDesafio.textContent = carta.desafioTexto || "Cumpra a prova na câmera ou mostre no celular!";
+        btnEscolhaDesafio.classList.add("selecionado");
+        btnEscolhaVerdade.classList.remove("selecionado");
       }
+      statusVerdadeDesafio.textContent = `${carta.leitorNome || "O jogador"} escolheu ${escolhaData.escolha}!`;
+    } else {
+      revelacaoVdBox.classList.add("bloco-oculto");
+      btnEscolhaVerdade.classList.remove("selecionado");
+      btnEscolhaDesafio.classList.remove("selecionado");
+      statusVerdadeDesafio.textContent = souOLeitor
+        ? "Escolha entre Verdade ou Desafio:"
+        : `Aguardando ${carta.leitorNome || "o jogador"} escolher entre Verdade ou Desafio...`;
+    }
 
-      if (!reacoesAnimadasSet.has(rId)) {
-        reacoesAnimadasSet.add(rId);
-        criarEmojiFlutuante(r.emoji, r.autorNome);
-      }
-    });
-
-    Object.keys(contadores).forEach((emoji) => {
-      const countEl = document.getElementById(`count-reacao-${emoji}`);
-      if (countEl) countEl.textContent = contadores[emoji];
-    });
+    btnEscolhaVerdade.disabled = !souOLeitor || !!escolhaData;
+    btnEscolhaDesafio.disabled = !souOLeitor || !!escolhaData;
   }
 
-  // 4. MECÂNICA: ESCOLHA (target: CHOOSE)
+  // 3. MECÂNICA: EU NUNCA (JÁ FIZ vs SOU INOCENTE)
+  else if (mechanic === "EU_NUNCA") {
+    mecanicaEuNunca.classList.remove("bloco-oculto");
+    const votosEuNunca = interacoes.euNunca || {};
+    const meuVoto = votosEuNunca[idJogadorAtual];
+    const totalVotos = Object.keys(votosEuNunca).length;
+
+    btnEuNuncaFiz.className = `btn-eu-nunca-voto btn-en-fiz ${meuVoto === "JA_FIZ" ? "selecionado" : ""}`;
+    btnEuNuncaInocente.className = `btn-eu-nunca-voto btn-en-inocente ${meuVoto === "INOCENTE" ? "selecionado" : ""}`;
+
+    statusEuNunca.textContent = meuVoto
+      ? `Seu voto: ${meuVoto === "JA_FIZ" ? "Já Fiz 🍷" : "Sou Inocente 😇"} • (${totalVotos}/${totalJogadores} votaram)`
+      : `Você já fez isso? Vote com sinceridade: • (${totalVotos}/${totalJogadores} votaram)`;
+
+    if (totalVotos > 0) {
+      resultadoEuNunca.classList.remove("bloco-oculto");
+      let qtdFiz = 0;
+      let qtdInocente = 0;
+      const votantesFiz = [];
+      const votantesInocente = [];
+
+      Object.entries(votosEuNunca).forEach(([id, v]) => {
+        const jNome = (jogadores[id] && jogadores[id].nome) || "Jogador";
+        if (v === "JA_FIZ") {
+          qtdFiz++;
+          votantesFiz.push(jNome);
+        } else {
+          qtdInocente++;
+          votantesInocente.push(jNome);
+        }
+      });
+
+      const percFiz = Math.round((qtdFiz / totalVotos) * 100);
+      const percInocente = 100 - percFiz;
+
+      barraEnFiz.style.width = `${percFiz}%`;
+      barraEnInocente.style.width = `${percInocente}%`;
+      percEnFiz.textContent = `🍷 ${percFiz}% Já Fez (${qtdFiz})`;
+      percEnInocente.textContent = `😇 ${percInocente}% Inocente (${qtdInocente})`;
+
+      detalhesVotosEuNunca.innerHTML = `
+        <div class="coluna-votos-en">
+          <strong class="label-col-fiz">🍷 Já Fizeram (Bebem ou contam!):</strong>
+          <span>${votantesFiz.join(", ") || "Ninguém"}</span>
+        </div>
+        <div class="coluna-votos-en">
+          <strong class="label-col-inocente">😇 Inocentes:</strong>
+          <span>${votantesInocente.join(", ") || "Ninguém"}</span>
+        </div>
+      `;
+    } else {
+      resultadoEuNunca.classList.add("bloco-oculto");
+    }
+  }
+
+  // 4. MECÂNICA: PREENCHA A LACUNA
+  else if (mechanic === "LACUNA") {
+    mecanicaLacuna.classList.remove("bloco-oculto");
+    const respostasBrancas = carta.respostasBrancas || [
+      "Uma pizza de madrugada",
+      "Stalkear a ex no Instagram",
+      "Fazer drama por 3 dias",
+      "Um vinho e conversa fiada"
+    ];
+
+    const lacunasObj = interacoes.lacuna || {};
+    const minhaResposta = lacunasObj[idJogadorAtual];
+
+    gradeCartasBrancas.innerHTML = "";
+    respostasBrancas.forEach((textoOpcao) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `btn-carta-branca-opcao ${minhaResposta && minhaResposta.texto === textoOpcao ? "selecionado" : ""}`;
+      btn.innerHTML = `<span>${textoOpcao}</span>`;
+
+      btn.addEventListener("click", () => {
+        if (typeof audioApp !== "undefined") audioApp.tocarClique();
+        submeterRespostaLacuna(codigoSala, textoOpcao);
+      });
+
+      gradeCartasBrancas.appendChild(btn);
+    });
+
+    const totalRespostas = Object.keys(lacunasObj).length;
+    statusLacuna.textContent = minhaResposta
+      ? `Sua resposta foi enviada! (${totalRespostas}/${totalJogadores} responderam)`
+      : `Escolha a melhor carta branca para preencher a lacuna: (${totalRespostas}/${totalJogadores})`;
+  }
+
+  // 5. MECÂNICA: ESCOLHA (target: CHOOSE)
   else if (mechanic === "ESCOLHA" || target === "CHOOSE") {
     mecanicaEscolha.classList.remove("bloco-oculto");
     gradeEscolhaJogador.innerHTML = "";
@@ -1081,7 +1351,7 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
     });
   }
 
-  // 5. MECÂNICA: DILEMA (target: ALL)
+  // 6. MECÂNICA: DILEMA (target: ALL)
   else if (mechanic === "DILEMA") {
     mecanicaDilema.classList.remove("bloco-oculto");
 
@@ -1092,20 +1362,18 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
     textoDilemaA.textContent = opcoes[0];
     textoDilemaB.textContent = opcoes[1];
 
-    const dilemas = interacoes.dilema || {};
-    const meuVoto = dilemas[idJogadorAtual];
-    const totalVotosDilema = Object.keys(dilemas).length;
+    const votosDilema = interacoes.dilema || {};
+    const meuVoto = votosDilema[idJogadorAtual];
+    const totalVotos = Object.keys(votosDilema).length;
+
+    btnDilemaA.className = `btn-dilema-hud ${meuVoto === "A" ? "selecionado" : ""}`;
+    btnDilemaB.className = `btn-dilema-hud ${meuVoto === "B" ? "selecionado" : ""}`;
 
     statusDilemaVotos.textContent = meuVoto
-      ? `Você votou na Opção ${meuVoto} • (${totalVotosDilema}/${totalJogadores} votaram)`
-      : `Escolha sua opção em segredo • (${totalVotosDilema}/${totalJogadores} já responderam)`;
+      ? `Você votou na Opção ${meuVoto} • (${totalVotos}/${totalJogadores} votaram)`
+      : `Voto Secreto — Escolha seu lado • (${totalVotos}/${totalJogadores} votaram)`;
 
-    btnDilemaA.className = `btn-dilema-hud ${meuVoto === "A" ? "selecionado-dilema" : ""}`;
-    btnDilemaB.className = `btn-dilema-hud ${meuVoto === "B" ? "selecionado-dilema" : ""}`;
-    btnDilemaA.disabled = isRevelada;
-    btnDilemaB.disabled = isRevelada;
-
-    if (isRevelada || totalVotosDilema >= totalJogadores) {
+    if (isRevelada || totalVotos >= totalJogadores) {
       resultadoDilema.classList.remove("bloco-oculto");
 
       let countA = 0;
@@ -1113,33 +1381,33 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
       const votantesA = [];
       const votantesB = [];
 
-      Object.keys(dilemas).forEach((id) => {
+      Object.entries(votosDilema).forEach(([id, voto]) => {
         const jNome = (jogadores[id] && jogadores[id].nome) || "Jogador";
-        if (dilemas[id] === "A") {
+        if (voto === "A") {
           countA++;
           votantesA.push(jNome);
-        } else if (dilemas[id] === "B") {
+        } else if (voto === "B") {
           countB++;
           votantesB.push(jNome);
         }
       });
 
-      const total = Math.max(1, countA + countB);
-      const percA = Math.round((countA / total) * 100);
-      const percB = Math.round((countB / total) * 100);
+      const totalDilema = countA + countB;
+      const percA = totalDilema > 0 ? Math.round((countA / totalDilema) * 100) : 50;
+      const percB = totalDilema > 0 ? 100 - percA : 50;
 
       barraDilemaA.style.width = `${percA}%`;
       barraDilemaB.style.width = `${percB}%`;
-      percDilemaA.textContent = `${percA}% (${countA})`;
-      percDilemaB.textContent = `${percB}% (${countB})`;
+      percDilemaA.textContent = `A: ${percA}% (${countA})`;
+      percDilemaB.textContent = `B: ${percB}% (${countB})`;
 
       detalhesVotosDilema.innerHTML = `
-        <div class="grupo-votantes-dilema">
-          <span class="titulo-lado-dilema">Lado A (${countA}):</span>
+        <div class="lado-dilema-detalhe">
+          <strong>Lado A:</strong>
           <p class="nomes-lado-dilema">${votantesA.join(", ") || "Ninguém"}</p>
         </div>
-        <div class="grupo-votantes-dilema" style="margin-top: 8px;">
-          <span class="titulo-lado-dilema">Lado B (${countB}):</span>
+        <div class="lado-dilema-detalhe">
+          <strong>Lado B:</strong>
           <p class="nomes-lado-dilema">${votantesB.join(", ") || "Ninguém"}</p>
         </div>
       `;
@@ -1147,6 +1415,27 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
       resultadoDilema.classList.add("bloco-oculto");
     }
   }
+
+  // Reações em Tempo Real
+  const reacoes = interacoes.reacoes || {};
+  const contadores = { "👏": 0, "🔥": 0, "😳": 0, "😂": 0 };
+
+  Object.keys(reacoes).forEach((rId) => {
+    const r = reacoes[rId];
+    if (r && contadores[r.emoji] !== undefined) {
+      contadores[r.emoji]++;
+    }
+
+    if (!reacoesAnimadasSet.has(rId)) {
+      reacoesAnimadasSet.add(rId);
+      criarEmojiFlutuante(r.emoji, r.autorNome);
+    }
+  });
+
+  Object.keys(contadores).forEach((emoji) => {
+    const countEl = document.getElementById(`count-reacao-${emoji}`);
+    if (countEl) countEl.textContent = contadores[emoji];
+  });
 }
 
 // Botões de Voto do Dilema
@@ -1162,6 +1451,36 @@ btnDilemaB.addEventListener("click", () => {
   votarDilema(codigoSala, "B");
 });
 
+// Botões de Escolha Verdade ou Desafio
+if (btnEscolhaVerdade) {
+  btnEscolhaVerdade.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    escolherVerdadeDesafio(codigoSala, "VERDADE");
+  });
+}
+
+if (btnEscolhaDesafio) {
+  btnEscolhaDesafio.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    escolherVerdadeDesafio(codigoSala, "DESAFIO");
+  });
+}
+
+// Botões de Eu Nunca
+if (btnEuNuncaFiz) {
+  btnEuNuncaFiz.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    votarEuNunca(codigoSala, "JA_FIZ");
+  });
+}
+
+if (btnEuNuncaInocente) {
+  btnEuNuncaInocente.addEventListener("click", () => {
+    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+    votarEuNunca(codigoSala, "INOCENTE");
+  });
+}
+
 // Botão do Host para Revelar Resultado
 btnRevelarResultado.addEventListener("click", async () => {
   if (!souHost) return;
@@ -1176,38 +1495,35 @@ btnRevelarResultado.addEventListener("click", async () => {
 // 1. Jogadores Conectados & Host Migration
 escutarJogadores(codigoSala, (jogadores) => {
   dadosJogadoresCache = jogadores || {};
-  
-  // Executa migração de host automática caso o host tenha saído
   migrarHostSeNecessario(codigoSala, jogadores, idHostSala);
-
-  // Renderiza a mesa do lobby com assentos 2.5D
   renderizarLobbyMesa(dadosJogadoresCache);
-
-  // Renderiza a mesa circular radial dos jogadores estilo Uno
   renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
 
   const ids = Object.keys(dadosJogadoresCache);
   const totalConectados = ids.filter((id) => dadosJogadoresCache[id].conectado !== false).length;
-
   contadorJogadores.textContent = `${totalConectados} na mesa`;
 
-  // Alerta de jogador sozinho no lobby
   if (totalConectados <= 1 && ids.length > 1) {
     avisoSozinhoSala.classList.remove("bloco-oculto");
   } else {
     avisoSozinhoSala.classList.add("bloco-oculto");
   }
 
-  // Re-renderiza mecânicas se a partida estiver ativa
+  if (tutorialDataCache) {
+    renderizarTutorialRegras(tutorialDataCache, dadosJogadoresCache);
+  }
+
   if (cartaAtualCache) {
     renderizarMecanicas(cartaAtualCache, interacoesCache, dadosJogadoresCache);
   }
 });
 
-// 2. Status Geral da Sala & Transição Sincronizada
+// 2. Status Geral da Sala
 escutarStatusSala(codigoSala, (status) => {
   if (status === "lobby") {
     transicaoEmExecucao = false;
+    tutorialJaDisparadoSorteio = false;
+    if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
     if (overlayContagemRegressiva) overlayContagemRegressiva.classList.add("bloco-oculto");
     if (overlaySorteioDado) overlaySorteioDado.classList.add("bloco-oculto");
     mostrarApenasPainel(painelLobby);
@@ -1217,6 +1533,13 @@ escutarStatusSala(codigoSala, (status) => {
       btnSalvarIniciarConfig.disabled = false;
       btnSalvarIniciarConfig.textContent = "🔥 Iniciar com essa Seleção";
     }
+  }
+});
+
+// Escuta o Tutorial de Regras
+escutarTutorialRegras(codigoSala, (tutorialData) => {
+  if (tutorialData) {
+    renderizarTutorialRegras(tutorialData, dadosJogadoresCache);
   }
 });
 
@@ -1233,48 +1556,43 @@ escutarPartida(codigoSala, (partida) => {
 
   interacoesCache = partida.interacoes || {};
 
-  // FIM DE PARTIDA (PÓDIO DA MESA)
+  // FIM DE PARTIDA
   if (partida.status === "finalizada") {
-    if (timerInterval) clearInterval(timerInterval);
     mostrarApenasPainel(painelFimPartida);
     if (textoResumoFim) {
       textoResumoFim.textContent = `A mesa completou com sucesso todas as ${partida.totalRodadas || 20} cartas sorteadas!`;
     }
     renderizarAvataresFim(dadosJogadoresCache);
-
-    if (souHost) {
-      if (controlesHostFim) controlesHostFim.classList.remove("bloco-oculto");
-      if (avisoJogadorFim) avisoJogadorFim.classList.add("bloco-oculto");
-    } else {
-      if (controlesHostFim) controlesHostFim.classList.add("bloco-oculto");
-      if (avisoJogadorFim) avisoJogadorFim.classList.remove("bloco-oculto");
-    }
     return;
   }
 
   // PARTIDA EM ANDAMENTO
   if (partida.status === "jogando" && partida.cartaAtual) {
+    if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
+    if (overlayContagemRegressiva) overlayContagemRegressiva.classList.add("bloco-oculto");
+    if (overlaySorteioDado) overlaySorteioDado.classList.add("bloco-oculto");
+
     mostrarApenasPainel(painelMesaJogo);
     const carta = partida.cartaAtual;
     cartaAtualCache = carta;
 
-    // Atualiza cabeçalho e contagem de rodadas
     if (tagDeckNome) tagDeckNome.textContent = `🔥 ${carta.deck_nome ? carta.deck_nome.toUpperCase() : "MESA QUENTE"}`;
     if (contadorCartasRodada) contadorCartasRodada.textContent = `Rodada ${partida.rodadaAtual || 1} / ${partida.totalRodadas || 20}`;
 
-    // Leitor da Rodada (Jogador da Vez)
     const souOLeitor = carta.leitorId === idJogadorAtual;
     if (souOLeitor) {
-      if (boxLeitorRodada) boxLeitorRodada.className = "box-leitor-hud box-leitor-voce";
-      if (leitorTitulo) leitorTitulo.innerHTML = "🎙️ SUA VEZ DE LER!";
+      if (boxLeitorRodada) boxLeitorRodada.className = "tag-leitor-vez-discreta box-leitor-voce";
+      if (leitorTitulo) leitorTitulo.textContent = "Sua vez de ler!";
+      if (leitorHudIcone) leitorHudIcone.textContent = "🎙️";
       if (leitorInstrucao) leitorInstrucao.textContent = "Puxe a carta e leia em voz alta para todos os jogadores.";
     } else {
-      if (boxLeitorRodada) boxLeitorRodada.className = "box-leitor-hud box-leitor-outro";
-      if (leitorTitulo) leitorTitulo.innerHTML = `🎙️ Vez de: ${carta.leitorNome || "Jogador"}`;
-      if (leitorInstrucao) leitorInstrucao.textContent = `Aguarde ${carta.leitorNome || "o jogador"} ler o desafio em voz alta.`;
+      const nomeLeitor = carta.leitorNome || "Jogador";
+      if (boxLeitorRodada) boxLeitorRodada.className = "tag-leitor-vez-discreta box-leitor-outro";
+      if (leitorTitulo) leitorTitulo.textContent = `Vez de ${nomeLeitor}`;
+      if (leitorHudIcone) leitorHudIcone.textContent = "👀";
+      if (leitorInstrucao) leitorInstrucao.textContent = `Aguarde ${nomeLeitor} ler o desafio em voz alta.`;
     }
 
-    // Alvo da Rodada (se target === RANDOM)
     if (carta.target === "RANDOM" && carta.alvoNome) {
       if (blocoAlvoSorteado) blocoAlvoSorteado.classList.remove("bloco-oculto");
       if (nomeAlvoDestaque) nomeAlvoDestaque.textContent = carta.alvoNome;
@@ -1282,22 +1600,19 @@ escutarPartida(codigoSala, (partida) => {
       if (blocoAlvoSorteado) blocoAlvoSorteado.classList.add("bloco-oculto");
     }
 
-    // Atualiza a mesa circular radial com destaque glow no jogador da vez / alvo
     renderizarJogadoresRadial(dadosJogadoresCache, carta);
 
-    // ========================================================
-    // CONTROLE DE ESTADOS: 1. BARALHO FECHADO vs 2. CARTA SECRETA REVELADA
-    // ========================================================
     const isRevelada = carta.revelada === true;
 
     if (!isRevelada) {
-      // ESTADO 1: O CENTRO DA MESA (BARALHO CENTRAL VIRADO PARA BAIXO)
       if (deckCentralArea) deckCentralArea.classList.remove("bloco-oculto");
       if (cartaFlipWrapper) cartaFlipWrapper.classList.add("bloco-oculto");
       if (focoCartaBackdrop) focoCartaBackdrop.classList.add("bloco-oculto");
 
       if (souOLeitor) {
         if (deckPilhaJogo) deckPilhaJogo.classList.add("deck-pulsando-suavez");
+        if (baralhoAssetWrapper) baralhoAssetWrapper.classList.add("baralho-ativo-vez");
+        if (badgeSuaVez) badgeSuaVez.classList.remove("bloco-oculto");
         if (btnPuxarCartaMesa) {
           btnPuxarCartaMesa.classList.remove("bloco-oculto");
           btnPuxarCartaMesa.disabled = false;
@@ -1305,6 +1620,8 @@ escutarPartida(codigoSala, (partida) => {
         if (boxEsperaPuxar) boxEsperaPuxar.classList.add("bloco-oculto");
       } else {
         if (deckPilhaJogo) deckPilhaJogo.classList.remove("deck-pulsando-suavez");
+        if (baralhoAssetWrapper) baralhoAssetWrapper.classList.remove("baralho-ativo-vez");
+        if (badgeSuaVez) badgeSuaVez.classList.add("bloco-oculto");
         if (btnPuxarCartaMesa) btnPuxarCartaMesa.classList.add("bloco-oculto");
         if (boxEsperaPuxar) {
           boxEsperaPuxar.classList.remove("bloco-oculto");
@@ -1314,13 +1631,13 @@ escutarPartida(codigoSala, (partida) => {
         }
       }
     } else {
-      // ESTADO 2: CARTA REVELADA (VISÃO ISOLADA: LEITOR VÊ FRENTE, OUTROS VÊEM VERSO SECRETO)
       if (deckCentralArea) deckCentralArea.classList.add("bloco-oculto");
+      if (baralhoAssetWrapper) baralhoAssetWrapper.classList.remove("baralho-ativo-vez");
+      if (badgeSuaVez) badgeSuaVez.classList.add("bloco-oculto");
       if (cartaFlipWrapper) cartaFlipWrapper.classList.remove("bloco-oculto");
       if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
 
       if (souOLeitor) {
-        // Leitor: Visualiza o conteúdo completo e lê em voz alta
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("carta-secreta-oculta");
           cartaJogoElemento.classList.add("carta-aberta-leitor");
@@ -1328,12 +1645,11 @@ escutarPartida(codigoSala, (partida) => {
         if (cartaDeckIcone) cartaDeckIcone.textContent = carta.deck_icone || "🃏";
         if (cartaDeckNome) cartaDeckNome.textContent = carta.deck_nome || "Baralho";
         if (cartaMechanicTag) {
-          cartaMechanicTag.textContent = carta.mechanic || "DESAFIO";
+          cartaMechanicTag.textContent = carta.subtype || carta.mechanic || "DESAFIO";
           cartaMechanicTag.className = `badge-mecanica-carta tag-mechanic-${carta.mechanic || "CONFISSAO"}`;
         }
         if (cartaTexto) cartaTexto.textContent = carta.text || "";
       } else {
-        // Outros jogadores: Visualizam a carta fechada com arte secreta
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("carta-aberta-leitor");
           cartaJogoElemento.classList.add("carta-secreta-oculta");
@@ -1344,7 +1660,6 @@ escutarPartida(codigoSala, (partida) => {
         }
       }
 
-      // Animação 3D Flip ao puxar nova carta da mesa
       if (ultimaCartaExibidaId !== carta.id + "_rev") {
         reacoesAnimadasSet.clear();
         if (typeof audioApp !== "undefined") audioApp.tocarViradaCarta();
@@ -1352,7 +1667,7 @@ escutarPartida(codigoSala, (partida) => {
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("anim-descarte-esquerda");
           cartaJogoElemento.classList.remove("anim-puxar-flip");
-          void cartaJogoElemento.offsetWidth; // Trigger reflow
+          void cartaJogoElemento.offsetWidth;
           cartaJogoElemento.classList.add("anim-puxar-flip");
         }
 
@@ -1360,10 +1675,8 @@ escutarPartida(codigoSala, (partida) => {
       }
     }
 
-    // Renderiza a Mecânica Interativa e Reações no HUD
     renderizarMecanicas(carta, interacoesCache, dadosJogadoresCache);
 
-    // Permite avançar para a próxima rodada caso seja o Leitor da vez ou o Host
     if (souHost || souOLeitor) {
       if (controlesAvancoJogo) controlesAvancoJogo.classList.remove("bloco-oculto");
       if (avisoJogadorJogo) avisoJogadorJogo.classList.add("bloco-oculto");
@@ -1381,7 +1694,7 @@ escutarPartida(codigoSala, (partida) => {
   }
 });
 
-// 4. Escuta Específica de Interações (para reatividade instantânea)
+// 4. Escuta de Interações
 escutarInteracoes(codigoSala, (interacoes) => {
   interacoesCache = interacoes || {};
   if (cartaAtualCache) {
@@ -1393,7 +1706,6 @@ escutarInteracoes(codigoSala, (interacoes) => {
 // AÇÕES DO JOGADOR E DO HOST
 // ============================================================
 
-// Copiar código da sala
 btnCopiarCodigo.addEventListener("click", () => {
   navigator.clipboard.writeText(codigoSala).then(() => {
     btnCopiarCodigo.innerHTML = "<span>✅</span> Copiado!";
@@ -1404,15 +1716,15 @@ btnCopiarCodigo.addEventListener("click", () => {
   });
 });
 
-// Iniciar Partida (do Lobby)
+// Iniciar Partida (Abre o Tutorial & Regras do Minigame Selecionado)
 btnIniciarPartida.addEventListener("click", async () => {
   if (!souHost) return;
   btnIniciarPartida.disabled = true;
-  btnIniciarPartida.textContent = "Preparando a mesa...";
+  btnIniciarPartida.textContent = "Abrindo regras...";
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
   try {
-    await iniciarTransicaoPartida(codigoSala, configLocal);
+    await iniciarTutorialRegras(codigoSala, configLocal);
   } catch (erro) {
     console.error(erro);
     mensagemErroLobby.textContent = "Não foi possível iniciar a partida.";
@@ -1421,7 +1733,7 @@ btnIniciarPartida.addEventListener("click", async () => {
   }
 });
 
-// Ação de Puxar Carta da Mesa (Jogador da Vez)
+// Puxar Carta
 async function executarAcaoPuxarCarta() {
   if (!cartaAtualCache || cartaAtualCache.revelada) return;
   if (cartaAtualCache.leitorId !== idJogadorAtual) return;
@@ -1449,7 +1761,23 @@ if (deckPilhaJogo) {
   });
 }
 
-// Avançar para Próxima Carta (Host ou Jogador da Vez)
+if (baralhoAssetWrapper) {
+  baralhoAssetWrapper.addEventListener("click", () => {
+    if (cartaAtualCache && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
+      executarAcaoPuxarCarta();
+    }
+  });
+}
+
+if (imgBaralhoMesa) {
+  imgBaralhoMesa.addEventListener("click", () => {
+    if (cartaAtualCache && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
+      executarAcaoPuxarCarta();
+    }
+  });
+}
+
+// Avançar Rodada
 btnProximaCarta.addEventListener("click", async () => {
   const souOLeitor = cartaAtualCache && cartaAtualCache.leitorId === idJogadorAtual;
   if (!souHost && !souOLeitor) return;
@@ -1458,7 +1786,6 @@ btnProximaCarta.addEventListener("click", async () => {
   btnProximaCarta.textContent = "Passando a vez...";
   if (typeof audioApp !== "undefined") audioApp.tocarDescarte();
 
-  // Animação de descarte deslizando para a esquerda
   if (cartaJogoElemento) {
     cartaJogoElemento.classList.add("anim-descarte-esquerda");
   }
@@ -1469,14 +1796,14 @@ btnProximaCarta.addEventListener("click", async () => {
     console.error(erro);
     mensagemErroJogo.textContent = "Erro ao passar a carta. Tente novamente.";
     btnProximaCarta.disabled = false;
-    btnProximaCarta.textContent = "🃏 Próxima Carta 🔥";
+    btnProximaCarta.textContent = "⏭️ Próxima Rodada 🔥";
     if (cartaJogoElemento) {
       cartaJogoElemento.classList.remove("anim-descarte-esquerda");
     }
   }
 });
 
-// Jogar Novamente / Voltar ao Lobby (Host)
+// Jogar Novamente
 btnJogarNovamente.addEventListener("click", async () => {
   if (!souHost) return;
   btnJogarNovamente.disabled = true;
@@ -1488,6 +1815,6 @@ btnJogarNovamente.addEventListener("click", async () => {
   } catch (erro) {
     console.error(erro);
     btnJogarNovamente.disabled = false;
-    btnJogarNovamente.textContent = "🔥 Jogar Novamente (Voltar à Mesa)";
+    btnJogarNovamente.textContent = "🔄 Voltar ao Lobby";
   }
 });

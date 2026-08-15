@@ -1,5 +1,5 @@
 // ============================================================
-// APP.JS — Lógica da tela inicial (index.html) — Etapa 1
+// APP.JS — Lógica da tela inicial (index.html)
 // ============================================================
 
 const blocoAcoesIniciais = document.getElementById("bloco-acoes-iniciais");
@@ -23,12 +23,47 @@ const galeriaAvataresEntrar = document.getElementById("galeria-avatares-entrar")
 
 const mensagemErro = document.getElementById("mensagem-erro");
 const btnAudio = document.getElementById("btn-audio");
+const btnFullscreen = document.getElementById("btn-fullscreen");
+const iconeFullscreen = document.getElementById("icone-fullscreen");
+const textoFullscreen = document.getElementById("texto-fullscreen");
+
+// Controle de Tela Cheia Opcional
+function alternarTelaCheia() {
+  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+function atualizarIconeFullscreen() {
+  const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  if (iconeFullscreen) iconeFullscreen.textContent = isFull ? "🗗" : "⛶";
+  if (textoFullscreen) textoFullscreen.textContent = isFull ? "Sair" : "Tela Cheia";
+}
+
+if (btnFullscreen) {
+  btnFullscreen.addEventListener("click", alternarTelaCheia);
+}
+
+document.addEventListener("fullscreenchange", atualizarIconeFullscreen);
+document.addEventListener("webkitfullscreenchange", atualizarIconeFullscreen);
 
 // Estado local de seleção
 let avatarHostSelecionado = AVATARES_PREDEFINIDOS[0];
 let avatarEntrarSelecionado = AVATARES_PREDEFINIDOS[0];
-let modoJogoSelecionado = "fogo_no_parquinho";
-let baralhosPersonalizadosAtivos = ["quebra_gelo", "fogo_no_parquinho"];
+let modoJogoSelecionado = "niveis_intimidade";
+let baralhosPersonalizadosAtivos = ["niveis_intimidade", "roleta_consequencias", "eu_nunca_safico", "quem_e_mais_provavel", "preencha_a_lacuna"];
 let totalRodadasSelecionado = 20;
 
 const painelBaralhosPersonalizados = document.getElementById("painel-baralhos-personalizados");
@@ -173,11 +208,9 @@ function renderizarGaleriaAvatares(container, avatarAtivo, onSelect) {
     btnAvatar.addEventListener("click", () => {
       if (typeof audioApp !== "undefined") audioApp.tocarClique();
       onSelect(avatar);
-      // Atualiza visual
       const todos = container.querySelectorAll(".btn-avatar-opcao");
       todos.forEach((el) => el.classList.remove("avatar-selecionado"));
       btnAvatar.classList.add("avatar-selecionado");
-      // Salva preferência local
       localStorage.setItem("mesaQuente_avatarId", avatar.id);
     });
 
@@ -185,9 +218,6 @@ function renderizarGaleriaAvatares(container, avatarAtivo, onSelect) {
   });
 }
 
-/**
- * Inicializa a galeria de avatares para Host e Convidado
- */
 function inicializarGalerias() {
   renderizarGaleriaAvatares(galeriaAvataresHost, avatarHostSelecionado, (avatar) => {
     avatarHostSelecionado = avatar;
@@ -199,18 +229,17 @@ function inicializarGalerias() {
 }
 
 /**
- * Configura os cliques dos cards de Modo de Jogo para o Host
+ * Configura os cliques de todos os cards de Minigames & Modos de Jogo
  */
 function inicializarSeletorModos() {
-  if (!seletorModosJogo) return;
-  const cards = seletorModosJogo.querySelectorAll(".card-modo-opcao");
+  const cards = document.querySelectorAll(".card-modo-opcao");
 
   cards.forEach((card) => {
     card.addEventListener("click", () => {
       if (typeof audioApp !== "undefined") audioApp.tocarClique();
       cards.forEach((c) => c.classList.remove("selecionado"));
       card.classList.add("selecionado");
-      modoJogoSelecionado = card.getAttribute("data-modo") || "fogo_no_parquinho";
+      modoJogoSelecionado = card.getAttribute("data-modo") || "niveis_intimidade";
 
       if (modoJogoSelecionado === "personalizado") {
         if (painelBaralhosPersonalizados) {
@@ -252,7 +281,6 @@ inicializarGalerias();
 inicializarSeletorModos();
 inicializarSeletorRodadas();
 
-// Botão de Áudio
 if (btnAudio) {
   btnAudio.addEventListener("click", () => {
     if (typeof audioApp !== "undefined") {
@@ -261,7 +289,6 @@ if (btnAudio) {
   });
 }
 
-// Alternância entre telas do formulário
 btnAbrirCriar.addEventListener("click", () => {
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
   alternarModo("criar");
@@ -299,7 +326,7 @@ btnConfirmarCriar.addEventListener("click", async () => {
   }
 
   if (modoJogoSelecionado === "personalizado" && baralhosPersonalizadosAtivos.length === 0) {
-    mostrarErro("Selecione ao menos 1 baralho no modo Personalizado.");
+    mostrarErro("Selecione ao menos 1 minigame no modo Personalizado.");
     return;
   }
 
@@ -314,7 +341,7 @@ btnConfirmarCriar.addEventListener("click", async () => {
     const configExtra = {
       baralhosAtivos: modoJogoSelecionado === "personalizado"
         ? baralhosPersonalizadosAtivos
-        : (MODOS_DE_JOGO[modoJogoSelecionado]?.baralhos || ["quebra_gelo"]),
+        : (MODOS_DE_JOGO[modoJogoSelecionado]?.baralhos || ["niveis_intimidade"]),
       totalCartas: totalRodadasSelecionado || 20
     };
 
@@ -369,12 +396,10 @@ btnConfirmarEntrar.addEventListener("click", async () => {
   }
 });
 
-// Força maiúsculas no input de código
 inputCodigoEntrar.addEventListener("input", () => {
   inputCodigoEntrar.value = inputCodigoEntrar.value.toUpperCase();
 });
 
-// Suporte a pressionar Enter nos inputs
 inputNomeHost.addEventListener("keydown", (e) => {
   if (e.key === "Enter") btnConfirmarCriar.click();
 });
