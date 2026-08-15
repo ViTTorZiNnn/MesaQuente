@@ -229,17 +229,27 @@ function inicializarGalerias() {
 }
 
 /**
- * Configura os cliques de todos os cards de Minigames & Modos de Jogo
+ * Configura os cliques e seleção de todos os 18 Minigames & Modos de Jogo
  */
 function inicializarSeletorModos() {
-  const cards = document.querySelectorAll(".card-modo-opcao");
+  const radioItens = document.querySelectorAll(".item-minigame-radio, .card-modo-opcao");
 
-  cards.forEach((card) => {
-    card.addEventListener("click", () => {
+  radioItens.forEach((item) => {
+    const radioInput = item.querySelector(".minigame-radio-input");
+
+    item.addEventListener("click", (e) => {
       if (typeof audioApp !== "undefined") audioApp.tocarClique();
-      cards.forEach((c) => c.classList.remove("selecionado"));
-      card.classList.add("selecionado");
-      modoJogoSelecionado = card.getAttribute("data-modo") || "niveis_intimidade";
+
+      radioItens.forEach((el) => {
+        el.classList.remove("selecionado");
+        const r = el.querySelector(".minigame-radio-input");
+        if (r) r.checked = false;
+      });
+
+      item.classList.add("selecionado");
+      if (radioInput) radioInput.checked = true;
+
+      modoJogoSelecionado = item.getAttribute("data-modo") || (radioInput ? radioInput.value : "quem_e_mais_provavel");
 
       if (modoJogoSelecionado === "personalizado") {
         if (painelBaralhosPersonalizados) {
@@ -252,6 +262,16 @@ function inicializarSeletorModos() {
         }
       }
     });
+
+    if (radioInput) {
+      radioInput.addEventListener("change", () => {
+        if (radioInput.checked) {
+          radioItens.forEach((el) => el.classList.remove("selecionado"));
+          item.classList.add("selecionado");
+          modoJogoSelecionado = radioInput.value;
+        }
+      });
+    }
   });
 }
 

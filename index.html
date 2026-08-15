@@ -69,147 +69,342 @@
           <p class="moldura-subtitulo">Configure a mesa e chame seus amigos</p>
         </div>
 
-        <div class="campo-grupo">
-          <label class="campo-rotulo" for="input-nome-host">1. Seu Nome / Apelido</label>
-          <input
-            type="text"
-            id="input-nome-host"
-            class="input-texto-3d input-cartoon"
-            placeholder="Como a galera te chama?"
-            maxlength="20"
-            autocomplete="name"
-          />
-        </div>
-
-        <!-- Galeria de Avatares do Host -->
-        <div class="campo-grupo">
-          <label class="campo-rotulo">2. Escolha seu Avatar</label>
-          <div class="galeria-avatares-wrapper">
-            <div class="galeria-avatares-scroll" id="galeria-avatares-host">
-              <!-- Injetado dinamicamente via JS -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Seletor do Modo de Jogo / Minigames -->
-        <div class="campo-grupo">
-          <label class="campo-rotulo">3. Escolha o Minigame ou Modo</label>
-          
-          <!-- Categoria: Casais & 1x1 -->
-          <div class="secao-categoria-modos">
-            <span class="titulo-categoria-modos">💜 Dinâmicas para Casais (1x1 ou Roda)</span>
-            <div class="seletor-modos-grid">
-              <div class="card-modo-opcao selecionado" data-modo="niveis_intimidade" id="modo-opt-niveis-intimidade">
-                <span class="card-modo-icone">💜</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Níveis de Intimidade</strong>
-                  <p class="card-modo-desc">3 níveis (Percepção, Conexão e +18 Íntimo).</p>
-                </div>
-              </div>
-
-              <div class="card-modo-opcao" data-modo="roleta_consequencias" id="modo-opt-roleta-consequencias">
-                <span class="card-modo-icone">🎭</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Roleta de Consequências</strong>
-                  <p class="card-modo-desc">Verdade ou Desafio Hot adaptado para celular.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Categoria: Grupos de Amigas (Sáfico) -->
-          <div class="secao-categoria-modos">
-            <span class="titulo-categoria-modos">👭 Dinâmicas para Grupos de Amigas (Foco Sáfico)</span>
-            <div class="seletor-modos-grid">
-              <div class="card-modo-opcao" data-modo="eu_nunca_safico" id="modo-opt-eu-nunca">
-                <span class="card-modo-icone">🍷</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Eu Nunca: Vale Tudo</strong>
-                  <p class="card-modo-desc">Esteriótipos da comunidade, votos e goles.</p>
-                </div>
-              </div>
-
-              <div class="card-modo-opcao" data-modo="quem_e_mais_provavel" id="modo-opt-quem-provavel">
-                <span class="card-modo-icone">🎯</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Quem é Mais Provável?</strong>
-                  <p class="card-modo-desc">Julgamento em grupo apontando as amigas.</p>
-                </div>
-              </div>
-
-              <div class="card-modo-opcao" data-modo="preencha_a_lacuna" id="modo-opt-preencha-lacuna">
-                <span class="card-modo-icone">🃏</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Preencha a Lacuna</strong>
-                  <p class="card-modo-desc">Cards Against Humanity sáfico e ácido.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Categoria: Modos Especiais & Mix -->
-          <div class="secao-categoria-modos">
-            <span class="titulo-categoria-modos">🛠️ Modos Especiais & Mix de Minigames</span>
-            <div class="seletor-modos-grid">
-              <div class="card-modo-opcao" data-modo="personalizado" id="modo-opt-personalizado">
-                <span class="card-modo-icone">🛠️</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Personalizado (Mix)</strong>
-                  <p class="card-modo-desc">Cada rodada é um minigame diferente!</p>
-                </div>
-              </div>
-
-              <div class="card-modo-opcao" data-modo="fogo_no_parquinho" id="modo-opt-fogo-parquinho">
-                <span class="card-modo-icone">🔥</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Fogo no Parquinho</strong>
-                  <p class="card-modo-desc">Desafios, intrigas e polêmicas.</p>
-                </div>
-              </div>
-
-              <div class="card-modo-opcao" data-modo="quebra_gelo" id="modo-opt-quebra-gelo">
-                <span class="card-modo-icone">🧊</span>
-                <div class="card-modo-info">
-                  <strong class="card-modo-titulo">Quebra-Gelo Clássico</strong>
-                  <p class="card-modo-desc">Perguntas casuais para soltar a galera.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Painel Dinâmico de Baralhos para Modo Personalizado -->
-          <div id="painel-baralhos-personalizados" class="painel-baralhos-personalizados bloco-oculto">
-            <span class="rotulo-painel-baralhos">Marque os Minigames que Vão Entrar na Partida:</span>
-            <div class="lista-checkboxes-baralhos" id="lista-checkboxes-baralhos-index">
-              <!-- Checkboxes estilizados injetados via JS -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Seletor de Quantidade de Rodadas (Cartas) -->
-        <div class="campo-grupo">
-          <label class="campo-rotulo">4. Duração da Partida (Rodadas / Cartas)</label>
-          <div class="seletor-rodadas-grid" id="seletor-rodadas-host">
-            <button type="button" class="btn-opcao-rodada" data-rodadas="10">10 Cartas</button>
-            <button type="button" class="btn-opcao-rodada selecionado" data-rodadas="20">20 Cartas</button>
-            <button type="button" class="btn-opcao-rodada" data-rodadas="40">40 Cartas</button>
-            <button type="button" class="btn-opcao-rodada" data-rodadas="custom">Personalizado</button>
-          </div>
-          <div id="campo-rodadas-custom" class="campo-rodadas-custom bloco-oculto">
+        <!-- Scroll Interno Mobile-First (Apenas esta área rola) -->
+        <div class="modal-corpo-scroll" id="modal-criar-scroll">
+          <div class="campo-grupo">
+            <label class="campo-rotulo" for="input-nome-host">1. Seu Nome / Apelido</label>
             <input
-              type="number"
-              id="input-rodadas-custom"
-              class="input-texto-3d input-numero-3d input-cartoon"
-              placeholder="Qtd (ex: 25)"
-              min="5"
-              max="100"
-              value="25"
+              type="text"
+              id="input-nome-host"
+              class="input-texto-3d input-cartoon"
+              placeholder="Como a galera te chama?"
+              maxlength="20"
+              autocomplete="name"
             />
-            <span class="subtexto-campo-rodadas">cartas na partida</span>
+          </div>
+
+          <!-- Galeria de Avatares do Host -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">2. Escolha seu Avatar</label>
+            <div class="galeria-avatares-wrapper">
+              <div class="galeria-avatares-scroll" id="galeria-avatares-host">
+                <!-- Injetado dinamicamente via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Seletor do Modo de Jogo: 6 Categorias & 18 Minigames Selecionáveis -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">3. Escolha o Minigame</label>
+            
+            <div class="grade-categorias-minigames">
+              
+              <!-- CATEGORIA 1: VOTAÇÃO & JULGAMENTO -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-1">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-votacao.png" alt="Cartas de Votação" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 1</span>
+                    <h3 class="categoria-nome-destaque">Votação & Tribunal</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Minigame 1 -->
+                  <label class="item-minigame-radio selecionado" data-modo="quem_e_mais_provavel" for="minigame-opt-1">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-1" value="quem_e_mais_provavel" class="minigame-radio-input" checked />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Quem é Mais Provável?</strong>
+                      <p class="minigame-radio-desc">Julgamento em grupo apontando as amigas na roda.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 2 -->
+                  <label class="item-minigame-radio" data-modo="tribunal_da_mesa" for="minigame-opt-2">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-2" value="tribunal_da_mesa" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Tribunal da Mesa</strong>
+                      <p class="minigame-radio-desc">Defenda seus pontos e sofra o veredito da roda.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 3 -->
+                  <label class="item-minigame-radio" data-modo="eleicao_dos_defeitos" for="minigame-opt-3">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-3" value="eleicao_dos_defeitos" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Eleição de Famas</strong>
+                      <p class="minigame-radio-desc">Votem em quem tem os hábitos mais questionáveis.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 2: CONEXÃO & CASAIS -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-2">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-casais.png" alt="Cartas de Casais" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 2</span>
+                    <h3 class="categoria-nome-destaque">Conexão & Casais</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Minigame 4 -->
+                  <label class="item-minigame-radio" data-modo="niveis_intimidade" for="minigame-opt-4">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-4" value="niveis_intimidade" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Níveis de Intimidade</strong>
+                      <p class="minigame-radio-desc">3 níveis (Percepção, Conexão e +18 Íntimo).</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 5 -->
+                  <label class="item-minigame-radio" data-modo="sintonia_de_olhares" for="minigame-opt-5">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-5" value="sintonia_de_olhares" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Sintonia de Olhares</strong>
+                      <p class="minigame-radio-desc">Perguntas diretas de vulnerabilidade e química.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 6 -->
+                  <label class="item-minigame-radio" data-modo="pacto_secreto" for="minigame-opt-6">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-6" value="pacto_secreto" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Pacto Secreto</strong>
+                      <p class="minigame-radio-desc">Promessas, segredos e cumplicidade a dois.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 3: RODA SÁFICA & AMIGAS -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-3">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-safico.png" alt="Cartas Roda Sáfica" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 3</span>
+                    <h3 class="categoria-nome-destaque">Roda Sáfica & Amigas</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Minigame 7 -->
+                  <label class="item-minigame-radio" data-modo="eu_nunca_safico" for="minigame-opt-7">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-7" value="eu_nunca_safico" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Eu Nunca: Vale Tudo</strong>
+                      <p class="minigame-radio-desc">Esteriótipos da comunidade, confissões e goles.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 8 -->
+                  <label class="item-minigame-radio" data-modo="preencha_a_lacuna" for="minigame-opt-8">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-8" value="preencha_a_lacuna" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Preencha a Lacuna</strong>
+                      <p class="minigame-radio-desc">Cards Against Humanity com cartas ácidas e +18.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 9 -->
+                  <label class="item-minigame-radio" data-modo="fofoca_anonima" for="minigame-opt-9">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-9" value="fofoca_anonima" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Fofoca da Mesa</strong>
+                      <p class="minigame-radio-desc">Histórias bizarras e passados que vêm à tona.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 4: DESAFIOS & PROVAS -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-4">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-desafios.png" alt="Cartas de Desafios" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 4</span>
+                    <h3 class="categoria-nome-destaque">Desafios & Provas</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Minigame 10 -->
+                  <label class="item-minigame-radio" data-modo="roleta_consequencias" for="minigame-opt-10">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-10" value="roleta_consequencias" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Roleta de Consequências</strong>
+                      <p class="minigame-radio-desc">Verdade ou Desafio Hot com fotos e câmera ao vivo.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 11 -->
+                  <label class="item-minigame-radio" data-modo="fogo_no_parquinho" for="minigame-opt-11">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-11" value="fogo_no_parquinho" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Fogo no Parquinho</strong>
+                      <p class="minigame-radio-desc">Dilemas impossíveis, intrigas e discórdia.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 12 -->
+                  <label class="item-minigame-radio" data-modo="pressao_maxima" for="minigame-opt-12">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-12" value="pressao_maxima" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Pressão Máxima</strong>
+                      <p class="minigame-radio-desc">Responda em 5 segundos antes que o alarme toque.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 5: +18 & SEM FILTRO -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-5">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-picante.png" alt="Cartas +18 Picante" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 5</span>
+                    <h3 class="categoria-nome-destaque">+18 & Sem Filtro</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Minigame 13 -->
+                  <label class="item-minigame-radio" data-modo="confissoes_quentes" for="minigame-opt-13">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-13" value="confissoes_quentes" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Confissões Quentes</strong>
+                      <p class="minigame-radio-desc">Perguntas picantes e revelações sem censura.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 14 -->
+                  <label class="item-minigame-radio" data-modo="zona_de_perigo" for="minigame-opt-14">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-14" value="zona_de_perigo" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Zona de Perigo</strong>
+                      <p class="minigame-radio-desc">Fetiches, fantasias e segredos da madrugada.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 15 -->
+                  <label class="item-minigame-radio" data-modo="bebe_ou_responde" for="minigame-opt-15">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-15" value="bebe_ou_responde" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Bebe ou Responde</strong>
+                      <p class="minigame-radio-desc">Ou conta tudo na mesa ou vira a taça.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- CATEGORIA 6: ESPECIAIS & MIX -->
+              <div class="categoria-bloco-jogos" id="cat-bloco-6">
+                <div class="categoria-cabecalho-card">
+                  <div class="categoria-carta-wrapper">
+                    <img src="cartas-especial.png" alt="Cartas Especiais" class="categoria-carta-img" />
+                  </div>
+                  <div class="categoria-titulos">
+                    <span class="categoria-rotulo-tag">CATEGORIA 6</span>
+                    <h3 class="categoria-nome-destaque">Especiais & Mix</h3>
+                  </div>
+                </div>
+
+                <div class="lista-minigames-radios">
+                  <!-- Minigame 16 -->
+                  <label class="item-minigame-radio" data-modo="personalizado" for="minigame-opt-16">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-16" value="personalizado" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Personalizado (Mix Geral)</strong>
+                      <p class="minigame-radio-desc">Cada rodada é um minigame diferente sorteado!</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 17 -->
+                  <label class="item-minigame-radio" data-modo="quebra_gelo" for="minigame-opt-17">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-17" value="quebra_gelo" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Quebra-Gelo Clássico</strong>
+                      <p class="minigame-radio-desc">Perguntas casuais e leves para soltar a galera.</p>
+                    </div>
+                  </label>
+
+                  <!-- Minigame 18 -->
+                  <label class="item-minigame-radio" data-modo="maratona_caotica" for="minigame-opt-18">
+                    <input type="radio" name="modo_jogo_radio" id="minigame-opt-18" value="maratona_caotica" class="minigame-radio-input" />
+                    <span class="minigame-radio-circulo" aria-hidden="true"></span>
+                    <div class="minigame-radio-info">
+                      <strong class="minigame-radio-titulo">Maratona Caótica</strong>
+                      <p class="minigame-radio-desc">Ritmo acelerado com todas as dinâmicas misturadas.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Painel Dinâmico de Baralhos para Modo Personalizado -->
+            <div id="painel-baralhos-personalizados" class="painel-baralhos-personalizados bloco-oculto">
+              <span class="rotulo-painel-baralhos">Marque os Minigames que Vão Entrar na Partida:</span>
+              <div class="lista-checkboxes-baralhos" id="lista-checkboxes-baralhos-index">
+                <!-- Checkboxes estilizados injetados via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Seletor de Quantidade de Rodadas (Cartas) -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">4. Duração da Partida (Rodadas / Cartas)</label>
+            <div class="seletor-rodadas-grid" id="seletor-rodadas-host">
+              <button type="button" class="btn-opcao-rodada" data-rodadas="10">10 Cartas</button>
+              <button type="button" class="btn-opcao-rodada selecionado" data-rodadas="20">20 Cartas</button>
+              <button type="button" class="btn-opcao-rodada" data-rodadas="40">40 Cartas</button>
+              <button type="button" class="btn-opcao-rodada" data-rodadas="custom">Personalizado</button>
+            </div>
+            <div id="campo-rodadas-custom" class="campo-rodadas-custom bloco-oculto">
+              <input
+                type="number"
+                id="input-rodadas-custom"
+                class="input-texto-3d input-numero-3d input-cartoon"
+                placeholder="Qtd (ex: 25)"
+                min="5"
+                max="100"
+                value="25"
+              />
+              <span class="subtexto-campo-rodadas">cartas na partida</span>
+            </div>
           </div>
         </div>
 
-        <div class="moldura-botoes-acoes">
+        <div class="moldura-botoes-acoes moldura-rodape-acoes">
           <button class="botao-comic botao-comic-primario" id="btn-confirmar-criar" type="button">
             <span>🔥 Criar Sala e Sentar à Mesa</span>
           </button>
@@ -226,42 +421,44 @@
           <p class="moldura-subtitulo">Digite o código de 4 letras compartilhado pelo anfitrião</p>
         </div>
 
-        <div class="campo-grupo">
-          <label class="campo-rotulo" for="input-codigo-entrar">1. Código da Sala (4 letras)</label>
-          <input
-            type="text"
-            id="input-codigo-entrar"
-            class="input-texto-3d input-codigo-3d input-cartoon"
-            placeholder="ABCD"
-            maxlength="4"
-            autocomplete="off"
-            autocapitalize="characters"
-          />
-        </div>
+        <div class="modal-corpo-scroll" id="modal-entrar-scroll">
+          <div class="campo-grupo">
+            <label class="campo-rotulo" for="input-codigo-entrar">1. Código da Sala (4 letras)</label>
+            <input
+              type="text"
+              id="input-codigo-entrar"
+              class="input-texto-3d input-codigo-3d input-cartoon"
+              placeholder="ABCD"
+              maxlength="4"
+              autocomplete="off"
+              autocapitalize="characters"
+            />
+          </div>
 
-        <div class="campo-grupo">
-          <label class="campo-rotulo" for="input-nome-entrar">2. Seu Nome / Apelido</label>
-          <input
-            type="text"
-            id="input-nome-entrar"
-            class="input-texto-3d input-cartoon"
-            placeholder="Seu apelido na roda"
-            maxlength="20"
-            autocomplete="name"
-          />
-        </div>
+          <div class="campo-grupo">
+            <label class="campo-rotulo" for="input-nome-entrar">2. Seu Nome / Apelido</label>
+            <input
+              type="text"
+              id="input-nome-entrar"
+              class="input-texto-3d input-cartoon"
+              placeholder="Seu apelido na roda"
+              maxlength="20"
+              autocomplete="name"
+            />
+          </div>
 
-        <!-- Galeria de Avatares do Convidado -->
-        <div class="campo-grupo">
-          <label class="campo-rotulo">3. Escolha seu Avatar</label>
-          <div class="galeria-avatares-wrapper">
-            <div class="galeria-avatares-scroll" id="galeria-avatares-entrar">
-              <!-- Injetado dinamicamente via JS -->
+          <!-- Galeria de Avatares do Convidado -->
+          <div class="campo-grupo">
+            <label class="campo-rotulo">3. Escolha seu Avatar</label>
+            <div class="galeria-avatares-wrapper">
+              <div class="galeria-avatares-scroll" id="galeria-avatares-entrar">
+                <!-- Injetado dinamicamente via JS -->
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="moldura-botoes-acoes">
+        <div class="moldura-botoes-acoes moldura-rodape-acoes">
           <button class="botao-comic botao-comic-primario" id="btn-confirmar-entrar" type="button">
             <span>🚪 Puxar Cadeira e Entrar</span>
           </button>

@@ -16,75 +16,121 @@ const AVATARES_PREDEFINIDOS = [
   { id: "robot", emoji: "🤖", nome: "Robô", cor: "#00b4d8", corBorda: "#90e0ef" }
 ];
 
-// Catálogo Completo de Modos de Jogo / Minigames
+// Catálogo Completo de Modos de Jogo / Minigames (6 Categorias & 18 Minigames)
 const MODOS_DE_JOGO = {
-  // --- GRUPO 1: DINÂMICAS PARA CASAIS / 1x1 ---
+  // --- CATEGORIA 1: VOTAÇÃO & TRIBUNAL ---
+  quem_e_mais_provavel: {
+    id: "quem_e_mais_provavel",
+    nome: "Quem é Mais Provável?",
+    icone: "🎯",
+    categoria: "votacao",
+    categoriaNome: "Votação & Tribunal",
+    descricao: "Julgamento em grupo apontando as amigas na roda.",
+    baralhos: ["quem_e_mais_provavel"],
+    cor: "#ff5400",
+    corGlow: "rgba(255, 84, 0, 0.45)",
+    regras: [
+      "A carta lança uma situação extrema, hilária ou picante.",
+      "Todas as jogadoras votam no avatar de quem mais se encaixa na situação.",
+      "O sistema acende o holofote na pessoa mais votada para ela se explicar!"
+    ]
+  },
+  tribunal_da_mesa: {
+    id: "tribunal_da_mesa",
+    nome: "Tribunal da Mesa",
+    icone: "⚖️",
+    categoria: "votacao",
+    categoriaNome: "Votação & Tribunal",
+    descricao: "Defenda seus pontos e sofra o veredito da roda.",
+    baralhos: ["quem_e_mais_provavel", "fogo_no_parquinho"],
+    cor: "#e63946",
+    corGlow: "rgba(230, 57, 70, 0.45)",
+    regras: [
+      "Um dilema moral ou acusação polêmica é colocada em julgamento.",
+      "A mesa vota entre Culpada ou Inocente.",
+      "A condenada deve aceitar a sentença ou virar a taça!"
+    ]
+  },
+  eleicao_dos_defeitos: {
+    id: "eleicao_dos_defeitos",
+    nome: "Eleição de Famas",
+    icone: "🏆",
+    categoria: "votacao",
+    categoriaNome: "Votação & Tribunal",
+    descricao: "Votem em quem tem os hábitos mais questionáveis.",
+    baralhos: ["quem_e_mais_provavel"],
+    cor: "#ffd166",
+    corGlow: "rgba(255, 209, 102, 0.45)",
+    regras: [
+      "Títulos hilários são disputados pela roda.",
+      "Todos votam em quem melhor ostenta o título.",
+      "A vencedora ganha a coroa e a glória (ou vergonha) da rodada!"
+    ]
+  },
+
+  // --- CATEGORIA 2: CONEXÃO & CASAIS ---
   niveis_intimidade: {
     id: "niveis_intimidade",
     nome: "Níveis de Intimidade",
     icone: "💜",
     categoria: "casal",
-    categoriaNome: "Dinâmicas para Casais (1x1)",
-    descricao: "Vulnerabilidade e flerte em 3 níveis (Percepção, Conexão e +18 Íntimo).",
+    categoriaNome: "Conexão & Casais",
+    descricao: "3 níveis (Percepção, Conexão e +18 Íntimo).",
     baralhos: ["niveis_intimidade"],
     cor: "#b5179e",
     corGlow: "rgba(181, 23, 158, 0.45)",
     regras: [
       "Uma troca profunda de perguntas focada em vulnerabilidade, conexão e flerte.",
       "Dividido em 3 níveis: Nível 1 (Percepção), Nível 2 (Conexão) e Nível 3 (+18 Íntimo).",
-      "Puxem a carta na mesa e respondam com total sinceridade no áudio ou olhando nos olhos!"
+      "Puxem a carta na mesa e respondam com total sinceridade!"
     ]
   },
-  roleta_consequencias: {
-    id: "roleta_consequencias",
-    nome: "Roleta de Consequências",
-    icone: "🎭",
+  sintonia_de_olhares: {
+    id: "sintonia_de_olhares",
+    nome: "Sintonia de Olhares",
+    icone: "👀",
     categoria: "casal",
-    categoriaNome: "Dinâmicas para Casais (1x1)",
-    descricao: "Verdade ou Desafio Hot adaptado para celular, fotos e câmera.",
-    baralhos: ["roleta_consequencias"],
-    cor: "#e63946",
-    corGlow: "rgba(230, 57, 70, 0.45)",
+    categoriaNome: "Conexão & Casais",
+    descricao: "Perguntas diretas de vulnerabilidade e química.",
+    baralhos: ["niveis_intimidade"],
+    cor: "#7209b7",
+    corGlow: "rgba(114, 9, 183, 0.45)",
     regras: [
-      "O jogador da vez escolhe entre 'Verdade 🗣️' ou 'Desafio ⚡'.",
-      "Se escolher Verdade: responda uma pergunta indiscreta e sem filtro sobre seu passado ou desejos.",
-      "Se escolher Desafio: cumpra a prova online ao vivo (fotos da lixeira, histórico de buscas, áudios).",
-      "Se recusar a cumprir, sofra o castigo decretado pela mesa!"
+      "Perguntas de contato visual e respostas diretas sem rodeios.",
+      "Teste se vocês têm a mesma visão sobre momentos chave do casal."
+    ]
+  },
+  pacto_secreto: {
+    id: "pacto_secreto",
+    nome: "Pacto Secreto",
+    icone: "🗝️",
+    categoria: "casal",
+    categoriaNome: "Conexão & Casais",
+    descricao: "Promessas, segredos e cumplicidade a dois.",
+    baralhos: ["niveis_intimidade"],
+    cor: "#f72585",
+    corGlow: "rgba(247, 37, 133, 0.45)",
+    regras: [
+      "Revele pensamentos guardados que nunca foram ditos em voz alta.",
+      "Crie pactos e promessas com a pessoa parceira."
     ]
   },
 
-  // --- GRUPO 2: DINÂMICAS PARA GRUPOS DE AMIGAS (FOCO SÁFICO) ---
+  // --- CATEGORIA 3: RODA SÁFICA & AMIGAS ---
   eu_nunca_safico: {
     id: "eu_nunca_safico",
     nome: "Eu Nunca: Vale Tudo",
     icone: "🍷",
     categoria: "amigas",
-    categoriaNome: "Dinâmicas para Amigas (Sáfico)",
-    descricao: "O clássico Eu Nunca com esteriótipos da comunidade e confissões ao vivo.",
+    categoriaNome: "Roda Sáfica & Amigas",
+    descricao: "Esteriótipos da comunidade, confissões e goles.",
     baralhos: ["eu_nunca_safico"],
     cor: "#7209b7",
     corGlow: "rgba(114, 9, 183, 0.45)",
     regras: [
       "A afirmação aparece na tela para todas as jogadoras da sala.",
       "Cada participante clica em 'Já Fiz 🍷' ou 'Sou Inocente 😇'.",
-      "O sistema revela as porcentagens e votos de todas em tempo real.",
-      "Quem clicou em 'Já Fiz' toma um gole de bebida ou conta a história no áudio!"
-    ]
-  },
-  quem_e_mais_provavel: {
-    id: "quem_e_mais_provavel",
-    nome: "Quem é Mais Provável?",
-    icone: "🎯",
-    categoria: "amigas",
-    categoriaNome: "Dinâmicas para Amigas (Sáfico)",
-    descricao: "Coloque as amigas na fogueira apontando a pessoa mais provável da situação.",
-    baralhos: ["quem_e_mais_provavel"],
-    cor: "#ff5400",
-    corGlow: "rgba(255, 84, 0, 0.45)",
-    regras: [
-      "A carta lança uma situação extrema, hilária ou picante.",
-      "Todas as jogadoras votam anonimamente no avatar de quem mais se encaixa na situação.",
-      "O sistema acende o holofote na pessoa mais votada, que sofre a penalidade ou explica a fama!"
+      "Quem já fez toma um gole ou conta o babado!"
     ]
   },
   preencha_a_lacuna: {
@@ -92,48 +138,136 @@ const MODOS_DE_JOGO = {
     nome: "Preencha a Lacuna",
     icone: "🃏",
     categoria: "amigas",
-    categoriaNome: "Dinâmicas para Amigas (Sáfico)",
-    descricao: "Cards Against Humanity com referências sáficas, ácidas e +18.",
+    categoriaNome: "Roda Sáfica & Amigas",
+    descricao: "Cards Against Humanity com cartas ácidas e +18.",
     baralhos: ["preencha_a_lacuna"],
     cor: "#4361ee",
     corGlow: "rgba(67, 97, 238, 0.45)",
     regras: [
       "Uma Carta Preta traz uma lacuna para completar (________).",
-      "Cada jogadora escolhe uma resposta branca bizarra, ácida ou romântica da mão.",
-      "A Juíza da rodada lê as respostas anônimas e elege a vencedora da rodada!"
+      "Cada jogadora escolhe a resposta mais ácida ou engraçada.",
+      "A juíza da rodada elege a melhor combinação!"
+    ]
+  },
+  fofoca_anonima: {
+    id: "fofoca_anonima",
+    nome: "Fofoca da Mesa",
+    icone: "🤫",
+    categoria: "amigas",
+    categoriaNome: "Roda Sáfica & Amigas",
+    descricao: "Histórias bizarras e passados que vêm à tona.",
+    baralhos: ["eu_nunca_safico", "quem_e_mais_provavel"],
+    cor: "#9d4edd",
+    corGlow: "rgba(157, 78, 221, 0.45)",
+    regras: [
+      "Histórias sem nomes reveladas na mesa.",
+      "A roda tenta adivinhar quem é a dona da fofoca!"
     ]
   },
 
-  // --- GRUPO 3: MODOS ESPECIAIS & MIX ---
-  personalizado: {
-    id: "personalizado",
-    nome: "Personalizado (Mix de Minigames)",
-    icone: "🛠️",
-    categoria: "especial",
-    categoriaNome: "Modos Especiais & Mix",
-    descricao: "Cada rodada é um minigame diferente! Escolha quais entram na mistura.",
-    baralhos: ["niveis_intimidade", "roleta_consequencias", "eu_nunca_safico", "quem_e_mais_provavel", "preencha_a_lacuna"],
-    cor: "#ffb703",
-    corGlow: "rgba(255, 183, 3, 0.45)",
+  // --- CATEGORIA 4: DESAFIOS & PROVAS ---
+  roleta_consequencias: {
+    id: "roleta_consequencias",
+    nome: "Roleta de Consequências",
+    icone: "⚡",
+    categoria: "desafios",
+    categoriaNome: "Desafios & Provas",
+    descricao: "Verdade ou Desafio Hot com fotos e câmera ao vivo.",
+    baralhos: ["roleta_consequencias"],
+    cor: "#ff5400",
+    corGlow: "rgba(255, 84, 0, 0.45)",
     regras: [
-      "Cada rodada da partida sorteia um minigame específico entre os baralhos ativos.",
-      "A mecânica se adapta instantaneamente à carta sorteada (Verdade ou Desafio, Eu Nunca, etc.).",
-      "Muita variedade, surpresas e dinamismo para a mesa!"
+      "Escolha entre 'Verdade 🗣️' ou 'Desafio ⚡'.",
+      "Cumpra a prova diante da roda ou sofra o castigo decretado pela mesa!"
     ]
   },
   fogo_no_parquinho: {
     id: "fogo_no_parquinho",
     nome: "Fogo no Parquinho",
     icone: "🔥",
-    categoria: "especial",
-    categoriaNome: "Modos Especiais & Mix",
-    descricao: "Desafios, intrigas, votos polêmicos e verdades sem filtro.",
+    categoria: "desafios",
+    categoriaNome: "Desafios & Provas",
+    descricao: "Dilemas impossíveis, intrigas e discórdia.",
     baralhos: ["fogo_no_parquinho", "roleta_consequencias"],
     cor: "#ff4d2e",
     corGlow: "rgba(255, 77, 46, 0.45)",
     regras: [
-      "Votos diretos, dilemas impossíveis e verdades provocativas sem filtro.",
-      "Estejam preparadas para defender suas opiniões na roda!"
+      "Votos diretos, dilemas impossíveis e verdades provocativas sem filtro."
+    ]
+  },
+  pressao_maxima: {
+    id: "pressao_maxima",
+    nome: "Pressão Máxima",
+    icone: "⏱️",
+    categoria: "desafios",
+    categoriaNome: "Desafios & Provas",
+    descricao: "Responda em 5 segundos antes que o alarme toque.",
+    baralhos: ["roleta_consequencias", "quebra_gelo"],
+    cor: "#d90429",
+    corGlow: "rgba(217, 4, 41, 0.45)",
+    regras: [
+      "3 respostas em 5 segundos. Se travar, bebe!"
+    ]
+  },
+
+  // --- CATEGORIA 5: +18 & SEM FILTRO ---
+  confissoes_quentes: {
+    id: "confissoes_quentes",
+    nome: "Confissões Quentes",
+    icone: "🌶️",
+    categoria: "picante",
+    categoriaNome: "+18 & Sem Filtro",
+    descricao: "Perguntas picantes e revelações sem censura.",
+    baralhos: ["niveis_intimidade", "eu_nunca_safico"],
+    cor: "#d90429",
+    corGlow: "rgba(217, 4, 41, 0.45)",
+    regras: [
+      "Perguntas intensas sobre desejos, preferências e experiências passadas."
+    ]
+  },
+  zona_de_perigo: {
+    id: "zona_de_perigo",
+    nome: "Zona de Perigo",
+    icone: "💣",
+    categoria: "picante",
+    categoriaNome: "+18 & Sem Filtro",
+    descricao: "Fetiches, fantasias e segredos da madrugada.",
+    baralhos: ["niveis_intimidade", "roleta_consequencias"],
+    cor: "#7209b7",
+    corGlow: "rgba(114, 9, 183, 0.45)",
+    regras: [
+      "Nível máximo de ousadia. Apenas para quem aguenta a verdade."
+    ]
+  },
+  bebe_ou_responde: {
+    id: "bebe_ou_responde",
+    nome: "Bebe ou Responde",
+    icone: "🍸",
+    categoria: "picante",
+    categoriaNome: "+18 & Sem Filtro",
+    descricao: "Ou conta tudo na mesa ou vira a taça.",
+    baralhos: ["eu_nunca_safico", "niveis_intimidade"],
+    cor: "#ff758f",
+    corGlow: "rgba(255, 117, 143, 0.45)",
+    regras: [
+      "Se a resposta for segredo de estado, o preço é um shot generoso!"
+    ]
+  },
+
+  // --- CATEGORIA 6: ESPECIAIS & MIX ---
+  personalizado: {
+    id: "personalizado",
+    nome: "Personalizado (Mix Geral)",
+    icone: "🃏",
+    categoria: "especial",
+    categoriaNome: "Especiais & Mix",
+    descricao: "Cada rodada é um minigame diferente sorteado!",
+    baralhos: ["niveis_intimidade", "roleta_consequencias", "eu_nunca_safico", "quem_e_mais_provavel", "preencha_a_lacuna"],
+    cor: "#ffb703",
+    corGlow: "rgba(255, 183, 3, 0.45)",
+    regras: [
+      "Cada rodada da partida sorteia um minigame específico entre os baralhos ativos.",
+      "A mecânica se adapta instantaneamente à carta sorteada!"
     ]
   },
   quebra_gelo: {
@@ -141,14 +275,27 @@ const MODOS_DE_JOGO = {
     nome: "Quebra-Gelo Clássico",
     icone: "🧊",
     categoria: "especial",
-    categoriaNome: "Modos Especiais & Mix",
-    descricao: "Perguntas leves e curiosas para esquentar a conversa e soltar a galera.",
+    categoriaNome: "Especiais & Mix",
+    descricao: "Perguntas casuais e leves para soltar a galera.",
     baralhos: ["quebra_gelo"],
     cor: "#00b4d8",
     corGlow: "rgba(0, 180, 216, 0.45)",
     regras: [
-      "Perguntas casuais, leves e divertidas para quebrar o gelo.",
-      "Respondam sem pressão e descubram curiosidades uns sobre os outros."
+      "Perguntas casuais, leves e divertidas para começar a noite."
+    ]
+  },
+  maratona_caotica: {
+    id: "maratona_caotica",
+    nome: "Maratona Caótica",
+    icone: "🌪️",
+    categoria: "especial",
+    categoriaNome: "Especiais & Mix",
+    descricao: "Ritmo acelerado com todas as dinâmicas misturadas.",
+    baralhos: ["quem_e_mais_provavel", "roleta_consequencias", "eu_nunca_safico", "preencha_a_lacuna", "niveis_intimidade", "fogo_no_parquinho"],
+    cor: "#4cc9f0",
+    corGlow: "rgba(76, 201, 240, 0.45)",
+    regras: [
+      "Sem pausas, ritmo acelerado e cartas trocando a cada minuto!"
     ]
   }
 };

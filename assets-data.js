@@ -642,6 +642,50 @@ export const sairSalaSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
   </g>
 </svg>`;
 
+// ============================================================
+// 12. CARTAS DE CATEGORIA (CARTOON / COMIC)
+// ============================================================
+export function criarCardCategoriaSvg(titulo, icone, corGrad1, corGrad2, corBorda) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 220" width="160" height="220">
+  <defs>
+    <linearGradient id="card-grad-${corGrad1.replace('#','')}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${corGrad1}"/>
+      <stop offset="100%" stop-color="${corGrad2}"/>
+    </linearGradient>
+    <filter id="card-drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#card-drop-shadow)">
+    <!-- Moldura Externa Preta Grossa -->
+    <rect x="8" y="8" width="144" height="204" rx="14" fill="#0b0b0b" stroke="#000000" stroke-width="4"/>
+    
+    <!-- Fundo Interno da Carta -->
+    <rect x="12" y="12" width="136" height="196" rx="10" fill="url(#card-grad-${corGrad1.replace('#','')})" stroke="${corBorda}" stroke-width="3"/>
+    
+    <!-- Borda Pontilhada Interna -->
+    <rect x="18" y="18" width="124" height="184" rx="7" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+    <!-- Ícone Central Flutuante -->
+    <circle cx="80" cy="95" r="38" fill="#000000" opacity="0.35"/>
+    <circle cx="80" cy="92" r="35" fill="#140306" stroke="${corBorda}" stroke-width="2.5"/>
+    <text x="80" y="103" font-size="36" text-anchor="middle" font-family="'Outfit', sans-serif">${icone}</text>
+
+    <!-- Faixa Inferior com Nome da Categoria -->
+    <rect x="22" y="160" width="116" height="28" rx="6" fill="#0b0b0b" stroke="${corBorda}" stroke-width="2"/>
+    <text x="80" y="179" font-size="11" font-weight="900" text-anchor="middle" fill="#ffffff" font-family="'Outfit', sans-serif" letter-spacing="0.5">${titulo}</text>
+  </g>
+</svg>`;
+}
+
+export const cardVotacaoSvg = criarCardCategoriaSvg("VOTAÇÃO", "🎯", "#e63946", "#670710", "#ffb703");
+export const cardCasaisSvg = criarCardCategoriaSvg("CASAIS", "💜", "#7209b7", "#30034f", "#f72585");
+export const cardSaficoSvg = criarCardCategoriaSvg("SÁFICO", "👭", "#f72585", "#700438", "#ffd166");
+export const cardDesafiosSvg = criarCardCategoriaSvg("DESAFIOS", "⚡", "#ff5400", "#7a1a00", "#ffda00");
+export const cardPicanteSvg = criarCardCategoriaSvg("+18 HOT", "🔥", "#d90429", "#4a000d", "#ff758f");
+export const cardEspecialSvg = criarCardCategoriaSvg("MIX GERAL", "🃏", "#4361ee", "#101f6e", "#4cc9f0");
+
 // Write all assets to root filesystem so both direct file serving and routes work
 try {
   fs.writeFileSync("background-lobby.svg", bgSvg);
@@ -658,7 +702,21 @@ try {
   fs.writeFileSync("engrenagem.svg", engrenagemSvg);
   fs.writeFileSync("reacoes.svg", reacoesSvg);
   fs.writeFileSync("sair-da-sala.svg", sairSalaSvg);
-  console.log("All V3 vector assets generated successfully!");
+
+  fs.writeFileSync("cartas-votacao.svg", cardVotacaoSvg);
+  fs.writeFileSync("cartas-votacao.png", cardVotacaoSvg);
+  fs.writeFileSync("cartas-casais.svg", cardCasaisSvg);
+  fs.writeFileSync("cartas-casais.png", cardCasaisSvg);
+  fs.writeFileSync("cartas-safico.svg", cardSaficoSvg);
+  fs.writeFileSync("cartas-safico.png", cardSaficoSvg);
+  fs.writeFileSync("cartas-desafios.svg", cardDesafiosSvg);
+  fs.writeFileSync("cartas-desafios.png", cardDesafiosSvg);
+  fs.writeFileSync("cartas-picante.svg", cardPicanteSvg);
+  fs.writeFileSync("cartas-picante.png", cardPicanteSvg);
+  fs.writeFileSync("cartas-especial.svg", cardEspecialSvg);
+  fs.writeFileSync("cartas-especial.png", cardEspecialSvg);
+
+  console.log("All V3 vector assets and category cards generated successfully!");
 } catch (err) {
   console.error("Error writing asset files:", err);
 }
