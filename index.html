@@ -93,289 +93,498 @@
             </div>
           </div>
 
-          <!-- Seletor do Modo de Jogo: 6 Categorias & Minigames com Múltipla Escolha e Modo Mix -->
-          <div class="campo-grupo">
+          <!-- Seletor do Modo de Jogo: 6 Categorias & Minigames com Múltipla Escolha e Modo Livre -->
+          <div class="campo-grupo" id="grupo-seletor-minigames">
             <div class="campo-cabecalho-linha">
               <label class="campo-rotulo">3. Escolha os Minigames</label>
-              <span class="subtexto-info-modo" id="subtexto-info-modo">Selecione minigames da mesma categoria ou ative o Modo Mix</span>
+              <span class="subtexto-info-modo" id="subtexto-info-modo">Selecione minigames da mesma categoria ou ative o Modo Livre</span>
             </div>
-            
-            <div class="grade-categorias-minigames" id="grade-categorias-minigames">
-              
-              <!-- CATEGORIA 1: VOTAÇÃO -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-1" data-cat="1">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-votação.png" alt="Cartas de Votação" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 1</span>
-                    <h3 class="categoria-nome-destaque">VOTAÇÃO</h3>
-                  </div>
-                </div>
 
-                <div class="lista-minigames-radios">
-                  <!-- Checkbox 1: Quem é Mais Provável? -->
-                  <label class="item-minigame-radio selecionado" data-cat="1" data-modo="quem_e_mais_provavel" for="minigame-opt-1">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-1" value="quem_e_mais_provavel" class="minigame-checkbox-input" checked />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Quem é Mais Provável?</strong>
-                      <p class="minigame-radio-desc">Julgamento em grupo apontando as amigas na roda.</p>
+            <!-- CONTÊINER 1: CATÁLOGOS CONVENCIONAIS (6 CATEGORIAS + CATEGORIA 7 MODO LIVRE) -->
+            <div id="visao-catalogos-convencionais" class="visao-catalogos-convencionais">
+              <div class="grade-categorias-minigames" id="grade-categorias-minigames">
+                
+                <!-- CATEGORIA 1: VOTAÇÃO -->
+                <div class="categoria-bloco-jogos" id="cat-bloco-1" data-cat="1">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper">
+                      <img src="cartas-votação.png" alt="Cartas de Votação" class="categoria-carta-img" />
                     </div>
-                  </label>
-
-                  <!-- Checkbox 2: Eu Nunca -->
-                  <label class="item-minigame-radio" data-cat="1" data-modo="eu_nunca" for="minigame-opt-2">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-2" value="eu_nunca" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Eu Nunca</strong>
-                      <p class="minigame-radio-desc">Confissões na roda: quem já fez toma um gole.</p>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag">CATEGORIA 1</span>
+                      <h3 class="categoria-nome-destaque">VOTAÇÃO</h3>
                     </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 2: DILEMAS -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-2" data-cat="2">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-confissões.png" alt="Cartas de Dilemas" class="categoria-carta-img" />
                   </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 2</span>
-                    <h3 class="categoria-nome-destaque">DILEMAS</h3>
-                  </div>
-                </div>
 
-                <div class="lista-minigames-radios">
-                  <!-- Checkbox 1: O Que Você Prefere? -->
-                  <label class="item-minigame-radio" data-cat="2" data-modo="o_que_voce_prefere" for="minigame-opt-3">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-3" value="o_que_voce_prefere" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">O Que Você Prefere?</strong>
-                      <p class="minigame-radio-desc">Escolhas difíceis e situações sem saída.</p>
-                    </div>
-                  </label>
-
-                  <!-- Checkbox 2: Preencha a Lacuna -->
-                  <label class="item-minigame-radio" data-cat="2" data-modo="preencha_a_lacuna" for="minigame-opt-4">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-4" value="preencha_a_lacuna" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Preencha a Lacuna</strong>
-                      <p class="minigame-radio-desc">Cards Against Humanity com cartas ácidas e +18.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 3: BLEFE -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-3" data-cat="3">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-surpresa.png" alt="Cartas de Blefe" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 3</span>
-                    <h3 class="categoria-nome-destaque">BLEFE</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Checkbox 1: Duas Verdades e Uma Mentira -->
-                  <label class="item-minigame-radio" data-cat="3" data-modo="duas_verdades_uma_mentira" for="minigame-opt-5">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-5" value="duas_verdades_uma_mentira" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Duas Verdades e Uma Mentira</strong>
-                      <p class="minigame-radio-desc">Conte 3 fatos e a mesa tenta adivinhar o blefe.</p>
-                    </div>
-                  </label>
-
-                  <!-- Checkbox 2: O Espião -->
-                  <label class="item-minigame-radio" data-cat="3" data-modo="o_espiao" for="minigame-opt-6">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-6" value="o_espiao" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">O Espião</strong>
-                      <p class="minigame-radio-desc">Descubra quem não sabe a palavra secreta da mesa.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 4: DEBATE -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-4" data-cat="4">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-contra-o-tempo.png" alt="Cartas de Debate" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 4</span>
-                    <h3 class="categoria-nome-destaque">DEBATE</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Checkbox 1: Bandeiras Vermelhas -->
-                  <label class="item-minigame-radio" data-cat="4" data-modo="bandeiras_vermelhas" for="minigame-opt-7">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-7" value="bandeiras_vermelhas" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Bandeiras Vermelhas</strong>
-                      <p class="minigame-radio-desc">Defenda o pretendente perfeito com um defeito bizarro.</p>
-                    </div>
-                  </label>
-
-                  <!-- Checkbox 2: Batalha de Argumentos -->
-                  <label class="item-minigame-radio" data-cat="4" data-modo="batalha_de_argumentos" for="minigame-opt-8">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-8" value="batalha_de_argumentos" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Batalha de Argumentos</strong>
-                      <p class="minigame-radio-desc">Defenda opiniões absurdas com unhas e dentes.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 5: SINTONIA -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-5" data-cat="5">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-picantes.png" alt="Cartas de Sintonia" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 5</span>
-                    <h3 class="categoria-nome-destaque">SINTONIA</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Checkbox 1: O Termômetro -->
-                  <label class="item-minigame-radio" data-cat="5" data-modo="o_termometro" for="minigame-opt-9">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-9" value="o_termometro" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">O Termômetro</strong>
-                      <p class="minigame-radio-desc">Adivinhe a intensidade da resposta de 1 a 10.</p>
-                    </div>
-                  </label>
-
-                  <!-- Checkbox 2: Apenas Uma Dica -->
-                  <label class="item-minigame-radio" data-cat="5" data-modo="apenas_uma_dica" for="minigame-opt-10">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-10" value="apenas_uma_dica" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Apenas Uma Dica</strong>
-                      <p class="minigame-radio-desc">Dicas de uma palavra para adivinhar o segredo.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- CATEGORIA 6: DESAFIO -->
-              <div class="categoria-bloco-jogos" id="cat-bloco-6" data-cat="6">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper">
-                    <img src="cartas-desafios.png" alt="Cartas de Desafios" class="categoria-carta-img" />
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag">CATEGORIA 6</span>
-                    <h3 class="categoria-nome-destaque">DESAFIO</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <!-- Checkbox 1: Palavra Proibida -->
-                  <label class="item-minigame-radio" data-cat="6" data-modo="palavra_proibida" for="minigame-opt-11">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-11" value="palavra_proibida" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Palavra Proibida</strong>
-                      <p class="minigame-radio-desc">Faça a mesa falar a palavra sem dizer as proibidas.</p>
-                    </div>
-                  </label>
-
-                  <!-- Checkbox 2: Níveis de Intimidade -->
-                  <label class="item-minigame-radio" data-cat="6" data-modo="niveis_intimidade" for="minigame-opt-12">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-12" value="niveis_intimidade" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Níveis de Intimidade</strong>
-                      <p class="minigame-radio-desc">3 níveis (Percepção, Conexão e +18 Íntimo).</p>
-                    </div>
-                  </label>
-
-                  <!-- Checkbox 3: Verdade ou Desafio Hot -->
-                  <label class="item-minigame-radio" data-cat="6" data-modo="verdade_ou_desafio_hot" for="minigame-opt-13">
-                    <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-13" value="verdade_ou_desafio_hot" class="minigame-checkbox-input" />
-                    <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
-                    <div class="minigame-radio-info">
-                      <strong class="minigame-radio-titulo">Verdade ou Desafio Hot</strong>
-                      <p class="minigame-radio-desc">Provas audaciosas e confissões sem filtro.</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- NOVA CATEGORIA: MODO LIVRE (?) -->
-              <div class="categoria-bloco-jogos categoria-bloco-livre" id="cat-bloco-livre" data-cat="livre">
-                <div class="categoria-cabecalho-card">
-                  <div class="categoria-carta-wrapper icone-livre-wrapper">
-                    <span class="icone-interrogacao-livre">❓</span>
-                  </div>
-                  <div class="categoria-titulos">
-                    <span class="categoria-rotulo-tag rotulo-tag-livre">ESPECIAL</span>
-                    <h3 class="categoria-nome-destaque">MODO LIVRE</h3>
-                  </div>
-                </div>
-
-                <div class="lista-minigames-radios">
-                  <div class="item-modo-livre-card" id="card-toggle-modo-livre">
-                    <label class="item-minigame-radio item-radio-livre-toggle" id="label-toggle-modo-livre" for="checkbox-modo-livre">
-                      <input type="checkbox" id="checkbox-modo-livre" class="minigame-checkbox-input" />
-                      <span class="minigame-checkbox-quadrado quadrado-livre" id="quadrado-modo-livre" aria-hidden="true">✓</span>
+                  <div class="lista-minigames-radios">
+                    <!-- Checkbox 1: Quem é Mais Provável? -->
+                    <label class="item-minigame-radio" data-cat="1" data-modo="quem_e_mais_provavel" for="minigame-opt-1">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-1" value="quem_e_mais_provavel" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
                       <div class="minigame-radio-info">
-                        <strong class="minigame-radio-titulo">Ativar Seleção Livre</strong>
-                        <p class="minigame-radio-desc">Desliga a trava de exclusividade e permite misturar minigames de qualquer categoria simultaneamente.</p>
+                        <strong class="minigame-radio-titulo">Quem é Mais Provável?</strong>
+                        <p class="minigame-radio-desc">Julgamento em grupo apontando as amigas na roda.</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 2: Eu Nunca -->
+                    <label class="item-minigame-radio" data-cat="1" data-modo="eu_nunca" for="minigame-opt-2">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-2" value="eu_nunca" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Eu Nunca</strong>
+                        <p class="minigame-radio-desc">Confissões na roda: quem já fez toma um gole.</p>
                       </div>
                     </label>
                   </div>
                 </div>
+
+                <!-- CATEGORIA 2: DILEMAS -->
+                <div class="categoria-bloco-jogos" id="cat-bloco-2" data-cat="2">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper">
+                      <img src="cartas-confissões.png" alt="Cartas de Dilemas" class="categoria-carta-img" />
+                    </div>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag">CATEGORIA 2</span>
+                      <h3 class="categoria-nome-destaque">DILEMAS</h3>
+                    </div>
+                  </div>
+
+                  <div class="lista-minigames-radios">
+                    <!-- Checkbox 1: O Que Você Prefere? -->
+                    <label class="item-minigame-radio" data-cat="2" data-modo="o_que_voce_prefere" for="minigame-opt-3">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-3" value="o_que_voce_prefere" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">O Que Você Prefere?</strong>
+                        <p class="minigame-radio-desc">Escolhas difíceis e situações sem saída.</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 2: Preencha a Lacuna -->
+                    <label class="item-minigame-radio" data-cat="2" data-modo="preencha_a_lacuna" for="minigame-opt-4">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-4" value="preencha_a_lacuna" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Preencha a Lacuna</strong>
+                        <p class="minigame-radio-desc">Cards Against Humanity com cartas ácidas e +18.</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- CATEGORIA 3: BLEFE -->
+                <div class="categoria-bloco-jogos" id="cat-bloco-3" data-cat="3">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper">
+                      <img src="cartas-surpresa.png" alt="Cartas de Blefe" class="categoria-carta-img" />
+                    </div>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag">CATEGORIA 3</span>
+                      <h3 class="categoria-nome-destaque">BLEFE</h3>
+                    </div>
+                  </div>
+
+                  <div class="lista-minigames-radios">
+                    <!-- Checkbox 1: Duas Verdades e Uma Mentira -->
+                    <label class="item-minigame-radio" data-cat="3" data-modo="duas_verdades_uma_mentira" for="minigame-opt-5">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-5" value="duas_verdades_uma_mentira" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Duas Verdades e Uma Mentira</strong>
+                        <p class="minigame-radio-desc">Conte 3 fatos e a mesa tenta adivinhar o blefe.</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 2: O Espião -->
+                    <label class="item-minigame-radio" data-cat="3" data-modo="o_espiao" for="minigame-opt-6">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-6" value="o_espiao" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">O Espião</strong>
+                        <p class="minigame-radio-desc">Descubra quem não sabe a palavra secreta da mesa.</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- CATEGORIA 4: DEBATE -->
+                <div class="categoria-bloco-jogos" id="cat-bloco-4" data-cat="4">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper">
+                      <img src="cartas-contra-o-tempo.png" alt="Cartas de Debate" class="categoria-carta-img" />
+                    </div>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag">CATEGORIA 4</span>
+                      <h3 class="categoria-nome-destaque">DEBATE</h3>
+                    </div>
+                  </div>
+
+                  <div class="lista-minigames-radios">
+                    <!-- Checkbox 1: Bandeiras Vermelhas -->
+                    <label class="item-minigame-radio" data-cat="4" data-modo="bandeiras_vermelhas" for="minigame-opt-7">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-7" value="bandeiras_vermelhas" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Bandeiras Vermelhas</strong>
+                        <p class="minigame-radio-desc">Defenda o pretendente perfeito com um defeito bizarro.</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 2: Batalha de Argumentos -->
+                    <label class="item-minigame-radio" data-cat="4" data-modo="batalha_de_argumentos" for="minigame-opt-8">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-8" value="batalha_de_argumentos" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Batalha de Argumentos</strong>
+                        <p class="minigame-radio-desc">Defenda opiniões absurdas com unhas e dentes.</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- CATEGORIA 5: SINTONIA -->
+                <div class="categoria-bloco-jogos" id="cat-bloco-5" data-cat="5">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper">
+                      <img src="cartas-picantes.png" alt="Cartas de Sintonia" class="categoria-carta-img" />
+                    </div>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag">CATEGORIA 5</span>
+                      <h3 class="categoria-nome-destaque">SINTONIA</h3>
+                    </div>
+                  </div>
+
+                  <div class="lista-minigames-radios">
+                    <!-- Checkbox 1: O Termômetro -->
+                    <label class="item-minigame-radio" data-cat="5" data-modo="o_termometro" for="minigame-opt-9">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-9" value="o_termometro" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">O Termômetro</strong>
+                        <p class="minigame-radio-desc">Adivinhe a intensidade da resposta de 1 a 10.</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 2: Apenas Uma Dica -->
+                    <label class="item-minigame-radio" data-cat="5" data-modo="apenas_uma_dica" for="minigame-opt-10">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-10" value="apenas_uma_dica" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Apenas Uma Dica</strong>
+                        <p class="minigame-radio-desc">Dicas de uma palavra para adivinhar o segredo.</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- CATEGORIA 6: DESAFIO -->
+                <div class="categoria-bloco-jogos" id="cat-bloco-6" data-cat="6">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper">
+                      <img src="cartas-desafios.png" alt="Cartas de Desafios" class="categoria-carta-img" />
+                    </div>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag">CATEGORIA 6</span>
+                      <h3 class="categoria-nome-destaque">DESAFIO</h3>
+                    </div>
+                  </div>
+
+                  <div class="lista-minigames-radios">
+                    <!-- Checkbox 1: Palavra Proibida -->
+                    <label class="item-minigame-radio" data-cat="6" data-modo="palavra_proibida" for="minigame-opt-11">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-11" value="palavra_proibida" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Palavra Proibida</strong>
+                        <p class="minigame-radio-desc">Faça a mesa falar a palavra sem dizer as proibidas.</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 2: Níveis de Intimidade -->
+                    <label class="item-minigame-radio" data-cat="6" data-modo="niveis_intimidade" for="minigame-opt-12">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-12" value="niveis_intimidade" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Níveis de Intimidade</strong>
+                        <p class="minigame-radio-desc">3 níveis (Percepção, Conexão e +18 Íntimo).</p>
+                      </div>
+                    </label>
+
+                    <!-- Checkbox 3: Verdade ou Desafio Hot -->
+                    <label class="item-minigame-radio" data-cat="6" data-modo="verdade_ou_desafio_hot" for="minigame-opt-13">
+                      <input type="checkbox" name="modo_jogo_checkbox" id="minigame-opt-13" value="verdade_ou_desafio_hot" class="minigame-checkbox-input" />
+                      <span class="minigame-checkbox-quadrado" aria-hidden="true">✓</span>
+                      <div class="minigame-radio-info">
+                        <strong class="minigame-radio-titulo">Verdade ou Desafio Hot</strong>
+                        <p class="minigame-radio-desc">Provas audaciosas e confissões sem filtro.</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- CATEGORIA 7: MODO LIVRE (GATILHO COM ÍCONE ?) -->
+                <div class="categoria-bloco-jogos categoria-bloco-livre-card" id="cat-bloco-7" data-cat="7">
+                  <div class="categoria-cabecalho-card">
+                    <div class="categoria-carta-wrapper icone-livre-wrapper">
+                      <span class="categoria-carta-emoji-livre" style="font-size: 26px; line-height: 1;">❓</span>
+                    </div>
+                    <div class="categoria-titulos">
+                      <span class="categoria-rotulo-tag rotulo-tag-livre">CATEGORIA 7</span>
+                      <h3 class="categoria-nome-destaque">MODO LIVRE</h3>
+                    </div>
+                  </div>
+
+                  <div class="lista-minigames-radios">
+                    <button type="button" class="btn-ativar-modo-livre-card" id="btn-abrir-modo-livre-cat7">
+                      <div class="info-btn-cat7">
+                        <strong class="titulo-cat7">Misturar Minigames Livremente</strong>
+                        <p class="desc-cat7">Abra o painel livre para marcar jogos de qualquer categoria simultaneamente.</p>
+                      </div>
+                      <span class="badge-cat7-status" id="badge-cat7-status">Configurar ➔</span>
+                    </button>
+                  </div>
+                </div>
+
               </div>
 
+              <!-- BOTÃO VISUAL DE CADEADO: MODO PERSONALIZADO -->
+              <div class="bloco-modo-cadeado-container" id="bloco-modo-cadeado-container">
+                <button type="button" class="btn-cadeado-personalizado bloqueado" id="btn-cadeado-modo-personalizado">
+                  <div class="cadeado-icone-wrapper">
+                    <span class="cadeado-icone" id="icone-cadeado">🔒</span>
+                  </div>
+                  <div class="cadeado-textos">
+                    <div class="cadeado-topo-linha">
+                      <strong class="cadeado-titulo">Modo Livre: <span class="cadeado-status-tag" id="texto-status-cadeado">DESATIVADO</span></strong>
+                      <span class="badge-cadeado-dica" id="badge-cadeado-dica">Categoria Única</span>
+                    </div>
+                    <p class="cadeado-desc" id="desc-cadeado-info">
+                      Clique para <strong>abrir o Modo Livre</strong> e ter liberdade total para marcar minigames de categorias diferentes ao mesmo tempo!
+                    </p>
+                  </div>
+                </button>
+              </div>
             </div>
 
-            <!-- BOTÃO VISUAL DE CADEADO: MODO PERSONALIZADO -->
-            <div class="bloco-modo-cadeado-container" id="bloco-modo-cadeado-container">
-              <button type="button" class="btn-cadeado-personalizado bloqueado" id="btn-cadeado-modo-personalizado">
-                <div class="cadeado-icone-wrapper">
-                  <span class="cadeado-icone" id="icone-cadeado">🔒</span>
-                </div>
-                <div class="cadeado-textos">
-                  <div class="cadeado-topo-linha">
-                    <strong class="cadeado-titulo">Modo Livre: <span class="cadeado-status-tag" id="texto-status-cadeado">DESATIVADO</span></strong>
-                    <span class="badge-cadeado-dica" id="badge-cadeado-dica">Categoria Única</span>
+            <!-- CONTÊINER 2: CAIXA DE SELEÇÃO LIVRE (MISTURAR TUDO) - LISTA CONTÍNUA DOS 13 MINIGAMES -->
+            <div id="caixa-selecao-modo-livre" class="caixa-selecao-modo-livre bloco-oculto">
+              <div class="caixa-livre-cabecalho">
+                <div class="caixa-livre-topo-info">
+                  <div class="caixa-livre-icone-wrapper">
+                    <span class="caixa-livre-icone">❓</span>
                   </div>
-                  <p class="cadeado-desc" id="desc-cadeado-info">
-                    Clique para <strong>ativar o Modo Livre</strong> e ter liberdade total para marcar minigames de categorias diferentes ao mesmo tempo!
-                  </p>
+                  <div class="caixa-livre-titulos">
+                    <div class="caixa-livre-rotulo-linha">
+                      <span class="caixa-livre-tag-destaque">LIBERDADE TOTAL</span>
+                      <span class="contador-minigames-livre-badge" id="contador-minigames-livres">1 de 13 selecionados</span>
+                    </div>
+                    <h3 class="caixa-livre-titulo-principal">Caixa de Seleção Livre</h3>
+                  </div>
                 </div>
-              </button>
+                <p class="caixa-livre-descricao-topo">
+                  A trava de exclusividade está <strong>desligada</strong>! Marque quantos minigames quiser de qualquer categoria sem restrições.
+                </p>
+                <div class="caixa-livre-atalhos-linha">
+                  <button type="button" class="btn-atalho-livre" id="btn-selecionar-todos-livre">⚡ Marcar Todos (13)</button>
+                  <button type="button" class="btn-atalho-livre" id="btn-limpar-selecao-livre">🧹 Limpar</button>
+                </div>
+              </div>
+
+              <!-- LISTA CONTÍNUA COM OS 13 MINIGAMES -->
+              <div class="lista-continua-minigames-livres" id="lista-continua-minigames-livres">
+                
+                <!-- 1. Quem é Mais Provável? -->
+                <label class="item-minigame-livre-card" data-modo="quem_e_mais_provavel" for="livre-opt-1">
+                  <input type="checkbox" id="livre-opt-1" value="quem_e_mais_provavel" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Quem é Mais Provável?</strong>
+                      <span class="tag-cat-livre tag-cat-votacao">🗳️ Votação</span>
+                    </div>
+                    <p class="desc-minigame-livre">Julgamento em grupo apontando as amigas na roda.</p>
+                  </div>
+                </label>
+
+                <!-- 2. Eu Nunca -->
+                <label class="item-minigame-livre-card" data-modo="eu_nunca" for="livre-opt-2">
+                  <input type="checkbox" id="livre-opt-2" value="eu_nunca" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Eu Nunca</strong>
+                      <span class="tag-cat-livre tag-cat-votacao">🗳️ Votação</span>
+                    </div>
+                    <p class="desc-minigame-livre">Confissões na roda: quem já fez toma um gole.</p>
+                  </div>
+                </label>
+
+                <!-- 3. O Que Você Prefere? -->
+                <label class="item-minigame-livre-card" data-modo="o_que_voce_prefere" for="livre-opt-3">
+                  <input type="checkbox" id="livre-opt-3" value="o_que_voce_prefere" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">O Que Você Prefere?</strong>
+                      <span class="tag-cat-livre tag-cat-dilemas">🤔 Dilemas</span>
+                    </div>
+                    <p class="desc-minigame-livre">Escolhas difíceis e situações sem saída.</p>
+                  </div>
+                </label>
+
+                <!-- 4. Preencha a Lacuna -->
+                <label class="item-minigame-livre-card" data-modo="preencha_a_lacuna" for="livre-opt-4">
+                  <input type="checkbox" id="livre-opt-4" value="preencha_a_lacuna" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Preencha a Lacuna</strong>
+                      <span class="tag-cat-livre tag-cat-dilemas">🤔 Dilemas</span>
+                    </div>
+                    <p class="desc-minigame-livre">Cards Against Humanity com cartas ácidas e +18.</p>
+                  </div>
+                </label>
+
+                <!-- 5. Duas Verdades e Uma Mentira -->
+                <label class="item-minigame-livre-card" data-modo="duas_verdades_uma_mentira" for="livre-opt-5">
+                  <input type="checkbox" id="livre-opt-5" value="duas_verdades_uma_mentira" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Duas Verdades e Uma Mentira</strong>
+                      <span class="tag-cat-livre tag-cat-blefe">🎭 Blefe</span>
+                    </div>
+                    <p class="desc-minigame-livre">Conte 3 fatos e a mesa tenta adivinhar o blefe.</p>
+                  </div>
+                </label>
+
+                <!-- 6. O Espião -->
+                <label class="item-minigame-livre-card" data-modo="o_espiao" for="livre-opt-6">
+                  <input type="checkbox" id="livre-opt-6" value="o_espiao" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">O Espião</strong>
+                      <span class="tag-cat-livre tag-cat-blefe">🎭 Blefe</span>
+                    </div>
+                    <p class="desc-minigame-livre">Descubra quem não sabe a palavra secreta da mesa.</p>
+                  </div>
+                </label>
+
+                <!-- 7. Bandeiras Vermelhas -->
+                <label class="item-minigame-livre-card" data-modo="bandeiras_vermelhas" for="livre-opt-7">
+                  <input type="checkbox" id="livre-opt-7" value="bandeiras_vermelhas" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Bandeiras Vermelhas</strong>
+                      <span class="tag-cat-livre tag-cat-debate">🚩 Debate</span>
+                    </div>
+                    <p class="desc-minigame-livre">Defenda o pretendente perfeito com um defeito bizarro.</p>
+                  </div>
+                </label>
+
+                <!-- 8. Batalha de Argumentos -->
+                <label class="item-minigame-livre-card" data-modo="batalha_de_argumentos" for="livre-opt-8">
+                  <input type="checkbox" id="livre-opt-8" value="batalha_de_argumentos" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Batalha de Argumentos</strong>
+                      <span class="tag-cat-livre tag-cat-debate">🚩 Debate</span>
+                    </div>
+                    <p class="desc-minigame-livre">Defenda opiniões absurdas com unhas e dentes.</p>
+                  </div>
+                </label>
+
+                <!-- 9. O Termômetro -->
+                <label class="item-minigame-livre-card" data-modo="o_termometro" for="livre-opt-9">
+                  <input type="checkbox" id="livre-opt-9" value="o_termometro" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">O Termômetro</strong>
+                      <span class="tag-cat-livre tag-cat-sintonia">🌡️ Sintonia</span>
+                    </div>
+                    <p class="desc-minigame-livre">Adivinhe a intensidade da resposta de 1 a 10.</p>
+                  </div>
+                </label>
+
+                <!-- 10. Apenas Uma Dica -->
+                <label class="item-minigame-livre-card" data-modo="apenas_uma_dica" for="livre-opt-10">
+                  <input type="checkbox" id="livre-opt-10" value="apenas_uma_dica" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Apenas Uma Dica</strong>
+                      <span class="tag-cat-livre tag-cat-sintonia">🌡️ Sintonia</span>
+                    </div>
+                    <p class="desc-minigame-livre">Dicas de uma palavra para adivinhar o segredo.</p>
+                  </div>
+                </label>
+
+                <!-- 11. Palavra Proibida -->
+                <label class="item-minigame-livre-card" data-modo="palavra_proibida" for="livre-opt-11">
+                  <input type="checkbox" id="livre-opt-11" value="palavra_proibida" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Palavra Proibida</strong>
+                      <span class="tag-cat-livre tag-cat-desafio">⚡ Desafio</span>
+                    </div>
+                    <p class="desc-minigame-livre">Faça a mesa falar a palavra sem dizer as proibidas.</p>
+                  </div>
+                </label>
+
+                <!-- 12. Níveis de Intimidade -->
+                <label class="item-minigame-livre-card" data-modo="niveis_intimidade" for="livre-opt-12">
+                  <input type="checkbox" id="livre-opt-12" value="niveis_intimidade" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Níveis de Intimidade</strong>
+                      <span class="tag-cat-livre tag-cat-desafio">⚡ Desafio</span>
+                    </div>
+                    <p class="desc-minigame-livre">3 níveis (Percepção, Conexão e +18 Íntimo).</p>
+                  </div>
+                </label>
+
+                <!-- 13. Verdade ou Desafio Hot -->
+                <label class="item-minigame-livre-card" data-modo="verdade_ou_desafio_hot" for="livre-opt-13">
+                  <input type="checkbox" id="livre-opt-13" value="verdade_ou_desafio_hot" class="checkbox-livre-input" />
+                  <span class="checkbox-livre-quadrado" aria-hidden="true">✓</span>
+                  <div class="info-minigame-livre">
+                    <div class="topo-minigame-livre">
+                      <strong class="titulo-minigame-livre">Verdade ou Desafio Hot</strong>
+                      <span class="tag-cat-livre tag-cat-desafio">⚡ Desafio</span>
+                    </div>
+                    <p class="desc-minigame-livre">Provas audaciosas e confissões sem filtro.</p>
+                  </div>
+                </label>
+
+              </div>
+
+              <!-- BOTÕES DE NAVEGAÇÃO DA CAIXA LIVRE -->
+              <div class="caixa-livre-botoes-acoes">
+                <button type="button" class="botao-comic botao-comic-primario btn-confirmar-livre-custom" id="btn-confirmar-modo-livre">
+                  <span>✓ Confirmar Seleção</span>
+                </button>
+                <button type="button" class="botao-comic botao-comic-voltar btn-voltar-livre-custom" id="btn-voltar-catalogos">
+                  <span>← Voltar aos Catálogos</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Seletor de Quantidade de Rodadas (Cartas) -->
+          <!-- Seletor de Quantidade de Rodadas -->
           <div class="campo-grupo">
-            <label class="campo-rotulo">4. Duração da Partida (Rodadas / Cartas)</label>
+            <label class="campo-rotulo">4. Duração da Partida (Rodadas)</label>
             <div class="seletor-rodadas-grid" id="seletor-rodadas-host">
-              <button type="button" class="btn-opcao-rodada" data-rodadas="10">10 Cartas</button>
-              <button type="button" class="btn-opcao-rodada selecionado" data-rodadas="20">20 Cartas</button>
-              <button type="button" class="btn-opcao-rodada" data-rodadas="40">40 Cartas</button>
+              <button type="button" class="btn-opcao-rodada" data-rodadas="5">5 Rodadas</button>
+              <button type="button" class="btn-opcao-rodada selecionado" data-rodadas="10">10 Rodadas</button>
+              <button type="button" class="btn-opcao-rodada" data-rodadas="25">25 Rodadas</button>
               <button type="button" class="btn-opcao-rodada" data-rodadas="custom">Personalizado</button>
             </div>
             <div id="campo-rodadas-custom" class="campo-rodadas-custom bloco-oculto">
@@ -383,12 +592,12 @@
                 type="number"
                 id="input-rodadas-custom"
                 class="input-texto-3d input-numero-3d input-cartoon"
-                placeholder="Qtd (ex: 25)"
-                min="5"
+                placeholder="Qtd (ex: 15)"
+                min="1"
                 max="100"
-                value="25"
+                value="10"
               />
-              <span class="subtexto-campo-rodadas">cartas na partida</span>
+              <span class="subtexto-campo-rodadas">rodadas na partida</span>
             </div>
           </div>
         </div>
@@ -458,6 +667,48 @@
       </div>
 
       <p class="mensagem-erro-3d" id="mensagem-erro"></p>
+
+      <!-- MODAL OVERLAY: CATEGORIA 7 (MODO LIVRE - MISTURAR TUDO) -->
+      <div id="modal-modo-livre-overlay" class="modal-overlay-modo-livre bloco-oculto" style="display: none;">
+        <div class="modal-modo-livre-dialog" role="dialog" aria-modal="true">
+          <div class="modal-livre-cabecalho">
+            <div class="modal-livre-topo-linha">
+              <div class="modal-livre-titulo-grupo">
+                <div class="modal-livre-icone">❓</div>
+                <div>
+                  <span class="modal-livre-tag">CATEGORIA 7 • MODO LIVRE</span>
+                  <h2 class="modal-livre-titulo">Misturar Minigames</h2>
+                </div>
+              </div>
+              <button type="button" class="btn-fechar-modal-livre-x" id="btn-fechar-modal-livre-x" aria-label="Fechar Modal">✕</button>
+            </div>
+            <p class="modal-livre-subtitulo">
+              A regra de exclusividade está <strong>desativada</strong>! Escolha minigames de qualquer categoria livremente.
+            </p>
+            <div class="modal-livre-controles-atalhos">
+              <span class="contador-livre-modal-pill" id="contador-modal-livre">1 de 13 selecionados</span>
+              <div class="botoes-atalho-grupo">
+                <button type="button" class="btn-atalho-livre" id="btn-modal-selecionar-todos">⚡ Marcar Todos (13)</button>
+                <button type="button" class="btn-atalho-livre" id="btn-modal-desmarcar-todos">🧹 Limpar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- LISTA ROLÁVEL COM OS 13 MINIGAMES DO PASSO 2 NO MODAL -->
+          <div class="modal-livre-lista-scroll" id="modal-livre-lista-minigames">
+            <!-- Injetado dinamicamente via JS com os 13 minigames -->
+          </div>
+
+          <div class="modal-livre-rodape-acoes">
+            <button type="button" class="botao-comic botao-comic-primario btn-confirmar-mistura-modal" id="btn-modal-confirmar-mistura">
+              <span>✓ Confirmar Mistura</span>
+            </button>
+            <button type="button" class="botao-comic botao-comic-voltar btn-cancelar-mistura-modal" id="btn-modal-cancelar-mistura">
+              <span>← Voltar / Cancelar</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
     </main>
   </div>

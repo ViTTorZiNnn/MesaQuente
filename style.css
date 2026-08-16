@@ -5255,6 +5255,711 @@ body.tela-gameplay-v3 {
 }
 
 /* ============================================================
+   MODO LIVRE: BANNER DE ATIVAÇÃO & CAIXA DE SELEÇÃO LIVRE
+   ============================================================ */
+.banner-modo-livre-container {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.btn-ativar-modo-livre-banner {
+  width: 100%;
+  background: linear-gradient(145deg, #2a0710 0%, #150205 100%);
+  border: 3px solid #ffda00;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0px #0b0b0b;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-ativar-modo-livre-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 6px 0px #0b0b0b, 0 0 18px rgba(255, 218, 0, 0.35);
+}
+
+.btn-ativar-modo-livre-banner:active {
+  transform: scale(0.98) !important;
+}
+
+.btn-ativar-modo-livre-banner.modo-livre-ativo-borda {
+  border-color: #06d6a0;
+  box-shadow: 4px 4px 0px #0b0b0b, 0 0 20px rgba(6, 214, 160, 0.3);
+}
+
+.modo-livre-icone-circulo {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: #ffda00;
+  border: 2px solid #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.btn-ativar-modo-livre-banner.modo-livre-ativo-borda .modo-livre-icone-circulo {
+  background: #06d6a0;
+}
+
+.modo-livre-icone-q {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.modo-livre-textos-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.modo-livre-linha-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modo-livre-titulo-texto {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14.5px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 1px 1px 0px #0b0b0b;
+}
+
+.badge-modo-livre-chip {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1.5px solid #0b0b0b;
+  background: #ff4d2e;
+  color: #ffffff;
+}
+
+.badge-modo-livre-chip.ativo {
+  background: #06d6a0;
+  color: #031510;
+}
+
+.modo-livre-desc-texto {
+  font-size: 12px;
+  color: #fca5a5;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.modo-livre-seta-acao {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11.5px;
+  font-weight: 900;
+  background: #ffda00;
+  color: #170407;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 2px solid #0b0b0b;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  white-space: nowrap;
+}
+
+.btn-ativar-modo-livre-banner.modo-livre-ativo-borda .modo-livre-seta-acao {
+  background: #06d6a0;
+  color: #031510;
+}
+
+/* CAIXA DE SELEÇÃO LIVRE (LISTA CONTÍNUA DOS 13 MINIGAMES) */
+.caixa-selecao-modo-livre {
+  background: linear-gradient(175deg, #22060d 0%, #120205 100%);
+  border: 3px solid #06d6a0;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 4px 4px 0px #0b0b0b, 0 0 24px rgba(6, 214, 160, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.caixa-livre-cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.caixa-livre-topo-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.caixa-livre-icone-wrapper {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: #06d6a0;
+  border: 2px solid #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.caixa-livre-titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.caixa-livre-rotulo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.caixa-livre-tag-destaque {
+  font-size: 10px;
+  font-weight: 900;
+  background: #06d6a0;
+  color: #031510;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #0b0b0b;
+}
+
+.contador-minigames-livre-badge {
+  font-size: 11px;
+  font-weight: 900;
+  background: #190509;
+  color: #ffda00;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1.5px solid #ffda0066;
+}
+
+.caixa-livre-titulo-principal {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 1.5px 1.5px 0px #0b0b0b;
+}
+
+.caixa-livre-descricao-topo {
+  font-size: 12.5px;
+  color: #d1fae5;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.caixa-livre-atalhos-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-atalho-livre {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  background: #280b13;
+  color: #ffd166;
+  border: 2px solid #0b0b0b;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  transition: all 0.12s ease;
+}
+
+.btn-atalho-livre:hover {
+  background: #3e121e;
+  transform: translateY(-1px);
+}
+
+.btn-atalho-livre:active {
+  transform: scale(0.96) !important;
+}
+
+/* LISTA CONTÍNUA DOS MINIGAMES */
+.lista-continua-minigames-livres {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #06d6a0 #1a0306;
+}
+
+.lista-continua-minigames-livres::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-continua-minigames-livres::-webkit-scrollbar-track {
+  background: #150205;
+  border-radius: 4px;
+}
+
+.lista-continua-minigames-livres::-webkit-scrollbar-thumb {
+  background: #06d6a0;
+  border-radius: 4px;
+}
+
+.item-minigame-livre-card {
+  background: #180509;
+  border: 2.5px solid #3d0e19;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #0b0b0b;
+  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+  user-select: none;
+}
+
+.item-minigame-livre-card:hover {
+  background: #250910;
+  border-color: #ffda0088;
+  transform: translateY(-1px);
+}
+
+.item-minigame-livre-card.selecionado {
+  background: linear-gradient(145deg, #072a20 0%, #031711 100%);
+  border-color: #06d6a0;
+  box-shadow: 3px 3px 0px #0b0b0b, 0 0 12px rgba(6, 214, 160, 0.2);
+}
+
+.checkbox-livre-input {
+  display: none;
+}
+
+.checkbox-livre-quadrado {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border: 2px solid #3d101a;
+  border-radius: 6px;
+  background: #120205;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  color: transparent;
+  transition: all 0.15s ease;
+}
+
+.item-minigame-livre-card.selecionado .checkbox-livre-quadrado {
+  background: #06d6a0;
+  border-color: #a7f3d0;
+  color: #021711;
+  box-shadow: 0 0 8px rgba(6, 214, 160, 0.6);
+}
+
+.info-minigame-livre {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.topo-minigame-livre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.titulo-minigame-livre {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.tag-cat-livre {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tag-cat-votacao {
+  background: #3b1424;
+  color: #ff758f;
+}
+
+.tag-cat-dilemas {
+  background: #3b220e;
+  color: #ffb703;
+}
+
+.tag-cat-blefe {
+  background: #25123d;
+  color: #c77dff;
+}
+
+.tag-cat-debate {
+  background: #102d3d;
+  color: #4cc9f0;
+}
+
+.tag-cat-sintonia {
+  background: #3d1020;
+  color: #ff4d6d;
+}
+
+.tag-cat-desafio {
+  background: #382d09;
+  color: #ffd166;
+}
+
+.desc-minigame-livre {
+  font-size: 11.5px;
+  color: #fca5a5;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.item-minigame-livre-card.selecionado .desc-minigame-livre {
+  color: #d1fae5;
+}
+
+.caixa-livre-botoes-acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-confirmar-livre-custom {
+  background: linear-gradient(135deg, #06d6a0 0%, #049669 100%) !important;
+  color: #021711 !important;
+  border-color: #0b0b0b !important;
+  text-shadow: none !important;
+  font-weight: 900 !important;
+}
+
+.btn-confirmar-livre-custom:hover {
+  filter: brightness(1.1) !important;
+}
+
+.btn-voltar-livre-custom {
+  background: #280e11 !important;
+  color: #f6c28b !important;
+  border-color: #0b0b0b !important;
+}
+
+.btn-voltar-livre-custom:hover {
+  background: #361418 !important;
+}
+
+/* ============================================================
+   CATEGORIA 7: MODO LIVRE (CARD NA GRADE & MODAL OVERLAY)
+   ============================================================ */
+.categoria-bloco-livre-card {
+  border-color: #ffda00 !important;
+  background: linear-gradient(175deg, #260f06 0%, #150802 100%) !important;
+}
+
+.categoria-bloco-livre-card.categoria-livre-ativa {
+  border-color: #06d6a0 !important;
+  background: linear-gradient(175deg, #05261d 0%, #031510 100%) !important;
+  box-shadow: 4px 4px 0px #0b0b0b, 0 0 20px rgba(6, 214, 160, 0.35) !important;
+}
+
+.btn-ativar-modo-livre-card {
+  width: 100%;
+  background: rgba(255, 218, 0, 0.08);
+  border: 2px dashed #ffda00;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-ativar-modo-livre-card:hover {
+  background: rgba(255, 218, 0, 0.16);
+  transform: translateY(-2px);
+}
+
+.categoria-bloco-livre-card.categoria-livre-ativa .btn-ativar-modo-livre-card {
+  border: 2px solid #06d6a0;
+  background: rgba(6, 214, 160, 0.15);
+}
+
+.info-btn-cat7 {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.titulo-cat7 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.desc-cat7 {
+  font-size: 11px;
+  color: #ffd166;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.badge-cat7-status {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  background: #ffda00;
+  color: #170407;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #0b0b0b;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  white-space: nowrap;
+}
+
+.categoria-bloco-livre-card.categoria-livre-ativa .badge-cat7-status {
+  background: #06d6a0;
+  color: #031510;
+}
+
+/* MODAL OVERLAY DO MODO LIVRE */
+.modal-overlay-modo-livre {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(8, 2, 4, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vh, 24px);
+  box-sizing: border-box;
+}
+
+.modal-modo-livre-dialog {
+  width: 100%;
+  max-width: 540px;
+  max-height: 92vh;
+  background: linear-gradient(175deg, #24070e 0%, #120205 100%);
+  border: 3.5px solid #06d6a0;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px #0b0b0b, 0 0 35px rgba(6, 214, 160, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: animPopInModal 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes animPopInModal {
+  0% {
+    transform: scale(0.88);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-livre-cabecalho {
+  padding: 16px 18px 12px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.modal-livre-topo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal-livre-titulo-grupo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-livre-icone {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 12px;
+  background: #ffda00;
+  border: 2px solid #0b0b0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.modal-livre-tag {
+  font-size: 9.5px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: #06d6a0;
+  color: #031510;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #0b0b0b;
+  text-transform: uppercase;
+}
+
+.modal-livre-titulo {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 4px 0 0;
+  text-shadow: 1px 1px 0px #0b0b0b;
+}
+
+.btn-fechar-modal-livre-x {
+  background: #2b0b12;
+  border: 2px solid #0b0b0b;
+  border-radius: 8px;
+  color: #fca5a5;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  transition: all 0.12s ease;
+}
+
+.btn-fechar-modal-livre-x:hover {
+  background: #ff4d2e;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.modal-livre-subtitulo {
+  font-size: 12px;
+  color: #d1fae5;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.modal-livre-controles-atalhos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.contador-livre-modal-pill {
+  font-size: 11px;
+  font-weight: 900;
+  background: #120205;
+  color: #ffda00;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1.5px solid #ffda0066;
+}
+
+.botoes-atalho-grupo {
+  display: flex;
+  gap: 6px;
+}
+
+.modal-livre-lista-scroll {
+  padding: 14px 18px;
+  overflow-y: auto;
+  max-height: 52vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #06d6a0 #150205;
+}
+
+.modal-livre-lista-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-livre-lista-scroll::-webkit-scrollbar-track {
+  background: #120205;
+}
+
+.modal-livre-lista-scroll::-webkit-scrollbar-thumb {
+  background: #06d6a0;
+  border-radius: 4px;
+}
+
+.modal-livre-rodape-acoes {
+  padding: 14px 18px;
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-confirmar-mistura-modal {
+  background: linear-gradient(135deg, #06d6a0 0%, #049669 100%) !important;
+  color: #021711 !important;
+  border-color: #0b0b0b !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+  padding: 12px !important;
+}
+
+.btn-confirmar-mistura-modal:hover {
+  filter: brightness(1.1) !important;
+}
+
+.btn-cancelar-mistura-modal {
+  background: #280e11 !important;
+  color: #f6c28b !important;
+  border-color: #0b0b0b !important;
+  padding: 10px !important;
+}
+
+/* ============================================================
    ETAPA 2: SALA DE ESPERA (LOBBY REAL CLÁSSICO)
    ============================================================ */
 .tela-lobby-espera-ativa {

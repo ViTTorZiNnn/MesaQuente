@@ -420,7 +420,11 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade"
     ? configExtra.baralhosAtivos
     : baralhosConsolidados;
 
-  const totalCartas = Number(configExtra.totalCartas) || 20;
+  const totalCartas = Number(configExtra.numeroRodadas) || Number(configExtra.totalCartas) || 10;
+  const numeroRodadas = totalCartas;
+  const jogosSelecionados = (Array.isArray(configExtra.jogosSelecionados) && configExtra.jogosSelecionados.length > 0)
+    ? configExtra.jogosSelecionados
+    : minigamesIds;
 
   const nomesFormatados = modosEncontrados.map((m) => m.nome).join(", ");
   const iconesFormatados = modosEncontrados.map((m) => m.icone).join(" ");
@@ -431,6 +435,9 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade"
     status: "lobby",
     modoJogo: modosEncontrados.length === 1 ? modoPrincipal.id : "personalizado",
     minigames: minigamesIds,
+    jogosSelecionados: jogosSelecionados,
+    numeroRodadas: numeroRodadas,
+    modoLivre: !!configExtra.modoLivre || !!configExtra.modoMix,
     modoInfo: {
       id: modoPrincipal.id,
       nome: modosEncontrados.length === 1 ? modoPrincipal.nome : nomesFormatados,
@@ -445,7 +452,9 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade"
     configLobby: {
       baralhosAtivos: baralhosAtivos,
       minigamesAtivos: minigamesIds,
-      totalCartas: totalCartas
+      jogosSelecionados: jogosSelecionados,
+      totalCartas: totalCartas,
+      numeroRodadas: numeroRodadas
     },
     jogadores: {
       [idJogador]: {
