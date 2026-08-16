@@ -5963,11 +5963,15 @@ body.tela-gameplay-v3 {
    ETAPA 2: SALA DE ESPERA (LOBBY REAL CLÁSSICO)
    ============================================================ */
 .tela-lobby-espera-ativa {
-  background-image: url('background-lobby.png'), url('background-lobby.svg'), url('bg.jpg');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-color: #120103;
+  background-image: url('background-lobby.png'), url('background-lobby.svg'), url('bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-color: #120103 !important;
+}
+
+body.tela-lobby-espera-ativa .gameplay-viewport-container {
+  background: transparent !important;
 }
 
 .painel-sala-espera-real {
@@ -5978,7 +5982,13 @@ body.tela-gameplay-v3 {
   justify-content: center;
   padding: 12px;
   overflow-y: auto;
-  z-index: 10;
+  position: relative;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.painel-sala-espera-real * {
+  pointer-events: auto;
 }
 
 .card-lobby-real-central {
@@ -5993,6 +6003,9 @@ body.tela-gameplay-v3 {
   flex-direction: column;
   gap: 14px;
   animation: slideUpLobby 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 10000;
+  pointer-events: auto;
 }
 
 @keyframes slideUpLobby {
@@ -6310,13 +6323,19 @@ body.tela-gameplay-v3 {
 .modal-backdrop-troca-avatar {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(6px);
-  z-index: 100;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 14px;
+  pointer-events: auto;
+}
+
+.modal-backdrop-troca-avatar * {
+  pointer-events: auto;
 }
 
 .modal-trocar-avatar-card {
@@ -6331,6 +6350,9 @@ body.tela-gameplay-v3 {
   flex-direction: column;
   gap: 12px;
   animation: popAvatarModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 1000000;
+  pointer-events: auto;
 }
 
 @keyframes popAvatarModal {

@@ -285,7 +285,7 @@ let configLocal = {
   totalCartas: 20
 };
 
-// Alternância de Telas integrada com Overlay sobre a Mesa
+// Alternância de Telas integrada
 function mostrarApenasPainel(painelAtivo) {
   const elLobby = document.getElementById("painel-lobby") || painelLobby;
   const elConfig = document.getElementById("painel-configuracao") || painelConfiguracao;
@@ -310,13 +310,13 @@ function mostrarApenasPainel(painelAtivo) {
     if (elConfig) { elConfig.classList.add("bloco-oculto"); elConfig.style.display = "none"; }
     if (elFim) { elFim.classList.add("bloco-oculto"); elFim.style.display = "none"; }
     if (elLobby) { elLobby.classList.add("bloco-oculto"); elLobby.style.display = "none"; }
-    if (elMesa) { elMesa.classList.remove("bloco-oculto"); elMesa.style.display = "block"; }
+    if (elMesa) { elMesa.classList.remove("bloco-oculto"); elMesa.style.display = "flex"; }
     if (boxLeitor) boxLeitor.classList.remove("bloco-oculto");
   } else {
-    // Modo Padrão: Sala de Espera / Lobby (Overlay elegante sobre a Mesa 2.5D)
+    // Modo Padrão: Sala de Espera / Lobby (CENÁRIO DE GAMEPLAY OBRIGATORIAMENTE EM DISPLAY: NONE)
     if (elConfig) { elConfig.classList.add("bloco-oculto"); elConfig.style.display = "none"; }
     if (elFim) { elFim.classList.add("bloco-oculto"); elFim.style.display = "none"; }
-    if (elMesa) { elMesa.classList.remove("bloco-oculto"); elMesa.style.display = "block"; }
+    if (elMesa) { elMesa.classList.add("bloco-oculto"); elMesa.style.display = "none"; }
     if (elLobby) { elLobby.classList.remove("bloco-oculto"); elLobby.style.display = "flex"; }
     if (boxLeitor) boxLeitor.classList.add("bloco-oculto");
   }
@@ -796,20 +796,6 @@ if (btnConfirmarNovoAvatar && modalTrocarAvatar) {
   });
 }
 
-// Copiar código da sala
-if (btnCopiarCodigo) {
-  btnCopiarCodigo.addEventListener("click", () => {
-    if (typeof audioApp !== "undefined") audioApp.tocarClique();
-    navigator.clipboard.writeText(codigoSala).then(() => {
-      const textoOrig = btnCopiarCodigo.textContent;
-      btnCopiarCodigo.textContent = "✓ Copiado!";
-      setTimeout(() => {
-        btnCopiarCodigo.textContent = textoOrig;
-      }, 2000);
-    });
-  });
-}
-
 // ============================================================
 // ETAPA 3: TRANSIÇÃO CARTOON (IRIS WIPE)
 // ============================================================
@@ -1000,26 +986,6 @@ function finalizarRoletaVencedor(vencedorId, vencedorObj, avatarVencedor) {
   setTimeout(() => {
     if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
   }, 2600);
-}
-
-// Botão Iniciar Partida (Host) com Transição Iris Wipe
-if (btnIniciarPartida) {
-  btnIniciarPartida.addEventListener("click", async () => {
-    if (!souHost) return;
-    btnIniciarPartida.disabled = true;
-    btnIniciarPartida.textContent = "Preparando a Mesa...";
-    if (typeof audioApp !== "undefined") audioApp.tocarClique();
-
-    try {
-      if (typeof db !== "undefined") {
-        await db.ref("salas/" + codigoSala + "/status").set("jogando");
-      }
-    } catch (e) {
-      console.error("Erro ao iniciar:", e);
-      btnIniciarPartida.disabled = false;
-      btnIniciarPartida.textContent = "🔥 Iniciar Partida";
-    }
-  });
 }
 
 // ============================================================
