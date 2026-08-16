@@ -8,6 +8,9 @@
 </head>
 <body class="tela-lobby-espera-ativa" id="corpo-pagina-sala">
 
+  <!-- Cortina Global de Transição Fade In/Out -->
+  <div id="cortina-transicao" class="cortina-transicao" aria-hidden="true"></div>
+
   <!-- Fundo de brasas animadas -->
   <canvas id="canvas-brasas"></canvas>
 
@@ -168,7 +171,6 @@
               <strong class="banner-minigames-nome" id="modo-jogo-nome">Carregando...</strong>
             </div>
           </div>
-          <p class="banner-minigames-desc" id="modo-jogo-desc"></p>
         </div>
 
         <!-- 2. Código da Sala bem visível com Botão Copiar -->
@@ -356,21 +358,21 @@
       </div>
 
       <!-- ======================================================
-           O CENÁRIO DIVIDIDO 2.5D: PAREDE (TOPO) + MESA (BASE)
+           O CENÁRIO 2.5D: PALCO DE GAMEPLAY COM CAMADAS
            ====================================================== -->
       <div class="cenario-gameplay-stage" id="cenario-gameplay-stage">
         
-        <!-- Parede 2.5D no Topo (Fundo) -->
-        <div class="cenario-parede-fundo" aria-hidden="true">
-          <img src="parede.png" alt="Parede do Cenário" class="parede-bg-img" />
-        </div>
+        <!-- Camada 1 - O Fundo (A Parede): parede.png -->
+        <img src="parede.png" alt="Parede do Cenário" class="cenario-parede" id="cenario-parede" />
 
-        <!-- Mesa 2.5D na Base (Sobreposta à Parede) -->
+        <!-- Camada 2 - A Frente (A Mesa): mesa.png -->
+        <img src="mesa.png" alt="Mesa de Jogo" class="cenario-mesa" id="cenario-mesa" />
+
+        <!-- Camada 3 - O Palco para o Tutorial e HUD (Preparação) -->
+        <div id="area-tutorial" class="area-tutorial"></div>
+
+        <!-- Mesa Container & Camada dos Jogadores Sentados ao Redor da Mesa -->
         <div class="cenario-mesa-container" id="palco-mesa-circular">
-          
-          <img src="mesa.png" alt="Mesa de Jogo" class="mesa-bg-img" />
-
-          <!-- Camada dos Jogadores Sentados ao Redor da Mesa com Molduras (Renderizada em Tempo Real) -->
           <div class="camada-jogadores-radial" id="camada-jogadores-radial">
             <!-- Renderizado dinamicamente via JS com moldura-playeres.png -->
           </div>

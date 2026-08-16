@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", inicializarVisualLobby);
 window.addEventListener("load", inicializarVisualLobby);
 
 // Elementos da UI — Painéis
+const cortinaTransicao = document.getElementById("cortina-transicao");
 const painelLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
 const painelConfiguracao = document.getElementById("painel-configuracao");
 const painelMesaJogo = document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
@@ -70,7 +71,6 @@ const btnCopiarCodigo = document.getElementById("btn-copiar-codigo");
 const bannerModoJogo = document.getElementById("banner-modo-jogo");
 const modoJogoIcone = document.getElementById("modo-jogo-icone");
 const modoJogoNome = document.getElementById("modo-jogo-nome");
-const modoJogoDesc = document.getElementById("modo-jogo-desc");
 const listaJogadoresLobby = document.getElementById("lista-jogadores-lobby");
 const contadorJogadores = document.getElementById("contador-jogadores");
 const avisoSozinhoSala = document.getElementById("aviso-sozinho-sala");
@@ -378,11 +378,9 @@ if (typeof db !== "undefined" && codigoSala) {
 
         if (modoJogoIcone) modoJogoIcone.textContent = "🔀";
         if (modoJogoNome) modoJogoNome.textContent = modoMix ? `Mix Personalizado (${minigamesArray.length} Minigames)` : nomesFormatados.join(" • ");
-        if (modoJogoDesc) modoJogoDesc.textContent = `Modos ativos: ${nomesFormatados.join(", ")}`;
       } else if (modoInfo && modoInfo.nome) {
         if (modoJogoIcone) modoJogoIcone.textContent = modoInfo.icone || "🔥";
         if (modoJogoNome) modoJogoNome.textContent = modoInfo.nome || "Modo Mesa Quente";
-        if (modoJogoDesc) modoJogoDesc.textContent = modoInfo.descricao || "";
       }
     }
   });
@@ -393,7 +391,6 @@ escutarModoInfo(codigoSala, (modoInfo) => {
   if (modoInfo && bannerModoJogo) {
     if (modoJogoIcone && !bannerModoJogo.dataset.custom) modoJogoIcone.textContent = modoInfo.icone || "🔥";
     if (modoJogoNome && !bannerModoJogo.dataset.custom) modoJogoNome.textContent = modoInfo.nome || "Modo Mesa Quente";
-    if (modoJogoDesc && !bannerModoJogo.dataset.custom) modoJogoDesc.textContent = modoInfo.descricao || "";
     configLocal.modoJogo = modoInfo.id;
   }
 });
@@ -2116,6 +2113,33 @@ escutarJogadores(codigoSala, (jogadores) => {
   }
 });
 
+/**
+ * Transição de Estado e Renderização do Cenário 2.5D (Efeito Fade In / Out 0.8s)
+ */
+function executarTransicaoFadeCenario(aoEscurecerTotal, aoClarearCenario) {
+  const cortina = document.getElementById("cortina-transicao") || cortinaTransicao;
+  if (!cortina) {
+    if (aoEscurecerTotal) aoEscurecerTotal();
+    if (aoClarearCenario) aoClarearCenario();
+    return;
+  }
+
+  // 1. O JS altera a opacity da cortina preta para 1 (Escurece a tela)
+  cortina.style.opacity = "1";
+
+  // 2. Após aproximadamente 800ms (tempo do fade completo):
+  setTimeout(() => {
+    // 3. Aplica display: none no Lobby e display: flex no Cenário de Gameplay
+    if (aoEscurecerTotal) aoEscurecerTotal();
+
+    // 4. Logo em seguida, retorna a opacity da cortina preta para 0 (Clareia a tela revelando o novo cenário 2.5D)
+    setTimeout(() => {
+      cortina.style.opacity = "0";
+      if (aoClarearCenario) aoClarearCenario();
+    }, 50);
+  }, 800);
+}
+
 let gameplayIniciadaTransicao = false;
 
 // 2. Status Geral da Sala
@@ -2134,20 +2158,12 @@ escutarStatusSala(codigoSala, (status) => {
   } else if ((status === "jogando" || status === "transicao") && !gameplayIniciadaTransicao) {
     gameplayIniciadaTransicao = true;
     
-    // Executa Transição Cartoon (Iris Wipe)
-    executarTransicaoCartoonIrisWipe(
-      () => {
-        // Ao fechar o círculo:
-        mostrarApenasPainel(painelMesaJogo);
-        if (corpoPaginaSala) corpoPaginaSala.classList.add("tela-gameplay-v3");
-        renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
-      },
-      () => {
-        // Ao abrir o círculo:
-        const modoAtivo = configLocal.modoJogo || "niveis_intimidade";
-        exibirTutorialMinigame(modoAtivo);
-      }
-    );
+    // Executa Transição Fade In/Out (Cortina Black 0.8s)
+    executarTransicaoFadeCenario(() => {
+      mostrarApenasPainel(painelMesaJogo);
+      if (corpoPaginaSala) corpoPaginaSala.classList.add("tela-gameplay-v3");
+      renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
+    });
   }
 });
 
@@ -2331,7 +2347,7 @@ btnCopiarCodigo.addEventListener("click", () => {
   });
 });
 
-// Iniciar Partida (Transição direta para Gameplay & Cenário 2.5D)
+// Iniciar Partida (Ação do Host na Sala de Espera com Efeito Fade In / Out)
 async function iniciarPartidaGameplay() {
   if (!souHost) return;
   if (btnIniciarPartida) {
@@ -2340,17 +2356,28 @@ async function iniciarPartidaGameplay() {
   }
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
-  try {
-    // Sincroniza início no Firebase (inicia partida e atualiza status para 'jogando')
-    await iniciarPartida(codigoSala, configLocal);
-  } catch (erro) {
-    console.error("Erro ao iniciar gameplay:", erro);
-    if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
-    if (btnIniciarPartida) {
-      btnIniciarPartida.disabled = false;
-      btnIniciarPartida.textContent = "🔥 Iniciar Partida";
+  // Executa o Efeito Fade In / Out
+  executarTransicaoFadeCenario(
+    () => {
+      // Ocorre aos 800ms com a tela 100% preta
+      mostrarApenasPainel(painelMesaJogo);
+      if (corpoPaginaSala) corpoPaginaSala.classList.add("tela-gameplay-v3");
+      renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
+    },
+    async () => {
+      // Ao clarear a tela revelando o novo cenário 2.5D: sincroniza no Firebase
+      try {
+        await iniciarPartida(codigoSala, configLocal);
+      } catch (erro) {
+        console.error("Erro ao iniciar gameplay:", erro);
+        if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
+        if (btnIniciarPartida) {
+          btnIniciarPartida.disabled = false;
+          btnIniciarPartida.textContent = "🔥 Iniciar Partida";
+        }
+      }
     }
-  }
+  );
 }
 
 if (btnIniciarPartida) {

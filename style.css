@@ -4650,58 +4650,100 @@ body.tela-gameplay-v3 {
   box-shadow: none;
 }
 
-/* 4. CENÁRIO DIVIDIDO 2.5D (PAREDE NO TOPO + MESA NA BASE) */
-.cenario-gameplay-stage {
-  flex: 1;
+/* ============================================================
+   1. TRANSIÇÃO DE ESTADO (CORTINA BLACK FADE IN / OUT)
+   ============================================================ */
+#cortina-transicao,
+.cortina-transicao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+/* ============================================================
+   2. ARQUITETURA DO CENÁRIO 2.5D (CAMADAS E Z-INDEX)
+   ============================================================ */
+
+/* O contêiner do Gameplay atuando como um palco */
+.cenario-gameplay-stage {
   position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* Parede no Topo (Fundo 2.5D) */
-.cenario-parede-fundo {
+/* Camada 1 - O Fundo (A Parede) */
+.cenario-parede,
+#cenario-parede {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 48%;
-  z-index: 1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.parede-bg-img {
-  width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
-/* Mesa na Base (Sobreposta à parede para profundidade 2.5D) */
-.cenario-mesa-container {
+/* Camada 2 - A Frente (A Mesa) */
+.cenario-mesa,
+#cenario-mesa {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 64%;
+  max-height: 85%;
+  object-fit: cover;
+  object-position: center bottom;
   z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Camada 3 - O Palco para o Tutorial e HUD (Preparação) */
+#area-tutorial,
+.area-tutorial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 3;
+  pointer-events: none;
 }
 
-.mesa-bg-img {
+/* Camada dos Jogadores Sentados ao Redor da Mesa */
+.cenario-mesa-container {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center center;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
-  z-index: 1;
-  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.9));
+}
+
+.cenario-mesa-container * {
+  pointer-events: auto;
 }
 
 /* 5. CENTRO DA MESA: REDEMOINHO + BARALHO */
