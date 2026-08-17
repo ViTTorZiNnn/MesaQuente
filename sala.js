@@ -478,7 +478,7 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade"
     }
   });
 
-  configurarDesconexao(codigo, idJogador);
+  configurarDesconexao(codigo, idJogador, true);
   return codigo;
 }
 
@@ -509,7 +509,7 @@ async function entrarNaSala(codigo, nome, avatarEscolhido) {
     conectado: true
   });
 
-  configurarDesconexao(codigo, idJogador);
+  configurarDesconexao(codigo, idJogador, false);
   return codigo;
 }
 
@@ -534,15 +534,37 @@ async function atualizarAvatarJogador(codigo, novoAvatar) {
   }
 }
 
-function configurarDesconexao(codigo, idJogador) {
-  const refConectado = db.ref("salas/" + codigo + "/jogadores/" + idJogador + "/conectado");
-  refConectado.onDisconnect().set(false);
+function configurarDesconexao(codigo, idJogador, ehHost = false) {
+  if (!codigo || !idJogador) return;
+  const refJogador = db.ref("salas/" + codigo + "/jogadores/" + idJogador);
+  const refStatus = db.ref("salas/" + codigo + "/status");
+
+  if (ehHost) {
+    // O Host é a âncora da partida: altera status para 'encerrada' e remove o host ao cair
+    refStatus.onDisconnect().set("encerrada");
+    refJogador.onDisconnect().remove();
+  } else {
+    // Convidado: remove imediatamente da lista de jogadores ao cair
+    refJogador.onDisconnect().remove();
+  }
 }
 
 async function sairDaSala(codigo) {
+  if (!codigo) return;
   const idJogador = obterIdJogador();
   try {
-    await db.ref("salas/" + codigo + "/jogadores/" + idJogador + "/conectado").set(false);
+    const snapHost = await db.ref("salas/" + codigo + "/hostId").get();
+    const hostId = snapHost.val();
+    const ehHost = hostId === idJogador;
+
+    if (ehHost) {
+      // Host abandonou a sala -> Destrói/Encerra a sala e remove o host
+      await db.ref("salas/" + codigo + "/status").set("encerrada");
+      await db.ref("salas/" + codigo + "/jogadores/" + idJogador).remove();
+    } else {
+      // Convidado saindo -> remove apenas seu próprio registro do banco
+      await db.ref("salas/" + codigo + "/jogadores/" + idJogador).remove();
+    }
   } catch (e) {
     console.warn("Erro ao sair da sala:", e);
   }

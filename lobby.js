@@ -325,6 +325,142 @@ function mostrarApenasPainel(painelAtivo) {
 // Exibe a Sala de Espera / Lobby imediatamente ao carregar
 mostrarApenasPainel(painelLobby);
 
+// ============================================================
+// GERENCIAMENTO DE PRESENÇA EM TEMPO REAL & DESCONEXÃO DO HOST
+// ============================================================
+let expulsaoEmAndamento = false;
+
+function iniciarExpulsaoSuaveConvidado() {
+  if (souHost || expulsaoEmAndamento) return;
+  expulsaoEmAndamento = true;
+
+  console.warn("Host desconectou ou sala foi encerrada. Iniciando expulsão suave do convidado...");
+
+  // 1. Congele imediatamente os cliques do convidado
+  document.body.style.pointerEvents = "none";
+  document.body.style.userSelect = "none";
+  document.body.style.cursor = "wait";
+
+  document.querySelectorAll("button, input, select, textarea, a").forEach((el) => {
+    el.disabled = true;
+    el.style.pointerEvents = "none";
+  });
+
+  // 2. Dispare um setTimeout de 2500 milissegundos (2.5 segundos)
+  setTimeout(() => {
+    // 3. Após os 2.5s, exiba uma notificação clara na tela:
+    // "Lamentamos, perdemos a conexão com o criador da sala."
+    exibirModalConexaoPerdida();
+  }, 2500);
+}
+
+function exibirModalConexaoPerdida() {
+  let modalAviso = document.getElementById("modal-aviso-conexao-perdida");
+  if (!modalAviso) {
+    modalAviso = document.createElement("div");
+    modalAviso.id = "modal-aviso-conexao-perdida";
+    modalAviso.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      pointer-events: auto;
+    `;
+    modalAviso.innerHTML = `
+      <div style="
+        background: #1a0f12;
+        border: 2px solid #ff5400;
+        border-radius: 16px;
+        padding: 32px 24px;
+        max-width: 440px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 12px 40px rgba(255, 84, 0, 0.4);
+        color: #fff;
+        font-family: inherit;
+      ">
+        <div style="font-size: 52px; margin-bottom: 12px;">🔌</div>
+        <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 12px 0; color: #ff9e00;">Sala Desconectada</h2>
+        <p style="font-size: 16px; line-height: 1.5; color: #f0f0f0; margin: 0 0 24px 0; font-weight: 500;">
+          Lamentamos, perdemos a conexão com o criador da sala.
+        </p>
+        <button id="btn-ok-conexao-perdida" style="
+          background: linear-gradient(135deg, #ff5400, #ff0055);
+          color: #fff;
+          border: none;
+          padding: 14px 28px;
+          border-radius: 12px;
+          font-weight: 700;
+          font-size: 15px;
+          cursor: pointer;
+          width: 100%;
+        ">
+          Voltar ao Menu Principal
+        </button>
+      </div>
+    `;
+    document.body.appendChild(modalAviso);
+
+    const btnOk = document.getElementById("btn-ok-conexao-perdida");
+    if (btnOk) {
+      btnOk.addEventListener("click", () => {
+        localStorage.removeItem("mesaQuente_codigoSalaAtual");
+        window.location.href = "index.html";
+      });
+    }
+  }
+
+  // 4. Redirecione o convidado automaticamente de volta para a tela do Menu Principal (Lobby)
+  setTimeout(() => {
+    localStorage.removeItem("mesaQuente_codigoSalaAtual");
+    window.location.href = "index.html";
+  }, 3500);
+}
+
+function inicializarPresencaFirebase() {
+  if (typeof db === "undefined" || !codigoSala || !idJogadorAtual) return;
+
+  const refConectadoInfo = db.ref(".info/connected");
+  const refMeuJogador = db.ref("salas/" + codigoSala + "/jogadores/" + idJogadorAtual);
+  const refStatusSala = db.ref("salas/" + codigoSala + "/status");
+
+  refConectadoInfo.on("value", (snapshot) => {
+    if (snapshot.val() === true) {
+      // Re-estabelece estado conectado para o jogador atual
+      refMeuJogador.child("conectado").set(true);
+
+      if (souHost) {
+        refStatusSala.onDisconnect().set("encerrada");
+        refMeuJogador.onDisconnect().remove();
+      } else {
+        refMeuJogador.onDisconnect().remove();
+      }
+    }
+  });
+}
+
+inicializarPresencaFirebase();
+
+window.addEventListener("beforeunload", () => {
+  if (typeof db !== "undefined" && codigoSala && idJogadorAtual) {
+    if (souHost) {
+      db.ref("salas/" + codigoSala + "/status").set("encerrada");
+      db.ref("salas/" + codigoSala + "/jogadores/" + idJogadorAtual).remove();
+    } else {
+      db.ref("salas/" + codigoSala + "/jogadores/" + idJogadorAtual).remove();
+    }
+  }
+});
+
 // Sair da Sala / Retornar
 async function executarSaidaSala() {
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
@@ -353,17 +489,58 @@ escutarHostId(codigoSala, (hostId) => {
   idHostSala = hostId;
   souHost = hostId === idJogadorAtual;
   atualizarVisualHost();
+
+  if (typeof db !== "undefined" && codigoSala && idJogadorAtual) {
+    const refMeuJogador = db.ref("salas/" + codigoSala + "/jogadores/" + idJogadorAtual);
+    const refStatusSala = db.ref("salas/" + codigoSala + "/status");
+    if (souHost) {
+      refStatusSala.onDisconnect().set("encerrada");
+      refMeuJogador.onDisconnect().remove();
+    } else {
+      refStatusSala.onDisconnect().cancel();
+      refMeuJogador.onDisconnect().remove();
+    }
+  }
+
   if (dadosJogadoresCache) {
-    renderizarLobbyMesa(dadosJogadoresCache);
+    renderizarLobbyReal(dadosJogadoresCache);
     renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
   }
 });
 
-// Escuta das Informações da Sala e Minigames Selecionados (Suporte a múltiplos minigames / Mix)
+// Escuta das Informações da Sala, Validação de Status e Minigames Selecionados
 if (typeof db !== "undefined" && codigoSala) {
   db.ref("salas/" + codigoSala).on("value", (snapshot) => {
+    if (!snapshot.exists() || !snapshot.val()) {
+      if (!souHost) {
+        iniciarExpulsaoSuaveConvidado();
+      }
+      return;
+    }
+
     const dadosSala = snapshot.val();
-    if (!dadosSala) return;
+
+    // Se o status da sala foi alterado para encerrada
+    if (dadosSala.status === "encerrada") {
+      if (!souHost) {
+        iniciarExpulsaoSuaveConvidado();
+      }
+      return;
+    }
+
+    // Validação de permanência do Host
+    const hostId = dadosSala.hostId;
+    if (hostId) {
+      idHostSala = hostId;
+      souHost = (hostId === idJogadorAtual);
+      atualizarVisualHost();
+
+      const jogadores = dadosSala.jogadores || {};
+      if (!souHost && (!jogadores[hostId] || jogadores[hostId].conectado === false)) {
+        iniciarExpulsaoSuaveConvidado();
+        return;
+      }
+    }
 
     const minigamesArray = dadosSala.minigames || (dadosSala.configLobby && dadosSala.configLobby.baralhosAtivos) || [];
     const modoMix = dadosSala.modoMix === true;
@@ -647,20 +824,24 @@ const MAPA_CATEGORIAS_MINIGAMES = {
 // ============================================================
 function renderizarLobbyReal(jogadores) {
   if (!listaJogadoresLobby) return;
+  // O DOM (interface gráfica) OBRIGATORIAMENTE é limpo toda vez que o listener dispara
   listaJogadoresLobby.innerHTML = "";
 
-  const ids = Object.keys(jogadores || {}).sort((a, b) => {
-    return (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0);
-  });
-
-  const conectados = ids.filter((id) => jogadores[id] && jogadores[id].conectado !== false);
+  const ids = Object.keys(jogadores || {})
+    .filter((id) => {
+      const j = jogadores[id];
+      return j && j.nome && j.conectado !== false;
+    })
+    .sort((a, b) => {
+      return (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0);
+    });
 
   if (contadorJogadores) {
-    contadorJogadores.textContent = `${conectados.length} ${conectados.length === 1 ? "jogador" : "jogadores"}`;
+    contadorJogadores.textContent = `${ids.length} ${ids.length === 1 ? "jogador" : "jogadores"}`;
   }
 
   if (avisoSozinhoSala) {
-    if (conectados.length <= 1) {
+    if (ids.length <= 1) {
       avisoSozinhoSala.classList.remove("bloco-oculto");
     } else {
       avisoSozinhoSala.classList.add("bloco-oculto");
@@ -671,13 +852,12 @@ function renderizarLobbyReal(jogadores) {
     const j = jogadores[id];
     if (!j || !j.nome) return;
 
-    const isDesconectado = j.conectado === false;
     const isMe = id === idJogadorAtual;
     const isHost = id === idHostSala;
     const avatarData = obterAvatarJogador(j);
 
     const card = document.createElement("div");
-    card.className = `card-jogador-espera ${isDesconectado ? "desconectado" : ""} ${isMe ? "is-me" : ""}`;
+    card.className = `card-jogador-espera ${isMe ? "is-me" : ""}`;
 
     const avatarBox = document.createElement("div");
     avatarBox.className = "avatar-espera-circulo";
@@ -708,12 +888,6 @@ function renderizarLobbyReal(jogadores) {
       tagV.textContent = "VOCÊ";
       tagsBox.appendChild(tagV);
     }
-    if (isDesconectado) {
-      const tagS = document.createElement("span");
-      tagS.className = "tag-espera-saiu";
-      tagS.textContent = "SAIU";
-      tagsBox.appendChild(tagS);
-    }
 
     infoBox.appendChild(nome);
     infoBox.appendChild(tagsBox);
@@ -724,6 +898,8 @@ function renderizarLobbyReal(jogadores) {
     listaJogadoresLobby.appendChild(card);
   });
 }
+
+const renderizarLobbyMesa = renderizarLobbyReal;
 
 // ============================================================
 // MODAL DE TROCA DE AVATAR (26 OPÇÕES PRÉ-DEFINIDAS)
@@ -2087,21 +2263,35 @@ btnRevelarResultado.addEventListener("click", async () => {
 // ESCUTAS EM TEMPO REAL (FIREBASE)
 // ============================================================
 
-// 1. Jogadores Conectados & Host Migration
+// 1. Jogadores Conectados (Sincronização em Tempo Real)
 escutarJogadores(codigoSala, (jogadores) => {
   dadosJogadoresCache = jogadores || {};
-  migrarHostSeNecessario(codigoSala, jogadores, idHostSala);
-  renderizarLobbyMesa(dadosJogadoresCache);
+
+  // Validação: Se o Host não estiver mais presente na lista e o usuário for convidado
+  if (idHostSala && !souHost) {
+    if (!dadosJogadoresCache[idHostSala] || dadosJogadoresCache[idHostSala].conectado === false) {
+      iniciarExpulsaoSuaveConvidado();
+      return;
+    }
+  }
+
+  // Limpa e re-renderiza o DOM com a lista atualizada
+  renderizarLobbyReal(dadosJogadoresCache);
   renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
 
-  const ids = Object.keys(dadosJogadoresCache);
-  const totalConectados = ids.filter((id) => dadosJogadoresCache[id].conectado !== false).length;
-  contadorJogadores.textContent = `${totalConectados} na mesa`;
+  const idsConectados = Object.keys(dadosJogadoresCache).filter(
+    (id) => dadosJogadoresCache[id] && dadosJogadoresCache[id].nome && dadosJogadoresCache[id].conectado !== false
+  );
+  if (contadorJogadores) {
+    contadorJogadores.textContent = `${idsConectados.length} ${idsConectados.length === 1 ? "jogador" : "jogadores"}`;
+  }
 
-  if (totalConectados <= 1 && ids.length > 1) {
-    avisoSozinhoSala.classList.remove("bloco-oculto");
-  } else {
-    avisoSozinhoSala.classList.add("bloco-oculto");
+  if (avisoSozinhoSala) {
+    if (idsConectados.length <= 1) {
+      avisoSozinhoSala.classList.remove("bloco-oculto");
+    } else {
+      avisoSozinhoSala.classList.add("bloco-oculto");
+    }
   }
 
   if (tutorialDataCache) {
@@ -2142,8 +2332,15 @@ function executarTransicaoFadeCenario(aoEscurecerTotal, aoClarearCenario) {
 
 let gameplayIniciadaTransicao = false;
 
-// 2. Status Geral da Sala
+// 2. Status Geral da Sala & Queda do Host
 escutarStatusSala(codigoSala, (status) => {
+  if (!status || status === "encerrada") {
+    if (!souHost) {
+      iniciarExpulsaoSuaveConvidado();
+    }
+    return;
+  }
+
   if (status === "lobby") {
     transicaoEmExecucao = false;
     gameplayIniciadaTransicao = false;
