@@ -494,6 +494,11 @@ async function entrarNaSala(codigo, nome, avatarEscolhido) {
     throw new Error("Sala não encontrada. Confira o código digitado.");
   }
 
+  const dadosSala = snapshot.val();
+  if (dadosSala.status === "encerrada") {
+    throw new Error("Esta sala foi encerrada pelo criador.");
+  }
+
   const idJogador = obterIdJogador();
   const avatarValido = avatarEscolhido || AVATARES_PREDEFINIDOS[0];
 
@@ -534,36 +539,50 @@ async function atualizarAvatarJogador(codigo, novoAvatar) {
   }
 }
 
-function configurarDesconexao(codigo, idJogador, ehHost = false) {
+/**
+ * Configura presença contínua e desconexão inteligente no Firebase Realtime Database
+ */
+function configurarDesconexao(codigo, idJogador, isHost = false) {
   if (!codigo || !idJogador) return;
+  const connectedRef = db.ref(".info/connected");
   const refJogador = db.ref("salas/" + codigo + "/jogadores/" + idJogador);
   const refStatus = db.ref("salas/" + codigo + "/status");
 
-  if (ehHost) {
-    // O Host é a âncora da partida: altera status para 'encerrada' e remove o host ao cair
-    refStatus.onDisconnect().set("encerrada");
-    refJogador.onDisconnect().remove();
-  } else {
-    // Convidado: remove imediatamente da lista de jogadores ao cair
-    refJogador.onDisconnect().remove();
-  }
+  connectedRef.on("value", (snap) => {
+    if (snap.val() === true) {
+      refJogador.child("conectado").set(true);
+
+      if (isHost) {
+        // Se for o Host caindo/fechando: altera status para 'encerrada'
+        refStatus.onDisconnect().set("encerrada");
+        refJogador.child("conectado").onDisconnect().set(false);
+      } else {
+        // Se for Convidado caindo/fechando: remove nó do jogador para sumir instantaneamente
+        refJogador.onDisconnect().remove();
+      }
+    }
+  });
 }
 
+/**
+ * Gerencia a saída voluntária da sala (Host encerra sala, Convidado se remove da lista)
+ */
 async function sairDaSala(codigo) {
   if (!codigo) return;
   const idJogador = obterIdJogador();
-  try {
-    const snapHost = await db.ref("salas/" + codigo + "/hostId").get();
-    const hostId = snapHost.val();
-    const ehHost = hostId === idJogador;
+  const refSala = db.ref("salas/" + codigo);
 
-    if (ehHost) {
-      // Host abandonou a sala -> Destrói/Encerra a sala e remove o host
-      await db.ref("salas/" + codigo + "/status").set("encerrada");
-      await db.ref("salas/" + codigo + "/jogadores/" + idJogador).remove();
+  try {
+    const snapHost = await refSala.child("hostId").get();
+    const hostId = snapHost.val();
+    const isHost = hostId === idJogador;
+
+    if (isHost) {
+      // Host saindo: envia comando ao Firebase alterando status para 'encerrada'
+      await refSala.child("status").set("encerrada");
     } else {
-      // Convidado saindo -> remove apenas seu próprio registro do banco
-      await db.ref("salas/" + codigo + "/jogadores/" + idJogador).remove();
+      // Convidado saindo: remove ID deste jogador da lista da sala
+      await refSala.child("jogadores/" + idJogador).remove();
     }
   } catch (e) {
     console.warn("Erro ao sair da sala:", e);
