@@ -4634,452 +4634,45 @@ body.tela-gameplay-v3 {
   letter-spacing: 1px;
 }
 
-/* 3. PAINEL PRINCIPAL DE JOGO 2.5D */
-.painel-mesa-jogo-v3 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: calc(100dvh - 60px);
-  position: relative;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-}
-
 /* ============================================================
-   1. TRANSIÇÃO DE ESTADO (CORTINA BLACK FADE IN / OUT)
+   CORTINA DE TRANSIÇÃO (FADE IN / OUT)
    ============================================================ */
-#cortina-transicao,
-.cortina-transicao {
+#cortina-transicao {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  width: 100%;
-  height: 100%;
-  background-color: black;
+  background-color: #000;
   z-index: 9999;
-  pointer-events: none;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.8s ease;
 }
 
 /* ============================================================
-   2. ARQUITETURA DO CENÁRIO 2.5D (CAMADAS E Z-INDEX)
+   NOVO CENÁRIO DE GAMEPLAY (FUNDO FIXO & HUD)
    ============================================================ */
-
-/* O contêiner do Gameplay atuando como um palco */
-.cenario-gameplay-stage {
+#cenario-gameplay {
   position: relative;
   width: 100vw;
   height: 100vh;
-  height: 100dvh;
+  background-image: url('bg-gameplay.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Camada 1 - O Fundo (A Parede) */
-.cenario-parede,
-#cenario-parede {
+#hud-jogo {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  z-index: 1;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Camada 2 - A Frente (A Mesa) */
-.cenario-mesa,
-#cenario-mesa {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-height: 85%;
-  object-fit: cover;
-  object-position: center bottom;
-  z-index: 2;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Camada 3 - O Palco para o Tutorial e HUD (Preparação) */
-#area-tutorial,
-.area-tutorial {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 500px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Camada dos Jogadores Sentados ao Redor da Mesa */
-.cenario-mesa-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 4;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.cenario-mesa-container * {
-  pointer-events: auto;
-}
-
-/* 5. CENTRO DA MESA: REDEMOINHO + BARALHO */
-.centro-mesa-v3 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Redemoinho com rotação anti-horária infinita e baixa opacidade */
-.redemoinho-vortex-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: clamp(140px, 36vw, 210px);
-  height: clamp(140px, 36vw, 210px);
-  transform: translate(-50%, -50%);
-  opacity: 0.65;
-  pointer-events: none;
-  z-index: 2;
-  animation: girarRedemoinhoAntiHorario 14s linear infinite;
-  will-change: transform;
-}
-
-.redemoinho-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-@keyframes girarRedemoinhoAntiHorario {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(-360deg);
-  }
-}
-
-/* Baralho estático sobreposto */
-.baralho-container-mesa {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.baralho-asset-wrapper {
-  position: relative;
-  width: clamp(100px, 26vw, 145px);
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.baralho-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
-  user-select: none;
-  -webkit-user-drag: none;
-  transition: filter 0.3s ease, transform 0.2s ease;
-}
-
-/* Feedback de Turno: Brilho Pulsante Amarelo e Animação de Balanço */
-.baralho-asset-wrapper.baralho-ativo-vez .baralho-img {
-  filter: drop-shadow(0 0 16px #ffea00) drop-shadow(0 0 28px #ff7b00) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8));
-  animation: pulsarBaralhoVez 1.4s ease-in-out infinite;
-}
-
-@keyframes pulsarBaralhoVez {
-  0%, 100% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.08) rotate(1.5deg);
-  }
-}
-
-.baralho-asset-wrapper:active .baralho-img {
-  transform: scale(0.94);
-}
-
-/* Badge Flutuante "Sua vez de jogar!" */
-.badge-vez-flutuante {
-  position: absolute;
-  top: -34px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffda00;
-  color: #160406;
-  border: 3px solid #0b0b0b;
-  border-radius: 8px;
-  box-shadow: 3px 3px 0px #0b0b0b;
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(11px, 2.8vw, 13px);
-  font-weight: 900;
-  padding: 4px 12px;
-  white-space: nowrap;
-  animation: flutuarTagSuaVez 1.6s ease-in-out infinite alternate;
-  z-index: 15;
-  pointer-events: none;
-  letter-spacing: 0.5px;
-}
-
-@keyframes flutuarTagSuaVez {
-  0% {
-    transform: translateX(-50%) translateY(0px);
-  }
-  100% {
-    transform: translateX(-50%) translateY(-6px);
-  }
-}
-
-/* 6. JOGADORES AO REDOR DA MESA COM MOLDURA CARTOON */
-.camada-jogadores-radial {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 8;
-  pointer-events: none;
-}
-
-.assento-radial-jogador {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.avatar-radial-wrapper {
-  position: relative;
-  width: clamp(56px, 14vw, 72px);
-  height: clamp(56px, 14vw, 72px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* A foto de perfil fica sob a moldura (z-index menor) */
-.avatar-radial-fundo {
-  position: absolute;
-  width: 64%;
-  height: 64%;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(16px, 4.5vw, 24px);
-  z-index: 1;
-  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 3px 8px rgba(0, 0, 0, 0.5);
-  user-select: none;
-}
-
-/* A moldura PNG por cima do avatar (z-index maior) */
-.moldura-player-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 2;
-  pointer-events: none;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.75));
-}
-
-/* Tag com nome do jogador posicionado sobre a barra inferior da moldura */
-.nome-radial-jogador {
-  position: relative;
-  margin-top: -10px;
-  z-index: 3;
-  background: #140306;
-  border: 2px solid #0b0b0b;
-  border-radius: 6px;
-  box-shadow: 2px 2px 0px #0b0b0b;
-  padding: 2px 8px;
-  font-size: clamp(10px, 2.5vw, 11.5px);
-  font-weight: 800;
-  color: #ffffff;
-  max-width: 90px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  text-align: center;
-  letter-spacing: 0.3px;
-}
-
-.assento-radial-jogador.is-local-player .nome-radial-jogador {
-  background: #2b0b14;
-  border-color: #ffb703;
-  color: #ffda00;
-}
-
-.assento-radial-jogador.is-leitor-ativo .avatar-radial-wrapper {
-  animation: glowLeitorAtivo 1.4s ease-in-out infinite alternate;
-}
-
-@keyframes glowLeitorAtivo {
-  0% {
-    filter: drop-shadow(0 0 8px rgba(255, 218, 0, 0.6));
-    transform: scale(1.02);
-  }
-  100% {
-    filter: drop-shadow(0 0 18px rgba(255, 218, 0, 0.95));
-    transform: scale(1.08);
-  }
-}
-
-.assento-radial-jogador.is-alvo-ativo .avatar-radial-wrapper {
-  animation: glowAlvoAtivo 1.4s ease-in-out infinite alternate;
-}
-
-@keyframes glowAlvoAtivo {
-  0% {
-    filter: drop-shadow(0 0 8px rgba(255, 77, 46, 0.6));
-    transform: scale(1.02);
-  }
-  100% {
-    filter: drop-shadow(0 0 18px rgba(255, 77, 46, 0.95));
-    transform: scale(1.08);
-  }
-}
-
-/* 7. REAÇÕES DA RODA: SUBMENU POPOVER COMIC */
-.bloco-reacoes-retratil {
-  position: fixed;
-  bottom: clamp(14px, 3vh, 24px);
-  right: clamp(14px, 3vw, 24px);
-  z-index: 60;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.popover-reacoes-menu {
-  background: linear-gradient(176deg, #28070e 0%, #160205 100%);
-  border: 3px solid #0b0b0b;
-  border-radius: 14px;
-  box-shadow: 6px 6px 0px #0b0b0b;
-  padding: 10px;
-  width: min(90vw, 280px);
-  animation: popoverReacaoIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes popoverReacaoIn {
-  from {
-    opacity: 0;
-    transform: scale(0.85) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.popover-reacoes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.btn-reacao-hud {
-  background: #1b070c;
-  border: 2px solid #0b0b0b;
-  border-radius: 10px;
-  box-shadow: 2px 2px 0px #0b0b0b;
-  padding: 6px 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  cursor: pointer;
-  transition: transform 0.12s ease, background 0.15s ease;
-}
-
-.btn-reacao-hud:hover {
-  background: #350b16;
-  transform: translateY(-2px);
-}
-
-.btn-reacao-hud:active {
-  transform: scale(0.92) !important;
-}
-
-.reacao-emoji-hud {
-  font-size: 20px;
-}
-
-.reacao-rotulo-hud {
-  font-size: 10px;
-  font-weight: 800;
-  color: #fca5a5;
-}
-
-.reacao-count-hud {
-  font-size: 9px;
-  font-weight: 900;
-  color: #ffda00;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 1px 5px;
-  border-radius: 6px;
-}
-
-/* 8. ZONA INFERIOR HUD FIXA NA BASE */
-.zona-inferior-hud {
-  width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 8px 12px clamp(8px, 2vh, 16px) 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 40;
-  position: relative;
-}
-
-.deck-lobby-img {
-  width: clamp(70px, 18vw, 95px);
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8));
 }
 
 /* ============================================================
@@ -6856,6 +6449,200 @@ body.tela-lobby-espera-ativa .gameplay-viewport-container {
   font-size: 12px;
   color: #fca5a5;
 }
+
+/* ============================================================
+   ETAPA 5: TUTORIAL SPLASH SCREEN NO GAMEPLAY (#HUD-JOGO)
+   ============================================================ */
+#hud-jogo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 50;
+}
+
+#hud-jogo > * {
+  pointer-events: auto;
+}
+
+.card-tutorial-gameplay {
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(176deg, #28070d 0%, #150205 100%);
+  border: 3.5px solid #0b0b0b;
+  border-radius: 22px;
+  box-shadow: 8px 8px 0px #0b0b0b, 0 20px 48px rgba(0, 0, 0, 0.95);
+  padding: clamp(20px, 4.5vw, 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  animation: popTutorialCard 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 60;
+  box-sizing: border-box;
+}
+
+@keyframes popTutorialCard {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.tutorial-gameplay-topo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.tutorial-gameplay-tag {
+  background: #ff4d2e;
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 12px;
+  border-radius: 6px;
+  border: 2px solid #0b0b0b;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0px #0b0b0b;
+}
+
+.tutorial-gameplay-titulo {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #0b0b0b;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tutorial-gameplay-corpo {
+  width: 100%;
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8), 2px 2px 0px #0b0b0b;
+  box-sizing: border-box;
+}
+
+.tutorial-gameplay-regra {
+  font-size: clamp(13.5px, 3.5vw, 15px);
+  font-weight: 700;
+  color: #fca5a5;
+  line-height: 1.5;
+  margin: 0;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.tutorial-gameplay-rodape {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-iniciar-rodada-3d {
+  width: 100%;
+  background: linear-gradient(135deg, #ff4d2e 0%, #d90429 100%);
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 3px solid #0b0b0b;
+  box-shadow: 4px 4px 0px #0b0b0b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-shadow: 1.5px 1.5px 0px #0b0b0b;
+  transition: transform 0.12s ease, filter 0.15s ease, box-shadow 0.12s ease;
+}
+
+.btn-iniciar-rodada-3d:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 4px 6px 0px #0b0b0b;
+}
+
+.btn-iniciar-rodada-3d:active {
+  transform: scale(0.96) translateY(2px) !important;
+  box-shadow: 2px 2px 0px #0b0b0b !important;
+}
+
+.box-aguardando-host-gameplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: #170407;
+  border: 2px solid #0b0b0b;
+  border-radius: 12px;
+  box-shadow: 2px 2px 0px #0b0b0b;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.icone-pulso-espera {
+  font-size: 20px;
+  animation: pulsoIconeEspera 1.5s ease-in-out infinite alternate;
+}
+
+.texto-pulso-espera {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffda00;
+  letter-spacing: 0.3px;
+  animation: pulsoTextoEspera 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulsoTextoEspera {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulsoIconeEspera {
+  0% {
+    transform: rotate(0deg) scale(0.9);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(180deg) scale(0.9);
+  }
+}
+
 
 
 

@@ -13,7 +13,7 @@ if (!codigoSala) {
 // Inicialização e remoção imediata da classe bloco-oculto do Lobby
 function inicializarVisualLobby() {
   const elLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
-  const elMesa = document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
+  const elMesa = document.getElementById("cenario-gameplay") || document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
   const elConfig = document.getElementById("painel-configuracao");
   const elFim = document.getElementById("painel-fim-partida");
 
@@ -52,7 +52,7 @@ window.addEventListener("load", inicializarVisualLobby);
 const cortinaTransicao = document.getElementById("cortina-transicao");
 const painelLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
 const painelConfiguracao = document.getElementById("painel-configuracao");
-const painelMesaJogo = document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
+const painelMesaJogo = document.getElementById("cenario-gameplay") || document.getElementById("painel-mesa-jogo") || document.getElementById("tela-gameplay");
 const painelFimPartida = document.getElementById("painel-fim-partida");
 const corpoPaginaSala = document.getElementById("corpo-pagina-sala") || document.body;
 
@@ -451,6 +451,27 @@ if (typeof db !== "undefined" && codigoSala) {
         if (modoJogoNome) modoJogoNome.textContent = modoInfo.nome || "Modo Mesa Quente";
       }
     }
+
+    // Sincronização em Tempo Real do Tutorial Splash Screen no Gameplay (#hud-jogo)
+    if (dadosSala.status === "tutorial_minigame" || (dadosSala.minigameAtual && dadosSala.tutorialConcluido !== true && dadosSala.status !== "lobby" && dadosSala.status !== "encerrada")) {
+      const elLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera");
+      if (elLobby) {
+        elLobby.classList.add("bloco-oculto");
+        elLobby.style.display = "none";
+      }
+      const elGameplay = document.getElementById("cenario-gameplay");
+      if (elGameplay) {
+        elGameplay.classList.remove("bloco-oculto");
+        elGameplay.style.display = "flex";
+      }
+      renderizarTutorialMinigame(dadosSala.minigameAtual);
+    } else if (dadosSala.tutorialConcluido === true || dadosSala.faseJogo === "rodada") {
+      const hudJogo = document.getElementById("hud-jogo");
+      if (hudJogo && tutorialGameplayAtivo) {
+        hudJogo.innerHTML = "";
+        tutorialGameplayAtivo = false;
+      }
+    }
   });
 }
 
@@ -529,6 +550,216 @@ function atualizarVisualHost() {
     if (avisoJogadorFim) {
       avisoJogadorFim.classList.remove("bloco-oculto");
       avisoJogadorFim.style.display = "block";
+    }
+  }
+}
+
+// ============================================================
+// DICIONÁRIO DE REGRAS DOS 13 MINIGAMES (TUTORIAL HUD)
+// ============================================================
+const DICIONARIO_REGRAS_MINIGAMES = {
+  "quem_e_mais_provavel": {
+    id: "quem_e_mais_provavel",
+    nome: "Quem é Mais Provável?",
+    icone: "🎯",
+    titulo: "🎯 Quem é Mais Provável?",
+    regra: "No 3, todo mundo aponta para quem tem mais cara de fazer o que a carta diz. O mais votado bebe!"
+  },
+  "eu_nunca": {
+    id: "eu_nunca",
+    nome: "Eu Nunca",
+    icone: "🍷",
+    titulo: "🍷 Eu Nunca",
+    regra: "Se você já fez o que está na tela, tome um gole."
+  },
+  "eu_nunca_safico": {
+    id: "eu_nunca_safico",
+    nome: "Eu Nunca",
+    icone: "🍷",
+    titulo: "🍷 Eu Nunca",
+    regra: "Se você já fez o que está na tela, tome um gole."
+  },
+  "o_que_voce_prefere": {
+    id: "o_que_voce_prefere",
+    nome: "O Que Você Prefere?",
+    icone: "⚖️",
+    titulo: "⚖️ O Que Você Prefere?",
+    regra: "Escolha a melhor (ou pior) opção. A minoria bebe!"
+  },
+  "preencha_a_lacuna": {
+    id: "preencha_a_lacuna",
+    nome: "Preencha a Lacuna",
+    icone: "🃏",
+    titulo: "🃏 Preencha a Lacuna",
+    regra: "Complete o espaço em branco da frase com a melhor resposta da sua mão. A juíza escolhe a mais engraçada!"
+  },
+  "duas_verdades_uma_mentira": {
+    id: "duas_verdades_uma_mentira",
+    nome: "Duas Verdades e Uma Mentira",
+    icone: "🎭",
+    titulo: "🎭 Duas Verdades e Uma Mentira",
+    regra: "Conte 3 histórias sobre você: duas verdadeiras e uma mentira. A mesa vota para descobrir o blefe!"
+  },
+  "o_espiao": {
+    id: "o_espiao",
+    nome: "O Espião",
+    icone: "🕵️",
+    titulo: "🕵️ O Espião",
+    regra: "Todos na roda recebem a mesma palavra secreta, exceto o espião. Façam perguntas discretas para desmascará-lo!"
+  },
+  "bandeiras_vermelhas": {
+    id: "bandeiras_vermelhas",
+    nome: "Bandeiras Vermelhas",
+    icone: "🚩",
+    titulo: "🚩 Bandeiras Vermelhas",
+    regra: "Defenda o pretendente perfeito com um defeito surreal. A mesa decide se passaria pano ou não!"
+  },
+  "batalha_de_argumentos": {
+    id: "batalha_de_argumentos",
+    nome: "Batalha de Argumentos",
+    icone: "⚔️",
+    titulo: "⚔️ Batalha de Argumentos",
+    regra: "Defenda com unhas e dentes a sua tese absurda. A roda vota no argumento mais convincente!"
+  },
+  "o_termometro": {
+    id: "o_termometro",
+    nome: "O Termômetro",
+    icone: "🌡️",
+    titulo: "🌡️ O Termômetro",
+    regra: "Dê uma nota secreta de 1 a 10 para o tema. A roda precisa adivinhar o quão quente ou frio você foi!"
+  },
+  "apenas_uma_dica": {
+    id: "apenas_uma_dica",
+    nome: "Apenas Uma Dica",
+    icone: "💡",
+    titulo: "💡 Apenas Uma Dica",
+    regra: "Escreva apenas uma palavra como pista. Se alguém der a mesma dica, ela é cancelada!"
+  },
+  "palavra_proibida": {
+    id: "palavra_proibida",
+    nome: "Palavra Proibida",
+    icone: "🚫",
+    titulo: "🚫 Palavra Proibida",
+    regra: "Faça a mesa adivinhar a palavra principal sem pronunciar nenhuma das palavras proibidas!"
+  },
+  "niveis_intimidade": {
+    id: "niveis_intimidade",
+    nome: "Níveis de Intimidade",
+    icone: "💜",
+    titulo: "💜 Níveis de Intimidade",
+    regra: "Perguntas de vulnerabilidade e conexão em 3 níveis. Respondam com total sinceridade na roda!"
+  },
+  "verdade_ou_desafio_hot": {
+    id: "verdade_ou_desafio_hot",
+    nome: "Verdade ou Desafio Hot",
+    icone: "🔥",
+    titulo: "🔥 Verdade ou Desafio Hot",
+    regra: "Escolha entre responder uma verdade sem filtro ou encarar um desafio ao vivo. Quem arregar toma castigo!"
+  },
+  "roleta_consequencias": {
+    id: "roleta_consequencias",
+    nome: "Roleta de Consequências",
+    icone: "🎲",
+    titulo: "🎲 Roleta de Consequências",
+    regra: "Escolha entre responder uma verdade picante ou cumprir um desafio na hora. Quem recusar sofre o castigo!"
+  }
+};
+
+function obterRegraMinigame(chaveOuNome) {
+  if (!chaveOuNome) {
+    return {
+      id: "quem_e_mais_provavel",
+      nome: "Quem é Mais Provável?",
+      icone: "🎯",
+      titulo: "🎯 Quem é Mais Provável?",
+      regra: "No 3, todo mundo aponta para quem tem mais cara de fazer o que a carta diz. O mais votado bebe!"
+    };
+  }
+
+  if (typeof chaveOuNome === "object") {
+    if (chaveOuNome.id && DICIONARIO_REGRAS_MINIGAMES[chaveOuNome.id]) {
+      return DICIONARIO_REGRAS_MINIGAMES[chaveOuNome.id];
+    }
+    chaveOuNome = chaveOuNome.id || chaveOuNome.nome || chaveOuNome.titulo || "";
+  }
+
+  const str = String(chaveOuNome).trim();
+  if (DICIONARIO_REGRAS_MINIGAMES[str]) {
+    return DICIONARIO_REGRAS_MINIGAMES[str];
+  }
+
+  const normalizado = str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "_").replace(/^_+|_+$/g, "");
+
+  for (const [key, item] of Object.entries(DICIONARIO_REGRAS_MINIGAMES)) {
+    const itemNorm = item.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "_").replace(/^_+|_+$/g, "");
+    if (key === normalizado || itemNorm === normalizado || normalizado.includes(key) || key.includes(normalizado)) {
+      return item;
+    }
+  }
+
+  return {
+    id: normalizado,
+    nome: str,
+    icone: "🔥",
+    titulo: `🔥 ${str}`,
+    regra: "Siga as instruções exibidas na mesa e divirta-se com a galera!"
+  };
+}
+
+let tutorialGameplayAtivo = false;
+
+function renderizarTutorialMinigame(minigameChave) {
+  const hudJogo = document.getElementById("hud-jogo");
+  if (!hudJogo) return;
+
+  const info = obterRegraMinigame(minigameChave);
+  tutorialGameplayAtivo = true;
+
+  hudJogo.innerHTML = `
+    <div class="card-tutorial-gameplay" id="card-tutorial-gameplay">
+      <div class="tutorial-gameplay-topo">
+        <span class="tutorial-gameplay-tag">TUTORIAL DO MINIGAME</span>
+        <h2 class="tutorial-gameplay-titulo" id="tutorial-gameplay-titulo">${info.titulo || info.nome}</h2>
+      </div>
+      <div class="tutorial-gameplay-corpo">
+        <p class="tutorial-gameplay-regra" id="tutorial-gameplay-regra">${info.regra}</p>
+      </div>
+      <div class="tutorial-gameplay-rodape" id="tutorial-gameplay-rodape">
+        ${souHost ? `
+          <button type="button" class="btn-iniciar-rodada-3d" id="btn-iniciar-rodada-tutorial">
+            <span>🔥 Iniciar Rodada</span>
+          </button>
+        ` : `
+          <div class="box-aguardando-host-gameplay">
+            <span class="icone-pulso-espera">⏳</span>
+            <span class="texto-pulso-espera">Aguardando o Anfitrião...</span>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+
+  if (souHost) {
+    const btnIniciarRodada = document.getElementById("btn-iniciar-rodada-tutorial");
+    if (btnIniciarRodada) {
+      btnIniciarRodada.addEventListener("click", async () => {
+        if (typeof audioApp !== "undefined") audioApp.tocarClique();
+        
+        // 4. FUNCIONAMENTO DO BOTÃO: Limpa (esvazia) a div #hud-jogo
+        hudJogo.innerHTML = "";
+        tutorialGameplayAtivo = false;
+
+        // Atualiza o Firebase para sincronizar com todos os convidados
+        try {
+          await db.ref("salas/" + codigoSala).update({
+            status: "jogando",
+            faseJogo: "rodada",
+            tutorialConcluido: true
+          });
+        } catch (e) {
+          console.error("Erro ao sincronizar término do tutorial:", e);
+        }
+      });
     }
   }
 }
@@ -2224,7 +2455,7 @@ escutarStatusSala(codigoSala, (status) => {
       btnIniciarPartida.disabled = false;
       btnIniciarPartida.textContent = "🔥 Iniciar Partida";
     }
-  } else if ((status === "jogando" || status === "transicao") && !gameplayIniciadaTransicao) {
+  } else if ((status === "jogando" || status === "transicao" || status === "tutorial_minigame") && !gameplayIniciadaTransicao) {
     gameplayIniciadaTransicao = true;
     
     // Executa Transição Fade In/Out (Cortina Black 0.8s)
@@ -2416,7 +2647,7 @@ btnCopiarCodigo.addEventListener("click", () => {
   });
 });
 
-// Iniciar Partida (Ação do Host na Sala de Espera com Efeito Fade In / Out)
+// Iniciar Partida (Ação do Host na Sala de Espera com Transição de Cortina Fade Preto e Tutorial Splash)
 async function iniciarPartidaGameplay() {
   if (!souHost) return;
   if (btnIniciarPartida) {
@@ -2425,28 +2656,71 @@ async function iniciarPartidaGameplay() {
   }
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
 
-  // Executa o Efeito Fade In / Out
-  executarTransicaoFadeCenario(
-    () => {
-      // Ocorre aos 800ms com a tela 100% preta
-      mostrarApenasPainel(painelMesaJogo);
-      if (corpoPaginaSala) corpoPaginaSala.classList.add("tela-gameplay-v3");
-      renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
-    },
-    async () => {
-      // Ao clarear a tela revelando o novo cenário 2.5D: sincroniza no Firebase
-      try {
-        await iniciarPartida(codigoSala, configLocal);
-      } catch (erro) {
-        console.error("Erro ao iniciar gameplay:", erro);
-        if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
-        if (btnIniciarPartida) {
-          btnIniciarPartida.disabled = false;
-          btnIniciarPartida.textContent = "🔥 Iniciar Partida";
-        }
+  // 1. Escurece a tela (Fade In)
+  const cortina = document.getElementById("cortina-transicao");
+  if (cortina) {
+    cortina.style.opacity = "1";
+  }
+
+  // 2. Use setTimeout de 800ms
+  setTimeout(async () => {
+    // 3. Aplique display: none no modal/contêiner da Sala de Espera
+    const elLobby = document.getElementById("painel-lobby") || document.getElementById("sala-de-espera") || painelLobby;
+    if (elLobby) {
+      elLobby.classList.add("bloco-oculto");
+      elLobby.style.display = "none";
+    }
+
+    // 4. Aplique display: flex no #cenario-gameplay
+    const elGameplay = document.getElementById("cenario-gameplay") || painelMesaJogo;
+    if (elGameplay) {
+      elGameplay.classList.remove("bloco-oculto");
+      elGameplay.style.display = "flex";
+    }
+
+    // 5. Logo após as trocas de display, altere a opacidade da cortina de volta para '0' (Revela o novo cenário)
+    if (cortina) {
+      cortina.style.opacity = "0";
+    }
+
+    // 6. Lógica do Sorteio (Host): sortear aleatoriamente 1 minigame da array de jogosSelecionados
+    try {
+      const snap = await db.ref("salas/" + codigoSala).get();
+      const dadosSala = snap.exists() ? snap.val() : {};
+
+      const listaSelecionados = (Array.isArray(dadosSala.jogosSelecionados) && dadosSala.jogosSelecionados.length > 0)
+        ? dadosSala.jogosSelecionados
+        : (Array.isArray(dadosSala.minigames) && dadosSala.minigames.length > 0)
+          ? dadosSala.minigames
+          : (dadosSala.configLobby && Array.isArray(dadosSala.configLobby.jogosSelecionados) && dadosSala.configLobby.jogosSelecionados.length > 0)
+            ? dadosSala.configLobby.jogosSelecionados
+            : (dadosSala.configLobby && Array.isArray(dadosSala.configLobby.baralhosAtivos) && dadosSala.configLobby.baralhosAtivos.length > 0)
+              ? dadosSala.configLobby.baralhosAtivos
+              : (Array.isArray(configLocal.jogosSelecionados) && configLocal.jogosSelecionados.length > 0)
+                ? configLocal.jogosSelecionados
+                : ["quem_e_mais_provavel"];
+
+      const minigameSorteado = listaSelecionados[Math.floor(Math.random() * listaSelecionados.length)];
+
+      // Atualiza o banco de dados (Firebase) definindo qual é o minigameAtual para que todos os convidados recebam
+      await db.ref("salas/" + codigoSala).update({
+        status: "tutorial_minigame",
+        minigameAtual: minigameSorteado,
+        faseJogo: "tutorial_minigame",
+        tutorialConcluido: false
+      });
+
+      // Renderiza a interface do Tutorial para o Host no #hud-jogo
+      renderizarTutorialMinigame(minigameSorteado);
+    } catch (erro) {
+      console.error("Erro ao sortear minigame e iniciar gameplay:", erro);
+      if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
+      if (btnIniciarPartida) {
+        btnIniciarPartida.disabled = false;
+        btnIniciarPartida.textContent = "🔥 Iniciar Partida";
       }
     }
-  );
+  }, 800);
 }
 
 if (btnIniciarPartida) {
