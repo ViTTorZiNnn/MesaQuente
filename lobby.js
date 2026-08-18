@@ -361,8 +361,16 @@ function executarExpulsaoSuave() {
 async function executarSaidaSala() {
   if (typeof audioApp !== "undefined") audioApp.tocarClique();
   try {
-    if (typeof sairDaSala === "function") {
-      await sairDaSala(codigoSala);
+    if (souHost) {
+      if (typeof db !== "undefined" && codigoSala) {
+        await db.ref("salas/" + codigoSala + "/status").set("encerrada");
+      }
+    } else {
+      if (typeof sairDaSala === "function") {
+        await sairDaSala(codigoSala);
+      } else if (typeof db !== "undefined" && codigoSala) {
+        await db.ref("salas/" + codigoSala + "/jogadores/" + idJogadorAtual).remove();
+      }
     }
   } catch (err) {
     console.error("Erro ao sair da sala:", err);
@@ -375,8 +383,9 @@ async function executarSaidaSala() {
 
 // Gerenciamento de Saída e Desconexão Global (beforeunload)
 window.addEventListener("beforeunload", () => {
-  if (!codigoSala) return;
-  const idJogador = idJogadorAtual || obterIdJogador();
+  if (!codigoSala || typeof db === "undefined") return;
+  const idJogador = idJogadorAtual || (typeof obterIdJogador === "function" ? obterIdJogador() : null);
+  if (!idJogador) return;
 
   if (souHost) {
     // Se for o Host: encerra a sala imediatamente no Firebase
@@ -390,6 +399,39 @@ window.addEventListener("beforeunload", () => {
     } catch (e) {}
   }
 });
+
+// Assegura o registro de presença imediata do jogador ao carregar a página
+async function assegurarPresencaJogador() {
+  if (!codigoSala || typeof db === "undefined") return;
+  const idJogador = idJogadorAtual || (typeof obterIdJogador === "function" ? obterIdJogador() : "jog_" + Date.now());
+  const nomeSalvo = localStorage.getItem("mesaQuente_nomeJogador") || "Jogador";
+  const avatarIdSalvo = localStorage.getItem("mesaQuente_avatarId") || "fox";
+  const avatarObj = (typeof AVATARES_PREDEFINIDOS !== "undefined" && AVATARES_PREDEFINIDOS.find(a => a.id === avatarIdSalvo)) || { id: "fox", emoji: "🦊", cor: "#ff5400", corBorda: "#ff9e00" };
+
+  try {
+    const refJogador = db.ref("salas/" + codigoSala + "/jogadores/" + idJogador);
+    const snap = await refJogador.get();
+    if (!snap.exists()) {
+      await refJogador.set({
+        id: idJogador,
+        nome: nomeSalvo,
+        avatar: {
+          id: avatarObj.id,
+          emoji: avatarObj.emoji,
+          cor: avatarObj.cor,
+          corBorda: avatarObj.corBorda
+        },
+        entrouEm: firebase.database.ServerValue.TIMESTAMP,
+        conectado: true
+      });
+    } else {
+      await refJogador.child("conectado").set(true);
+    }
+  } catch (err) {
+    console.error("Erro ao assegurar presença:", err);
+  }
+}
+assegurarPresencaJogador();
 
 if (btnSairSala) {
   btnSairSala.addEventListener("click", executarSaidaSala);
@@ -960,10 +1002,12 @@ function renderizarLobbyReal(jogadores) {
   }
 
   if (avisoSozinhoSala) {
-    if (conectados.length <= 1) {
+    if (conectados.length === 0) {
       avisoSozinhoSala.classList.remove("bloco-oculto");
+      avisoSozinhoSala.style.display = "block";
     } else {
       avisoSozinhoSala.classList.add("bloco-oculto");
+      avisoSozinhoSala.style.display = "none";
     }
   }
 
@@ -2380,21 +2424,27 @@ btnRevelarResultado.addEventListener("click", async () => {
 // ESCUTAS EM TEMPO REAL (FIREBASE)
 // ============================================================
 
-// 1. Jogadores Conectados & Host Migration
+// 1. Jogadores Conectados
 escutarJogadores(codigoSala, (jogadores) => {
   dadosJogadoresCache = jogadores || {};
-  migrarHostSeNecessario(codigoSala, jogadores, idHostSala);
   renderizarLobbyMesa(dadosJogadoresCache);
   renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
 
   const ids = Object.keys(dadosJogadoresCache);
-  const totalConectados = ids.filter((id) => dadosJogadoresCache[id].conectado !== false).length;
-  contadorJogadores.textContent = `${totalConectados} na mesa`;
+  const totalConectados = ids.filter((id) => dadosJogadoresCache[id] && dadosJogadoresCache[id].conectado !== false && dadosJogadoresCache[id].nome).length;
 
-  if (totalConectados <= 1 && ids.length > 1) {
-    avisoSozinhoSala.classList.remove("bloco-oculto");
-  } else {
-    avisoSozinhoSala.classList.add("bloco-oculto");
+  if (contadorJogadores) {
+    contadorJogadores.textContent = `${totalConectados} ${totalConectados === 1 ? "jogador" : "jogadores"}`;
+  }
+
+  if (avisoSozinhoSala) {
+    if (totalConectados === 0) {
+      avisoSozinhoSala.classList.remove("bloco-oculto");
+      avisoSozinhoSala.style.display = "block";
+    } else {
+      avisoSozinhoSala.classList.add("bloco-oculto");
+      avisoSozinhoSala.style.display = "none";
+    }
   }
 
   if (tutorialDataCache) {
@@ -2637,15 +2687,36 @@ escutarInteracoes(codigoSala, (interacoes) => {
 // AÇÕES DO JOGADOR E DO HOST
 // ============================================================
 
-btnCopiarCodigo.addEventListener("click", () => {
-  navigator.clipboard.writeText(codigoSala).then(() => {
-    btnCopiarCodigo.innerHTML = "<span>✅</span> Copiado!";
+if (btnCopiarCodigo) {
+  btnCopiarCodigo.addEventListener("click", async () => {
+    const codigoParaCopiar = codigoSala || (textoCodigoSala ? textoCodigoSala.textContent.trim() : "");
+    if (!codigoParaCopiar || codigoParaCopiar === "----") return;
+
     if (typeof audioApp !== "undefined") audioApp.tocarClique();
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(codigoParaCopiar);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = codigoParaCopiar;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+    } catch (err) {
+      console.warn("Erro ao copiar código:", err);
+    }
+
+    btnCopiarCodigo.innerHTML = "<span>✅</span> Copiado!";
     setTimeout(() => {
-      btnCopiarCodigo.innerHTML = "<span>📋</span> Copiar";
-    }, 1800);
+      btnCopiarCodigo.innerHTML = "<span>📋</span> Copiar Código";
+    }, 2000);
   });
-});
+}
 
 // Iniciar Partida (Ação do Host na Sala de Espera com Transição de Cortina Fade Preto e Tutorial Splash)
 async function iniciarPartidaGameplay() {
