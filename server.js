@@ -141,6 +141,26 @@ app.get(["/sair-da-sala.png", "/sair-da-sala.svg"], (req, res) => {
   res.send(sairSalaSvg);
 });
 
+app.get(["/bg-gameplay.png", "/bg-gameplay.svg", "/bg-gameplay.jpg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  const bgPath = path.join(__dirname, "bg-gameplay.svg");
+  if (fs.existsSync(bgPath)) {
+    res.sendFile(bgPath);
+  } else {
+    res.send(bgSvg);
+  }
+});
+
+app.get(["/icone-regras.png", "/icone-regras.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  const iconPath = path.join(__dirname, "icone-regras.svg");
+  if (fs.existsSync(iconPath)) {
+    res.sendFile(iconPath);
+  } else {
+    res.send(engrenagemSvg);
+  }
+});
+
 app.get(["/cartas-votação.png", "/cartas-vota%C3%A7%C3%A3o.png", "/cartas-votacao.png", "/cartas-votacao.svg"], (req, res) => {
   res.setHeader("Content-Type", "image/svg+xml");
   res.send(cardVotacaoSvg);
