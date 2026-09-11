@@ -161,6 +161,8 @@ const baralhoAssetWrapper = document.getElementById("baralho-asset-wrapper");
 const imgBaralhoMesa = document.getElementById("img-baralho-mesa");
 const badgeSuaVez = document.getElementById("badge-sua-vez");
 const btnPuxarCartaMesa = document.getElementById("btn-puxar-carta-mesa");
+const btnRevelarCartaMesa = document.getElementById("btn-revelar-carta-mesa");
+const containerAcaoRevelarCarta = document.getElementById("container-acao-revelar-carta");
 const boxEsperaPuxar = document.getElementById("box-espera-puxar");
 const textoEsperaPuxar = document.getElementById("texto-espera-puxar");
 const focoCartaBackdrop = document.getElementById("foco-carta-backdrop");
@@ -263,6 +265,16 @@ const avisoJogadorFim = document.getElementById("aviso-jogador-fim");
 const btnJogarNovamente = document.getElementById("btn-jogar-novamente");
 const btnSairPartidaFim = document.getElementById("btn-sair-partida-fim");
 
+// Elementos — Modal de Regras do Minigame Atual
+const btnRegrasJogo = document.getElementById("btn-regras-jogo");
+const modalRegrasJogo = document.getElementById("modal-regras-jogo");
+const btnFecharModalRegras = document.getElementById("btn-fechar-modal-regras");
+const btnEntendiRegras = document.getElementById("btn-entendi-regras");
+const modalRegrasCategoria = document.getElementById("modal-regras-categoria");
+const modalRegrasNome = document.getElementById("modal-regras-nome");
+const modalRegrasBanner = document.getElementById("modal-regras-banner");
+const modalRegrasLista = document.getElementById("modal-regras-lista");
+
 // Estado Local
 if (textoCodigoSala) textoCodigoSala.textContent = codigoSala;
 if (hudCodigoSalaTopo) hudCodigoSalaTopo.textContent = codigoSala;
@@ -270,6 +282,8 @@ const idJogadorAtual = obterIdJogador();
 let souHost = false;
 let idHostSala = null;
 let ultimaCartaExibidaId = null;
+let ultimaCartaPuxadaId = null;
+let ultimaCartaReveladaId = null;
 let dadosJogadoresCache = {};
 let cartaAtualCache = null;
 let interacoesCache = {};
@@ -731,6 +745,7 @@ function renderizarLobbyReal(jogadores) {
 
     const card = document.createElement("div");
     card.className = `card-jogador-espera ${isMe ? "is-me" : ""}`;
+    card.id = `card-espera-${id}`;
 
     const avatarBox = document.createElement("div");
     avatarBox.className = "avatar-espera-circulo";
@@ -1056,8 +1071,8 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
   const alvoId = cartaAtual ? cartaAtual.alvoId : null;
   const total = ids.length;
 
-  const raioX = 40;
-  const raioY = 36;
+  const raioX = 38;
+  const raioY = 32;
 
   ids.forEach((id, index) => {
     const j = jogadores[id];
@@ -1100,8 +1115,15 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
     molduraImg.alt = "Moldura";
     molduraImg.className = "moldura-player-img";
 
+    // Nome posicionado na plaqueta da base da moldura
+    const nome = document.createElement("div");
+    nome.className = "nome-radial-jogador";
+    nome.textContent = isMe ? `${j.nome} (Você)` : j.nome;
+    nome.title = j.nome;
+
     molduraWrapper.appendChild(avatarFundo);
     molduraWrapper.appendChild(molduraImg);
+    molduraWrapper.appendChild(nome);
 
     if (isLeitor) {
       const badgeLeitor = document.createElement("span");
@@ -1115,14 +1137,7 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
       seat.appendChild(badgeAlvo);
     }
 
-    // Nome posicionado na tag sobre a base da moldura
-    const nome = document.createElement("div");
-    nome.className = "nome-radial-jogador";
-    nome.textContent = isMe ? `${j.nome} (Você)` : j.nome;
-
     seat.appendChild(molduraWrapper);
-    seat.appendChild(nome);
-
     camadaJogadoresRadial.appendChild(seat);
   });
 }
@@ -1649,15 +1664,32 @@ function iniciarFaseSorteioDado(transicaoData) {
 // ============================================================
 // GERENCIADOR DE EMOJIS FLUTUANTES (Reações)
 // ============================================================
-function criarEmojiFlutuante(emoji, autorNome) {
+function criarEmojiFlutuante(emoji, autorNome, autorId) {
   const container = document.getElementById("container-emojis-flutuantes");
   if (!container) return;
 
   const item = document.createElement("div");
   item.className = "emoji-flutuante";
-  
-  const randomX = Math.floor(Math.random() * 60) + 20;
-  item.style.left = `${randomX}%`;
+
+  // Ancoragem visual: busca o assento radial (#seat-radial-${autorId}) ou o card de espera (#card-espera-${autorId})
+  const elAssento = autorId
+    ? document.getElementById(`seat-radial-${autorId}`) || document.getElementById(`card-espera-${autorId}`)
+    : null;
+
+  if (elAssento) {
+    const rect = elAssento.getBoundingClientRect();
+    const posX = rect.left + rect.width / 2;
+    const posY = rect.top + rect.height * 0.15;
+
+    item.classList.add("emoji-flutuante-ancorado");
+    item.style.left = `${posX}px`;
+    item.style.top = `${posY}px`;
+  } else {
+    // Fallback: caso o elemento não esteja visível no DOM
+    const randomX = Math.floor(Math.random() * 60) + 20;
+    item.style.left = `${randomX}%`;
+    item.style.bottom = "90px";
+  }
   
   item.innerHTML = `<span class="emoji-simbolo">${emoji}</span><small class="emoji-autor">${autorNome || ""}</small>`;
 
@@ -1718,12 +1750,16 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
   const idsJogadores = Object.keys(jogadores).filter((id) => jogadores[id] && jogadores[id].conectado !== false);
   const totalJogadores = idsJogadores.length;
 
-  if (souHost && (mechanic === "ALVO" || mechanic === "DILEMA" || mechanic === "EU_NUNCA")) {
-    btnRevelarResultado.classList.remove("bloco-oculto");
-    btnRevelarResultado.textContent = isRevelada ? "✅ Resultados Revelados" : "🎯 Revelar Resultados da Roda";
-    btnRevelarResultado.disabled = isRevelada;
-  } else {
-    btnRevelarResultado.classList.add("bloco-oculto");
+  const souOLeitor = carta.leitorId === idJogadorAtual;
+
+  if (btnRevelarResultado) {
+    if (souOLeitor && (mechanic === "ALVO" || mechanic === "DILEMA" || mechanic === "EU_NUNCA")) {
+      btnRevelarResultado.classList.remove("bloco-oculto");
+      btnRevelarResultado.textContent = isRevelada ? "✅ Resultados Revelados" : "🎯 Revelar Resultados da Roda";
+      btnRevelarResultado.disabled = isRevelada;
+    } else {
+      btnRevelarResultado.classList.add("bloco-oculto");
+    }
   }
 
   // 1. MECÂNICA: ALVO (target: VOTE / QUEM É MAIS PROVÁVEL)
@@ -2070,7 +2106,7 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
 
     if (!reacoesAnimadasSet.has(rId)) {
       reacoesAnimadasSet.add(rId);
-      criarEmojiFlutuante(r.emoji, r.autorNome);
+      criarEmojiFlutuante(r.emoji, r.autorNome, r.autorId);
     }
   });
 
@@ -2123,12 +2159,13 @@ if (btnEuNuncaInocente) {
   });
 }
 
-// Botão do Host para Revelar Resultado
-btnRevelarResultado.addEventListener("click", async () => {
-  if (!souHost) return;
-  if (typeof audioApp !== "undefined") audioApp.tocarClique();
-  await revelarResultadoCarta(codigoSala);
-});
+// Botão para Revelar Resultado da Roda (Exclusivo do Leitor)
+if (btnRevelarResultado) {
+  btnRevelarResultado.addEventListener("click", async () => {
+    if (!cartaAtualCache || cartaAtualCache.leitorId !== idJogadorAtual) return;
+    await executarAcaoRevelarCarta();
+  });
+}
 
 // ============================================================
 // ESCUTAS EM TEMPO REAL (FIREBASE)
@@ -2287,12 +2324,15 @@ escutarPartida(codigoSala, (partida) => {
 
     renderizarJogadoresRadial(dadosJogadoresCache, carta);
 
+    const isPuxada = carta.puxadaPeloLeitor === true;
     const isRevelada = carta.revelada === true;
 
-    if (!isRevelada) {
+    // ESTADO A: A CARTA AINDA NÃO FOI PUXADA PELO LEITOR
+    if (!isPuxada) {
       if (deckCentralArea) deckCentralArea.classList.remove("bloco-oculto");
       if (cartaFlipWrapper) cartaFlipWrapper.classList.add("bloco-oculto");
       if (focoCartaBackdrop) focoCartaBackdrop.classList.add("bloco-oculto");
+      if (btnRevelarCartaMesa) btnRevelarCartaMesa.classList.add("bloco-oculto");
 
       if (souOLeitor) {
         if (deckPilhaJogo) deckPilhaJogo.classList.add("deck-pulsando-suavez");
@@ -2315,14 +2355,20 @@ escutarPartida(codigoSala, (partida) => {
           }
         }
       }
-    } else {
+    }
+    // ESTADO B: PUXADA PELO LEITOR, MAS AINDA NÃO REVELADA PARA TODOS
+    else if (!isRevelada) {
       if (deckCentralArea) deckCentralArea.classList.add("bloco-oculto");
       if (baralhoAssetWrapper) baralhoAssetWrapper.classList.remove("baralho-ativo-vez");
       if (badgeSuaVez) badgeSuaVez.classList.add("bloco-oculto");
+      if (btnPuxarCartaMesa) btnPuxarCartaMesa.classList.add("bloco-oculto");
+      if (boxEsperaPuxar) boxEsperaPuxar.classList.add("bloco-oculto");
+
       if (cartaFlipWrapper) cartaFlipWrapper.classList.remove("bloco-oculto");
       if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
 
       if (souOLeitor) {
+        // Leitor vê a frente da carta legível
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("carta-secreta-oculta");
           cartaJogoElemento.classList.add("carta-aberta-leitor");
@@ -2334,7 +2380,29 @@ escutarPartida(codigoSala, (partida) => {
           cartaMechanicTag.className = `badge-mecanica-carta tag-mechanic-${carta.mechanic || "CONFISSAO"}`;
         }
         if (cartaTexto) cartaTexto.textContent = carta.text || "";
+
+        // O botão [Puxar Carta] desapareceu completamente; surge [Revelar para Todos] visível APENAS para o Leitor
+        if (btnRevelarCartaMesa) {
+          btnRevelarCartaMesa.classList.remove("bloco-oculto");
+          btnRevelarCartaMesa.disabled = false;
+        }
+
+        // Animação de flip 3D acontece APENAS para o Leitor ao puxar a carta
+        if (ultimaCartaPuxadaId !== carta.id + "_pux") {
+          reacoesAnimadasSet.clear();
+          if (typeof audioApp !== "undefined") audioApp.tocarViradaCarta();
+
+          if (cartaJogoElemento) {
+            cartaJogoElemento.classList.remove("anim-descarte-esquerda");
+            cartaJogoElemento.classList.remove("anim-puxar-flip");
+            void cartaJogoElemento.offsetWidth;
+            cartaJogoElemento.classList.add("anim-puxar-flip");
+          }
+
+          ultimaCartaPuxadaId = carta.id + "_pux";
+        }
       } else {
+        // Demais jogadores veem apenas o verso secreto da carta fechada
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("carta-aberta-leitor");
           cartaJogoElemento.classList.add("carta-secreta-oculta");
@@ -2343,11 +2411,40 @@ escutarPartida(codigoSala, (partida) => {
         if (textoOucaLeitor) {
           textoOucaLeitor.textContent = `Escute o que ${carta.leitorNome || "o jogador da vez"} vai ler em voz alta!`;
         }
+        if (btnRevelarCartaMesa) btnRevelarCartaMesa.classList.add("bloco-oculto");
       }
+    }
+    // ESTADO C: REVELADA PARA TODOS NA MESA
+    else {
+      if (deckCentralArea) deckCentralArea.classList.add("bloco-oculto");
+      if (baralhoAssetWrapper) baralhoAssetWrapper.classList.remove("baralho-ativo-vez");
+      if (badgeSuaVez) badgeSuaVez.classList.add("bloco-oculto");
+      if (btnPuxarCartaMesa) btnPuxarCartaMesa.classList.add("bloco-oculto");
+      if (btnRevelarCartaMesa) btnRevelarCartaMesa.classList.add("bloco-oculto");
+      if (boxEsperaPuxar) boxEsperaPuxar.classList.add("bloco-oculto");
 
-      if (ultimaCartaExibidaId !== carta.id + "_rev") {
+      if (cartaFlipWrapper) cartaFlipWrapper.classList.remove("bloco-oculto");
+      if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
+
+      // Todos na mesa agora veem a frente da carta aberta
+      if (cartaJogoElemento) {
+        cartaJogoElemento.classList.remove("carta-secreta-oculta");
+        cartaJogoElemento.classList.add("carta-aberta-leitor");
+      }
+      if (cartaDeckIcone) cartaDeckIcone.textContent = carta.deck_icone || "🃏";
+      if (cartaDeckNome) cartaDeckNome.textContent = carta.deck_nome || "Baralho";
+      if (cartaMechanicTag) {
+        cartaMechanicTag.textContent = carta.subtype || carta.mechanic || "DESAFIO";
+        cartaMechanicTag.className = `badge-mecanica-carta tag-mechanic-${carta.mechanic || "CONFISSAO"}`;
+      }
+      if (cartaTexto) cartaTexto.textContent = carta.text || "";
+
+      // O flip 3D acontece agora para o RESTO da mesa, revelando a carta para todos
+      if (ultimaCartaReveladaId !== carta.id + "_rev") {
         reacoesAnimadasSet.clear();
-        if (typeof audioApp !== "undefined") audioApp.tocarViradaCarta();
+        if (!souOLeitor && typeof audioApp !== "undefined") {
+          audioApp.tocarViradaCarta();
+        }
 
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("anim-descarte-esquerda");
@@ -2356,7 +2453,7 @@ escutarPartida(codigoSala, (partida) => {
           cartaJogoElemento.classList.add("anim-puxar-flip");
         }
 
-        ultimaCartaExibidaId = carta.id + "_rev";
+        ultimaCartaReveladaId = carta.id + "_rev";
       }
     }
 
@@ -2440,7 +2537,7 @@ if (btnIniciarPartida) {
 
 // Puxar Carta
 async function executarAcaoPuxarCarta() {
-  if (!cartaAtualCache || cartaAtualCache.revelada) return;
+  if (!cartaAtualCache || cartaAtualCache.puxadaPeloLeitor || cartaAtualCache.revelada) return;
   if (cartaAtualCache.leitorId !== idJogadorAtual) return;
 
   if (btnPuxarCartaMesa) btnPuxarCartaMesa.disabled = true;
@@ -2449,7 +2546,7 @@ async function executarAcaoPuxarCarta() {
   try {
     await puxarCartaDaMesa(codigoSala);
   } catch (err) {
-    console.error(err);
+    console.error("Erro ao puxar carta:", err);
     if (btnPuxarCartaMesa) btnPuxarCartaMesa.disabled = false;
   }
 }
@@ -2460,7 +2557,7 @@ if (btnPuxarCartaMesa) {
 
 if (deckPilhaJogo) {
   deckPilhaJogo.addEventListener("click", () => {
-    if (cartaAtualCache && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
+    if (cartaAtualCache && !cartaAtualCache.puxadaPeloLeitor && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
       executarAcaoPuxarCarta();
     }
   });
@@ -2468,7 +2565,7 @@ if (deckPilhaJogo) {
 
 if (baralhoAssetWrapper) {
   baralhoAssetWrapper.addEventListener("click", () => {
-    if (cartaAtualCache && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
+    if (cartaAtualCache && !cartaAtualCache.puxadaPeloLeitor && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
       executarAcaoPuxarCarta();
     }
   });
@@ -2476,10 +2573,33 @@ if (baralhoAssetWrapper) {
 
 if (imgBaralhoMesa) {
   imgBaralhoMesa.addEventListener("click", () => {
-    if (cartaAtualCache && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
+    if (cartaAtualCache && !cartaAtualCache.puxadaPeloLeitor && !cartaAtualCache.revelada && cartaAtualCache.leitorId === idJogadorAtual) {
       executarAcaoPuxarCarta();
     }
   });
+}
+
+// Revelar Carta para Todos na Mesa (Ação Exclusiva do Leitor)
+async function executarAcaoRevelarCarta() {
+  if (!cartaAtualCache) return;
+  if (cartaAtualCache.leitorId !== idJogadorAtual) return;
+  if (cartaAtualCache.revelada) return;
+
+  if (btnRevelarCartaMesa) btnRevelarCartaMesa.disabled = true;
+  if (btnRevelarResultado) btnRevelarResultado.disabled = true;
+  if (typeof audioApp !== "undefined") audioApp.tocarViradaCarta();
+
+  try {
+    await revelarResultadoCarta(codigoSala);
+  } catch (err) {
+    console.error("Erro ao revelar carta:", err);
+    if (btnRevelarCartaMesa) btnRevelarCartaMesa.disabled = false;
+    if (btnRevelarResultado) btnRevelarResultado.disabled = false;
+  }
+}
+
+if (btnRevelarCartaMesa) {
+  btnRevelarCartaMesa.addEventListener("click", executarAcaoRevelarCarta);
 }
 
 // Avançar Rodada
@@ -2523,3 +2643,60 @@ btnJogarNovamente.addEventListener("click", async () => {
     btnJogarNovamente.textContent = "🔄 Voltar ao Lobby";
   }
 });
+
+// ============================================================
+// MODAL DE REGRAS DO MINIGAME ATUAL (HUD INFERIOR ESQUERDO)
+// ============================================================
+function abrirModalRegrasJogo() {
+  const minigameAtual = (cartaAtualCache && (cartaAtualCache.deck_id || cartaAtualCache.template_id)) || (configLocal && configLocal.modoJogo) || "niveis_intimidade";
+  const regraObj = DICIONARIO_REGRAS_MINIGAMES[minigameAtual] || DICIONARIO_REGRAS_MINIGAMES["niveis_intimidade"] || Object.values(DICIONARIO_REGRAS_MINIGAMES)[0];
+
+  if (regraObj) {
+    if (modalRegrasCategoria) modalRegrasCategoria.textContent = regraObj.categoriaNome || "MINIGAME";
+    if (modalRegrasNome) modalRegrasNome.textContent = regraObj.nome || "Mesa Quente";
+    if (modalRegrasBanner) modalRegrasBanner.src = regraObj.img || "cartas-desafios.png";
+    if (modalRegrasLista) {
+      modalRegrasLista.innerHTML = (regraObj.regras || []).map((r) => `
+        <li class="item-regra-linha">
+          <span class="marcador-regra-fogo">🔥</span>
+          <span>${r}</span>
+        </li>
+      `).join("");
+    }
+  }
+
+  if (modalRegrasJogo) {
+    modalRegrasJogo.classList.remove("bloco-oculto");
+    modalRegrasJogo.style.display = "flex";
+  }
+}
+
+function fecharModalRegrasJogo() {
+  if (modalRegrasJogo) {
+    modalRegrasJogo.classList.add("bloco-oculto");
+    modalRegrasJogo.style.display = "none";
+  }
+}
+
+if (btnRegrasJogo) {
+  btnRegrasJogo.addEventListener("click", abrirModalRegrasJogo);
+}
+if (btnFecharModalRegras) {
+  btnFecharModalRegras.addEventListener("click", fecharModalRegrasJogo);
+}
+if (btnEntendiRegras) {
+  btnEntendiRegras.addEventListener("click", fecharModalRegrasJogo);
+}
+if (modalRegrasJogo) {
+  modalRegrasJogo.addEventListener("click", (e) => {
+    if (e.target === modalRegrasJogo) {
+      fecharModalRegrasJogo();
+    }
+  });
+}
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modalRegrasJogo && !modalRegrasJogo.classList.contains("bloco-oculto")) {
+    fecharModalRegrasJogo();
+  }
+});
+

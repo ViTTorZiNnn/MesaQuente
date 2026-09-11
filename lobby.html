@@ -362,11 +362,8 @@
            ====================================================== -->
       <div class="cenario-gameplay-stage" id="cenario-gameplay-stage">
         
-        <!-- Camada 1 - O Fundo (A Parede): parede.png -->
-        <img src="parede.png" alt="Parede do Cenário" class="cenario-parede" id="cenario-parede" />
-
-        <!-- Camada 2 - A Frente (A Mesa): mesa.png -->
-        <img src="mesa.png" alt="Mesa de Jogo" class="cenario-mesa" id="cenario-mesa" />
+        <!-- Fundo de gameplay com a mesa vermelha 3D em perspectiva preenchendo a tela -->
+        <img src="bg-gameplay.png" alt="Mesa de Jogo" class="cenario-bg-gameplay" id="cenario-bg-gameplay" />
 
         <!-- Camada 3 - O Palco para o Tutorial e HUD (Preparação) -->
         <div id="area-tutorial" class="area-tutorial"></div>
@@ -417,7 +414,7 @@
 
           <div class="carta-flip-wrapper bloco-oculto" id="carta-flip-wrapper">
             
-            <div class="carta-jogo-elemento carta-aberta-leitor" id="carta-jogo-elemento">
+            <div class="carta-jogo-elemento carta-flip-card carta-aberta-leitor" id="carta-jogo-elemento">
               
               <!-- CASO A: VISÃO DO LEITOR (CARTA ABERTA E LEGÍVEL) -->
               <div class="carta-face carta-face-frente" id="carta-face-frente">
@@ -460,6 +457,13 @@
                 </div>
               </div>
 
+            </div>
+
+            <!-- Botão de Revelar para Todos (aparece no lugar de Puxar Carta, visível apenas para o Leitor) -->
+            <div class="container-acao-revelar-carta" id="container-acao-revelar-carta">
+              <button class="btn-puxar-carta-3d botao-puxar-carta-3d botao-revelar-carta-3d bloco-oculto" id="btn-revelar-carta-mesa" type="button">
+                <span>👁️ REVELAR PARA TODOS</span>
+              </button>
             </div>
 
           </div>
@@ -663,6 +667,11 @@
             </div>
           </div>
 
+          <!-- HUD INFERIOR ESQUERDO: BOTÃO DE REGRAS DO MINIGAME ATUAL -->
+          <button class="btn-hud-icon btn-hud-regras" id="btn-regras-jogo" type="button" title="Regras do Minigame Atual">
+            <img src="icone-regras.png" alt="Regras" class="hud-icon-asset" />
+          </button>
+
         </div>
 
         <!-- ====================================================
@@ -689,6 +698,37 @@
       </div>
 
     </section>
+
+    <!-- ========================================================
+         MODAL DE REGRAS DO MINIGAME ATUAL (DICIONARIO_REGRAS_MINIGAMES)
+         ======================================================== -->
+    <div class="modal-backdrop-regras bloco-oculto" id="modal-regras-jogo" style="display: none;">
+      <div class="modal-regras-card">
+        <div class="modal-regras-topo">
+          <div class="modal-regras-titulos">
+            <span class="modal-regras-categoria" id="modal-regras-categoria">CATEGORIA • REGRAS</span>
+            <h3 class="modal-regras-nome" id="modal-regras-nome">Regras do Jogo</h3>
+          </div>
+          <button class="btn-fechar-modal-regras" id="btn-fechar-modal-regras" type="button" title="Fechar Regras">✕</button>
+        </div>
+        <div class="modal-regras-corpo">
+          <div class="modal-regras-banner-wrapper">
+            <img src="cartas-desafios.png" alt="Ilustração do Jogo" class="modal-regras-banner" id="modal-regras-banner" />
+          </div>
+          <div class="modal-regras-lista-box">
+            <h4 class="modal-regras-lista-titulo">📜 Como Jogar Esta Rodada:</h4>
+            <ul class="modal-regras-lista" id="modal-regras-lista">
+              <!-- Injetado dinamicamente via JS a partir do DICIONARIO_REGRAS_MINIGAMES -->
+            </ul>
+          </div>
+        </div>
+        <div class="modal-regras-rodape">
+          <button class="botao-3d botao-primario-3d btn-entendi-regras-modal" id="btn-entendi-regras" type="button">
+            <span>👍 Entendi, voltar ao jogo!</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ========================================================
          PAINEL 4: FIM DE PARTIDA (PÓDIO 2.5D & RETORNO AO LOBBY)

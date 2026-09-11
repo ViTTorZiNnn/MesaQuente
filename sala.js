@@ -718,6 +718,7 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
       respostasBrancas: cartaSorteada.respostasBrancas || null,
       duracao: cartaSorteada.duration || 35,
       iniciadaEm: firebase.database.ServerValue.TIMESTAMP,
+      puxadaPeloLeitor: false,
       revelada: false,
       leitorId: leitorId,
       leitorNome: leitorNome,
@@ -890,7 +891,7 @@ async function iniciarPartida(codigo, configPersonalizada = null) {
 async function puxarCartaDaMesa(codigo) {
   const refPartida = db.ref("salas/" + codigo + "/partida/cartaAtual");
   await refPartida.update({
-    revelada: true,
+    puxadaPeloLeitor: true,
     iniciadaEm: firebase.database.ServerValue.TIMESTAMP
   });
 }
@@ -941,6 +942,7 @@ async function avancarProximaCarta(codigo) {
 
   cartaAtual.leitorId = proximoLeitorId;
   cartaAtual.leitorNome = proximoLeitorNome;
+  cartaAtual.puxadaPeloLeitor = false;
   cartaAtual.revelada = false;
 
   await refSala.child("partida").update({
@@ -1018,7 +1020,11 @@ async function enviarReacao(codigo, emoji, nomeJogador) {
 }
 
 async function revelarResultadoCarta(codigo) {
-  await db.ref("salas/" + codigo + "/partida/cartaAtual/revelada").set(true);
+  const refPartida = db.ref("salas/" + codigo + "/partida/cartaAtual");
+  await refPartida.update({
+    revelada: true,
+    reveladaEm: firebase.database.ServerValue.TIMESTAMP
+  });
 }
 
 async function reiniciarPartida(codigo) {
