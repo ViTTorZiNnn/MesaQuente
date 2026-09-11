@@ -87,7 +87,7 @@ body.tela-inicio {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background-image: url('background-lobby.png'), url('background-lobby.svg'), url('bg.jpg');
+  background-image: url('background-lobby.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -6339,7 +6339,7 @@ body.tela-gameplay-v3 {
    ETAPA 2: SALA DE ESPERA (LOBBY REAL CLÁSSICO)
    ============================================================ */
 .tela-lobby-espera-ativa {
-  background-image: url('background-lobby.png'), url('background-lobby.svg'), url('bg.jpg') !important;
+  background-image: url('background-lobby.png') !important;
   background-size: cover !important;
   background-position: center center !important;
   background-repeat: no-repeat !important;

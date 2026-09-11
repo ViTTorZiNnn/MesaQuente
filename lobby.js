@@ -313,6 +313,10 @@ function mostrarApenasPainel(painelAtivo) {
     if (elMesa) { elMesa.classList.add("bloco-oculto"); elMesa.style.display = "none"; }
     if (elFim) { elFim.classList.add("bloco-oculto"); elFim.style.display = "none"; }
     if (elConfig) { elConfig.classList.remove("bloco-oculto"); elConfig.style.display = "flex"; }
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.remove("tela-gameplay-v3");
+      corpoPaginaSala.classList.add("tela-lobby-espera-ativa");
+    }
   } else if (painelAtivo === elFim) {
     // Fim de Partida
     if (elLobby) { elLobby.classList.add("bloco-oculto"); elLobby.style.display = "none"; }
@@ -326,6 +330,10 @@ function mostrarApenasPainel(painelAtivo) {
     if (elLobby) { elLobby.classList.add("bloco-oculto"); elLobby.style.display = "none"; }
     if (elMesa) { elMesa.classList.remove("bloco-oculto"); elMesa.style.display = "flex"; }
     if (boxLeitor) boxLeitor.classList.remove("bloco-oculto");
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.add("tela-gameplay-v3");
+      corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+    }
   } else {
     // Modo Padrão: Sala de Espera / Lobby (CENÁRIO DE GAMEPLAY OBRIGATORIAMENTE EM DISPLAY: NONE)
     if (elConfig) { elConfig.classList.add("bloco-oculto"); elConfig.style.display = "none"; }
@@ -333,6 +341,10 @@ function mostrarApenasPainel(painelAtivo) {
     if (elMesa) { elMesa.classList.add("bloco-oculto"); elMesa.style.display = "none"; }
     if (elLobby) { elLobby.classList.remove("bloco-oculto"); elLobby.style.display = "flex"; }
     if (boxLeitor) boxLeitor.classList.add("bloco-oculto");
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.remove("tela-gameplay-v3");
+      corpoPaginaSala.classList.add("tela-lobby-espera-ativa");
+    }
   }
 }
 
@@ -929,10 +941,30 @@ function exibirTutorialMinigame(minigameId) {
 }
 
 if (btnOkEntendiTutorial) {
-  btnOkEntendiTutorial.addEventListener("click", () => {
-    if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  btnOkEntendiTutorial.addEventListener("click", async () => {
+    if (typeof audioApp !== "undefined" && audioApp && typeof audioApp.tocarClique === "function") {
+      try { audioApp.tocarClique(); } catch (e) { console.warn(e); }
+    }
     if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
-    dispararSorteioRoletaInicial(dadosJogadoresCache);
+
+    try {
+      if (typeof marcarProntoTutorial === "function") {
+        await marcarProntoTutorial(codigoSala);
+      }
+    } catch (e) {
+      console.warn("Erro ao marcar pronto tutorial:", e);
+    }
+
+    if (souHost && !tutorialJaDisparadoSorteio) {
+      tutorialJaDisparadoSorteio = true;
+      setTimeout(async () => {
+        try {
+          await iniciarTransicaoPartida(codigoSala, (tutorialDataCache && tutorialDataCache.configTemp) || configLocal);
+        } catch (e) {
+          console.error("Erro ao iniciar transição da partida:", e);
+        }
+      }, 500);
+    }
   });
 }
 
@@ -1042,8 +1074,22 @@ function finalizarRoletaVencedor(vencedorId, vencedorObj, avatarVencedor) {
     db.ref("salas/" + codigoSala + "/leitorAtualId").set(vencedorId);
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
     if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
+    if (souHost && typeof concluirTransicaoParaPartida === "function") {
+      try {
+        await concluirTransicaoParaPartida(codigoSala);
+      } catch (e) {
+        console.error("Erro ao concluir transição:", e);
+      }
+    }
+    transicaoEmExecucao = false;
+    tutorialJaDisparadoSorteio = false;
+    mostrarApenasPainel(painelMesaJogo);
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.add("tela-gameplay-v3");
+      corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+    }
   }, 2600);
 }
 
@@ -1360,8 +1406,40 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
   if (!tutorialData) return;
   tutorialDataCache = tutorialData;
 
-  if (overlayTutorialRegras) {
-    overlayTutorialRegras.classList.remove("bloco-oculto");
+  const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+  if (overlayTutorial) {
+    overlayTutorial.classList.remove("bloco-oculto");
+  }
+
+  // Preenche dados do Minigame no overlay cartoon
+  const modoId = tutorialData.modoId || "niveis_intimidade";
+  const dadosModo = (typeof MAPA_CATEGORIAS_MINIGAMES !== "undefined" && (MAPA_CATEGORIAS_MINIGAMES[modoId] || MAPA_CATEGORIAS_MINIGAMES.niveis_intimidade)) || null;
+  if (tutorialCartaImg && dadosModo) {
+    tutorialCartaImg.src = dadosModo.img || "cartas-votacao.png";
+  }
+
+  if (tutorialCategoriaTag) {
+    tutorialCategoriaTag.textContent = (tutorialData.categoriaNome || (dadosModo && dadosModo.categoriaNome) || "CATEGORIA 1 • VOTAÇÃO").toUpperCase();
+  }
+  if (tutorialBoasVindas) {
+    tutorialBoasVindas.textContent = `Bem-vindos ao ${tutorialData.modoNome || (dadosModo && dadosModo.nome) || "Minigame"}!`;
+  }
+  if (tutorialRegrasLista) {
+    tutorialRegrasLista.innerHTML = "";
+    const regrasCartoon = tutorialData.regras || (dadosModo && dadosModo.regras) || [
+      "Leiam as instruções da carta na mesa com atenção.",
+      "Participem das escolhas e desafios em tempo real.",
+      "Divirtam-se com honestidade e química!"
+    ];
+    regrasCartoon.forEach((r, idx) => {
+      const item = document.createElement("div");
+      item.className = "tutorial-regra-passo-item";
+      item.innerHTML = `
+        <span class="regra-passo-num">${idx + 1}</span>
+        <p class="regra-passo-texto">${r}</p>
+      `;
+      tutorialRegrasLista.appendChild(item);
+    });
   }
 
   // Preenche textos do Minigame
@@ -1445,6 +1523,16 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
     }
   }
 
+  if (btnOkEntendiTutorial) {
+    if (euJaPronto) {
+      btnOkEntendiTutorial.disabled = true;
+      btnOkEntendiTutorial.innerHTML = "<span>✅ Você já confirmou! Aguardando...</span>";
+    } else {
+      btnOkEntendiTutorial.disabled = false;
+      btnOkEntendiTutorial.innerHTML = "<span>👍 Ok, Entendi!</span>";
+    }
+  }
+
   // Se TODOS os jogadores conectados confirmaram (ou se estiver 1 sozinho e já confirmou)
   const todosProntos = totalConectados > 0 && totalProntos >= totalConectados;
   if (todosProntos && !tutorialJaDisparadoSorteio) {
@@ -1454,7 +1542,7 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
         try {
           await iniciarTransicaoPartida(codigoSala, tutorialData.configTemp || configLocal);
         } catch (e) {
-          console.error(e);
+          console.error("Erro ao iniciar transição da partida:", e);
         }
       }, 600);
     }
@@ -1538,6 +1626,14 @@ function executarAnimacaoTransicao(transicaoData) {
   transicaoEmExecucao = true;
 
   if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
+  if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
+
+  // Se o overlay cartoon de roleta estiver presente no HTML, dispara a roleta
+  if (overlaySorteioRoleta && typeof dispararSorteioRoletaInicial === "function") {
+    dispararSorteioRoletaInicial(dadosJogadoresCache);
+    return;
+  }
+
   mostrarApenasPainel(null);
 
   // FASE 1: CONTAGEM REGRESSIVA (4 .. 1)
@@ -1656,6 +1752,10 @@ function iniciarFaseSorteioDado(transicaoData) {
       transicaoEmExecucao = false;
       tutorialJaDisparadoSorteio = false;
       mostrarApenasPainel(painelMesaJogo);
+      if (corpoPaginaSala) {
+        corpoPaginaSala.classList.add("tela-gameplay-v3");
+        corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+      }
     }, 2800);
 
   }, 2600);
@@ -2238,21 +2338,28 @@ escutarStatusSala(codigoSala, (status) => {
   if (status === "lobby") {
     transicaoEmExecucao = false;
     gameplayIniciadaTransicao = false;
+    tutorialJaDisparadoSorteio = false;
     if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
     if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
-    if (corpoPaginaSala) corpoPaginaSala.classList.remove("tela-gameplay-v3");
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.remove("tela-gameplay-v3");
+      corpoPaginaSala.classList.add("tela-lobby-espera-ativa");
+    }
     mostrarApenasPainel(painelLobby);
     if (btnIniciarPartida) {
       btnIniciarPartida.disabled = false;
       btnIniciarPartida.textContent = "🔥 Iniciar Partida";
     }
-  } else if ((status === "jogando" || status === "transicao") && !gameplayIniciadaTransicao) {
+  } else if ((status === "jogando" || status === "transicao" || status === "tutorial_regras" || status === "iniciando_partida" || status === "em_partida") && !gameplayIniciadaTransicao) {
     gameplayIniciadaTransicao = true;
     
     // Executa Transição Fade In/Out (Cortina Black 0.8s)
     executarTransicaoFadeCenario(() => {
       mostrarApenasPainel(painelMesaJogo);
-      if (corpoPaginaSala) corpoPaginaSala.classList.add("tela-gameplay-v3");
+      if (corpoPaginaSala) {
+        corpoPaginaSala.classList.add("tela-gameplay-v3");
+        corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+      }
       renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
     });
   }
@@ -2291,10 +2398,16 @@ escutarPartida(codigoSala, (partida) => {
   // PARTIDA EM ANDAMENTO
   if (partida.status === "jogando" && partida.cartaAtual) {
     if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
+    if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
+    if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
     if (overlayContagemRegressiva) overlayContagemRegressiva.classList.add("bloco-oculto");
     if (overlaySorteioDado) overlaySorteioDado.classList.add("bloco-oculto");
 
     mostrarApenasPainel(painelMesaJogo);
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.add("tela-gameplay-v3");
+      corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+    }
     const carta = partida.cartaAtual;
     cartaAtualCache = carta;
 
@@ -2500,35 +2613,60 @@ btnCopiarCodigo.addEventListener("click", () => {
 
 // Iniciar Partida (Ação do Host na Sala de Espera com Efeito Fade In / Out)
 async function iniciarPartidaGameplay() {
-  if (!souHost) return;
-  if (btnIniciarPartida) {
-    btnIniciarPartida.disabled = true;
-    btnIniciarPartida.textContent = "Iniciando Mesa...";
-  }
-  if (typeof audioApp !== "undefined") audioApp.tocarClique();
+  try {
+    console.log("iniciarPartidaGameplay disparado:", { codigoSala, souHost, configLocal });
+    if (!souHost) {
+      console.warn("iniciarPartidaGameplay cancelado: souHost é falso");
+      return;
+    }
+    if (btnIniciarPartida) {
+      btnIniciarPartida.disabled = true;
+      btnIniciarPartida.textContent = "Iniciando Mesa...";
+    }
+    if (typeof audioApp !== "undefined" && audioApp && typeof audioApp.tocarClique === "function") {
+      try { audioApp.tocarClique(); } catch (e) { console.warn("Erro ao tocar clique:", e); }
+    }
 
-  // Executa o Efeito Fade In / Out
-  executarTransicaoFadeCenario(
-    () => {
-      // Ocorre aos 800ms com a tela 100% preta
-      mostrarApenasPainel(painelMesaJogo);
-      if (corpoPaginaSala) corpoPaginaSala.classList.add("tela-gameplay-v3");
-      renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
-    },
-    async () => {
-      // Ao clarear a tela revelando o novo cenário 2.5D: sincroniza no Firebase
-      try {
-        await iniciarPartida(codigoSala, configLocal);
-      } catch (erro) {
-        console.error("Erro ao iniciar gameplay:", erro);
-        if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
-        if (btnIniciarPartida) {
-          btnIniciarPartida.disabled = false;
-          btnIniciarPartida.textContent = "🔥 Iniciar Partida";
+    // Executa o Efeito Fade In / Out
+    executarTransicaoFadeCenario(
+      () => {
+        try {
+          // Ocorre aos 800ms com a tela 100% preta
+          mostrarApenasPainel(painelMesaJogo);
+          if (corpoPaginaSala) {
+            corpoPaginaSala.classList.add("tela-gameplay-v3");
+            corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+          }
+          if (typeof renderizarJogadoresRadial === "function") {
+            renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
+          }
+        } catch (errFade) {
+          console.error("Erro na transição visual (aoEscurecerTotal):", errFade);
+        }
+      },
+      async () => {
+        // Ao clarear a tela revelando o novo cenário 2.5D: sincroniza no Firebase
+        try {
+          console.log("Chamando iniciarPartida no Firebase com:", codigoSala, configLocal);
+          await iniciarPartida(codigoSala, configLocal);
+        } catch (erro) {
+          console.error("Erro ao iniciar gameplay no Firebase:", erro);
+          if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
+          if (btnIniciarPartida) {
+            btnIniciarPartida.disabled = false;
+            btnIniciarPartida.textContent = "🔥 Iniciar Partida";
+          }
         }
       }
+    );
+  } catch (erroGlobal) {
+    console.error("Erro fatal em iniciarPartidaGameplay:", erroGlobal);
+    if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
+    if (btnIniciarPartida) {
+      btnIniciarPartida.disabled = false;
+      btnIniciarPartida.textContent = "🔥 Iniciar Partida";
     }
-  );
+  }
 }
 
 if (btnIniciarPartida) {

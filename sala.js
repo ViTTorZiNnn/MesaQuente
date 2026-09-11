@@ -675,7 +675,12 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
     }
   }
 
-  const cartaSorteada = poolCartas[Math.floor(Math.random() * poolCartas.length)];
+  if (!poolCartas || poolCartas.length === 0) {
+    poolCartas = baralhoObj.cartas || (BARALHOS_DISPONIVEIS[0] && BARALHOS_DISPONIVEIS[0].cartas) || [];
+  }
+  const cartaSorteada = (poolCartas && poolCartas.length > 0)
+    ? poolCartas[Math.floor(Math.random() * poolCartas.length)]
+    : (BARALHOS_DISPONIVEIS[0] && BARALHOS_DISPONIVEIS[0].cartas[0]) || { id: "card_fallback", deck_id: "niveis_intimidade", text: "Momento de conexão!", mechanic: "EXPRESSION", target: "ALL" };
 
   // Lista de jogadores conectados
   const idsJogadores = Object.keys(jogadoresConectados).filter(
