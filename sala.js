@@ -58,28 +58,13 @@ const MODOS_DE_JOGO = {
     categoria: "votacao",
     categoriaNome: "VOTAÇÃO",
     descricao: "Confissões na roda: quem já fez toma um gole.",
-    baralhos: ["eu_nunca_safico"],
+    baralhos: ["eu_nunca"],
     cor: "#e63946",
     corGlow: "rgba(230, 57, 70, 0.45)",
     regras: [
       "A afirmação aparece na tela para todas as jogadoras da sala.",
       "Cada participante clica em 'Já Fiz 🍷' ou 'Sou Inocente 😇'.",
       "Quem já fez toma um gole ou conta o babado!"
-    ]
-  },
-  eu_nunca_safico: {
-    id: "eu_nunca_safico",
-    nome: "Eu Nunca",
-    icone: "🍷",
-    categoria: "votacao",
-    categoriaNome: "VOTAÇÃO",
-    descricao: "Confissões na roda: quem já fez toma um gole.",
-    baralhos: ["eu_nunca_safico"],
-    cor: "#e63946",
-    corGlow: "rgba(230, 57, 70, 0.45)",
-    regras: [
-      "A afirmação aparece na tela para todas as jogadoras da sala.",
-      "Cada participante clica em 'Já Fiz 🍷' ou 'Sou Inocente 😇'."
     ]
   },
 
@@ -257,52 +242,6 @@ const MODOS_DE_JOGO = {
       "Escolha entre 'Verdade 🗣️' ou 'Desafio ⚡'.",
       "Cumpra a prova diante da roda ou sofra o castigo decretado pela mesa!"
     ]
-  },
-  roleta_consequencias: {
-    id: "roleta_consequencias",
-    nome: "Verdade ou Desafio Hot",
-    icone: "🔥",
-    categoria: "desafio",
-    categoriaNome: "DESAFIO",
-    descricao: "Provas audaciosas e confissões sem filtro.",
-    baralhos: ["roleta_consequencias"],
-    cor: "#ff5400",
-    corGlow: "rgba(255, 84, 0, 0.45)",
-    regras: [
-      "Escolha entre 'Verdade 🗣️' ou 'Desafio ⚡'.",
-      "Cumpra a prova diante da roda ou sofra o castigo decretado pela mesa!"
-    ]
-  },
-
-  // Fallbacks & Modos Especiais
-  tribunal_da_mesa: {
-    id: "tribunal_da_mesa",
-    nome: "Tribunal da Mesa",
-    icone: "⚖️",
-    categoria: "votacao",
-    categoriaNome: "VOTAÇÃO",
-    descricao: "Defenda seus pontos e sofra o veredito da roda.",
-    baralhos: ["quem_e_mais_provavel", "fogo_no_parquinho"],
-    cor: "#e63946",
-    corGlow: "rgba(230, 57, 70, 0.45)",
-    regras: [
-      "Um dilema moral ou acusação polêmica é colocada em julgamento.",
-      "A mesa vota entre Culpada ou Inocente."
-    ]
-  },
-  personalizado: {
-    id: "personalizado",
-    nome: "Personalizado (Mix Geral)",
-    icone: "🃏",
-    categoria: "especial",
-    categoriaNome: "Mix Geral",
-    descricao: "Cada rodada é um minigame diferente sorteado!",
-    baralhos: ["niveis_intimidade", "roleta_consequencias", "eu_nunca_safico", "quem_e_mais_provavel", "preencha_a_lacuna"],
-    cor: "#ffb703",
-    corGlow: "rgba(255, 183, 3, 0.45)",
-    regras: [
-      "Cada rodada da partida sorteia um minigame específico entre os baralhos ativos."
-    ]
   }
 };
 
@@ -433,7 +372,7 @@ async function criarSala(nomeHost, avatarHost, modoJogoKey = "niveis_intimidade"
     criadaEm: firebase.database.ServerValue.TIMESTAMP,
     hostId: idJogador,
     status: "lobby",
-    modoJogo: modosEncontrados.length === 1 ? modoPrincipal.id : "personalizado",
+    modoJogo: modoPrincipal.id,
     minigames: minigamesIds,
     jogosSelecionados: jogosSelecionados,
     numeroRodadas: numeroRodadas,

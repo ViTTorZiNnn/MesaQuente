@@ -255,13 +255,13 @@ const BARALHOS_DISPONIVEIS = [
   },
 
   // ------------------------------------------------------------
-  // MINIGAME 3: EU NUNCA: EDIÇÃO VALE TUDO (Foco Sáfico & Amigas)
+  // MINIGAME 3: EU NUNCA (Clássico / Confissões na Roda)
   // ------------------------------------------------------------
   {
-    id: "eu_nunca_safico",
+    id: "eu_nunca",
     nome: "Eu Nunca: Vale Tudo",
     categoria: "amigas",
-    descricao: "O clássico Eu Nunca com esteriótipos divertidos da comunidade e confissões hilárias.",
+    descricao: "O clássico Eu Nunca com confissões hilárias e revelações sem filtro.",
     icone: "🍷",
     age_rating: "18+",
     regras: [
@@ -273,7 +273,7 @@ const BARALHOS_DISPONIVEIS = [
     cartas: [
       {
         id: "en_01",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca aluguei um caminhão de mudança no segundo encontro (ou passei semanas na casa do date).",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -283,7 +283,7 @@ const BARALHOS_DISPONIVEIS = [
       },
       {
         id: "en_02",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca me apaixonei perdidamente por uma amiga hétero.",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -293,7 +293,7 @@ const BARALHOS_DISPONIVEIS = [
       },
       {
         id: "en_03",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca fiz o mapa astral e a sinastria completa de alguém antes mesmo do primeiro beijo.",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -303,7 +303,7 @@ const BARALHOS_DISPONIVEIS = [
       },
       {
         id: "en_04",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca mandei indireta no Close Friends do Instagram ou TikTok esperando uma única pessoa visualizar.",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -313,7 +313,7 @@ const BARALHOS_DISPONIVEIS = [
       },
       {
         id: "en_05",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca fiquei amiga da ex da minha ex (ou acabei no mesmo rolê com 3 ex-ficantes).",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -323,7 +323,7 @@ const BARALHOS_DISPONIVEIS = [
       },
       {
         id: "en_06",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca chorei ouvindo música triste (Taylor Swift, Reneé Rapp, Phoebe Bridgers) lembrando de alguém que vi 2 vezes.",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -333,7 +333,7 @@ const BARALHOS_DISPONIVEIS = [
       },
       {
         id: "en_07",
-        deck_id: "eu_nunca_safico",
+        deck_id: "eu_nunca",
         text: "Eu nunca beijei alguém e no dia seguinte já estava planejando adotar um gato juntas.",
         mechanic: "EU_NUNCA",
         target: "ALL",
@@ -637,7 +637,11 @@ const BARALHOS_DISPONIVEIS = [
 
 // Utilitários de manipulação e sorteio
 function obterBaralhoPorId(deckId) {
-  return BARALHOS_DISPONIVEIS.find((b) => b.id === deckId) || null;
+  return (
+    BARALHOS_DISPONIVEIS.find((b) => b.id === deckId) ||
+    (deckId === "eu_nunca_safico" ? BARALHOS_DISPONIVEIS.find((b) => b.id === "eu_nunca") : null) ||
+    null
+  );
 }
 
 /**
