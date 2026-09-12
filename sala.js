@@ -479,32 +479,47 @@ async function atualizarAvatarJogador(codigo, novoAvatar) {
 }
 
 /**
+ * Sanitiza objetos recursivamente para evitar erros de 'undefined' no Firebase Realtime Database
+ */
+function sanitizarDadosFirebase(obj) {
+  if (obj === undefined) return null;
+  if (obj === null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) {
+    return obj.map(sanitizarDadosFirebase);
+  }
+  const limpo = {};
+  for (const [k, v] of Object.entries(obj)) {
+    limpo[k] = v === undefined ? null : sanitizarDadosFirebase(v);
+  }
+  return limpo;
+}
+
+/**
  * Configura presença contínua e desconexão inteligente no Firebase Realtime Database
+ * Regra crítica: Usa EXCLUSIVAMENTE onDisconnect() do Firebase Realtime Database.
+ * Minimizar o navegador ou trocar de app NUNCA desconecta.
+ * Dispara apenas quando a conexão websocket real cai (fechamento de aba/navegador).
  */
 function configurarDesconexao(codigo, idJogador, isHost = false) {
   if (!codigo || !idJogador) return;
   const connectedRef = db.ref(".info/connected");
   const refJogador = db.ref("salas/" + codigo + "/jogadores/" + idJogador);
-  const refStatus = db.ref("salas/" + codigo + "/status");
 
   connectedRef.on("value", (snap) => {
     if (snap.val() === true) {
       refJogador.child("conectado").set(true);
 
-      if (isHost) {
-        // Se for o Host caindo/fechando: altera status para 'encerrada'
-        refStatus.onDisconnect().set("encerrada");
-        refJogador.child("conectado").onDisconnect().set(false);
-      } else {
-        // Se for Convidado caindo/fechando: remove nó do jogador para sumir instantaneamente
-        refJogador.onDisconnect().remove();
-      }
+      // Usar EXCLUSIVAMENTE onDisconnect() do Firebase Realtime Database
+      // Quando a conexão real cai (fechar aba/navegador), o nó do jogador é removido.
+      // Se for o host desconectando, migrarHostSeNecessario passa a liderança ao próximo jogador,
+      // ou encerra a sala se não houver mais nenhum jogador.
+      refJogador.onDisconnect().remove();
     }
   });
 }
 
 /**
- * Gerencia a saída voluntária da sala (Host encerra sala, Convidado se remove da lista)
+ * Gerencia a saída voluntária da sala (Host encerra sala se sozinho ou migra, Convidado se remove da lista)
  */
 async function sairDaSala(codigo) {
   if (!codigo) return;
@@ -512,13 +527,25 @@ async function sairDaSala(codigo) {
   const refSala = db.ref("salas/" + codigo);
 
   try {
-    const snapHost = await refSala.child("hostId").get();
-    const hostId = snapHost.val();
-    const isHost = hostId === idJogador;
+    const snapSala = await refSala.get();
+    if (!snapSala.exists()) return;
+    const dadosSala = snapSala.val();
+    const isHost = dadosSala.hostId === idJogador;
+    const jogadores = dadosSala.jogadores || {};
 
     if (isHost) {
-      // Host saindo: envia comando ao Firebase alterando status para 'encerrada'
-      await refSala.child("status").set("encerrada");
+      const outrosConectados = Object.keys(jogadores).filter(
+        (id) => id !== idJogador && jogadores[id] && jogadores[id].conectado !== false
+      );
+      if (outrosConectados.length === 0) {
+        // Host sozinho saindo explicitamente: encerra a sala
+        await refSala.child("status").set("encerrada");
+      } else {
+        // Outros jogadores na sala: migra liderança para o mais antigo e remove o host
+        const novoHostId = outrosConectados.sort((a, b) => (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0))[0];
+        await refSala.child("hostId").set(novoHostId);
+        await refSala.child("jogadores/" + idJogador).remove();
+      }
     } else {
       // Convidado saindo: remove ID deste jogador da lista da sala
       await refSala.child("jogadores/" + idJogador).remove();
@@ -537,7 +564,13 @@ async function migrarHostSeNecessario(codigo, jogadores, hostIdAtual) {
     .filter((id) => jogadores[id] && jogadores[id].conectado !== false && jogadores[id].nome)
     .sort((a, b) => (jogadores[a].entrouEm || 0) - (jogadores[b].entrouEm || 0));
 
-  if (conectados.length === 0) return;
+  if (conectados.length === 0) {
+    // Sala ficou vazia: encerra a sala
+    try {
+      await db.ref("salas/" + codigo + "/status").set("encerrada");
+    } catch (e) {}
+    return;
+  }
 
   const novoHostId = conectados[0];
   const meuId = obterIdJogador();
@@ -545,6 +578,7 @@ async function migrarHostSeNecessario(codigo, jogadores, hostIdAtual) {
   if (novoHostId === meuId && novoHostId !== hostIdAtual) {
     try {
       await db.ref("salas/" + codigo + "/hostId").set(novoHostId);
+      console.log("[PRESENCA] Host desconectou. Liderança migrada automaticamente para:", novoHostId);
     } catch (e) {
       console.warn("Erro na migração de host:", e);
     }
@@ -876,7 +910,7 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
   };
 
   await refSala.update({
-    status: "iniciando_partida",
+    status: "jogando",
     transicaoInicio: transicaoData,
     partida: dadosPartida
   });
@@ -885,7 +919,7 @@ async function iniciarTransicaoPartida(codigo, configPersonalizada = null) {
 async function concluirTransicaoParaPartida(codigo) {
   const refSala = db.ref("salas/" + codigo);
   await refSala.update({
-    status: "em_partida"
+    status: "jogando"
   });
 }
 
@@ -902,69 +936,81 @@ async function puxarCartaDaMesa(codigo) {
 }
 
 async function avancarProximaCarta(codigo) {
-  const refSala = db.ref("salas/" + codigo);
-  const snapshot = await refSala.get();
+  console.log("[PROGRESSAO-RODADA] Iniciando avancarProximaCarta para sala:", codigo);
+  try {
+    const refSala = db.ref("salas/" + codigo);
+    const snapshot = await refSala.get();
 
-  if (!snapshot.exists()) {
-    throw new Error("Sala não encontrada.");
-  }
-
-  const dadosSala = snapshot.val();
-  const partida = dadosSala.partida || {};
-  const jogadores = dadosSala.jogadores || {};
-
-  const rodadaAtual = (partida.rodadaAtual || 1) + 1;
-  const totalRodadas = partida.totalRodadas || 20;
-
-  if (rodadaAtual > totalRodadas) {
-    await refSala.child("partida/status").set("finalizada");
-    return;
-  }
-
-  const baralhosAtivos = partida.baralhosAtivos || ["niveis_intimidade"];
-  const ultimoBaralhoId = partida.ultimoBaralhoId || null;
-  const sacolaAlvosAtual = partida.sacolaAlvos || [];
-
-  const idsConectados = Object.keys(jogadores).filter(
-    (id) => jogadores[id] && jogadores[id].conectado !== false
-  );
-  const listaOrdem = idsConectados.length > 0 ? idsConectados : Object.keys(jogadores);
-
-  const leitorAnteriorId = partida.cartaAtual ? partida.cartaAtual.leitorId : null;
-  const idxAnterior = listaOrdem.indexOf(leitorAnteriorId);
-  const proximoIdx = idxAnterior >= 0 ? (idxAnterior + 1) % listaOrdem.length : 0;
-  const proximoLeitorId = listaOrdem[proximoIdx];
-  const proximoLeitorNome = (jogadores[proximoLeitorId] && jogadores[proximoLeitorId].nome) || "Jogador";
-
-  const { cartaAtual, ultimoBaralhoId: novoUltimo, novaSacolaAlvos } = sortearProximaCartaDoPool(
-    baralhosAtivos,
-    ultimoBaralhoId,
-    jogadores,
-    [],
-    sacolaAlvosAtual,
-    rodadaAtual
-  );
-
-  cartaAtual.leitorId = proximoLeitorId;
-  cartaAtual.leitorNome = proximoLeitorNome;
-  cartaAtual.puxadaPeloLeitor = false;
-  cartaAtual.revelada = false;
-
-  await refSala.child("partida").update({
-    rodadaAtual: rodadaAtual,
-    ultimoBaralhoId: novoUltimo,
-    sacolaAlvos: novaSacolaAlvos,
-    cartaAtual: cartaAtual,
-    interacoes: {
-      votos: {},
-      dilema: {},
-      escolha: null,
-      euNunca: {},
-      verdadeDesafio: null,
-      lacuna: {},
-      reacoes: {}
+    if (!snapshot.exists()) {
+      throw new Error("Sala não encontrada.");
     }
-  });
+
+    const dadosSala = snapshot.val();
+    const partida = dadosSala.partida || {};
+    const jogadores = dadosSala.jogadores || {};
+
+    const rodadaAtual = (partida.rodadaAtual || 1) + 1;
+    const totalRodadas = partida.totalRodadas || 20;
+
+    if (rodadaAtual > totalRodadas) {
+      console.log("[PROGRESSAO-RODADA] Partida finalizada! rodadaAtual (" + rodadaAtual + ") > totalRodadas (" + totalRodadas + ")");
+      await refSala.child("partida/status").set("finalizada");
+      return;
+    }
+
+    const baralhosAtivos = (partida.baralhosAtivos && partida.baralhosAtivos.length > 0)
+      ? partida.baralhosAtivos
+      : ["niveis_intimidade"];
+    const ultimoBaralhoId = partida.ultimoBaralhoId || null;
+    const sacolaAlvosAtual = partida.sacolaAlvos || [];
+
+    const idsConectados = Object.keys(jogadores).filter(
+      (id) => jogadores[id] && jogadores[id].conectado !== false
+    );
+    const listaOrdem = idsConectados.length > 0 ? idsConectados : Object.keys(jogadores);
+
+    const leitorAnteriorId = partida.cartaAtual ? partida.cartaAtual.leitorId : null;
+    const idxAnterior = listaOrdem.indexOf(leitorAnteriorId);
+    const proximoIdx = idxAnterior >= 0 ? (idxAnterior + 1) % listaOrdem.length : 0;
+    const proximoLeitorId = listaOrdem[proximoIdx] || idsConectados[0] || "jogador_1";
+    const proximoLeitorNome = (jogadores[proximoLeitorId] && jogadores[proximoLeitorId].nome) || "Jogador";
+
+    const { cartaAtual, ultimoBaralhoId: novoUltimo, novaSacolaAlvos } = sortearProximaCartaDoPool(
+      baralhosAtivos,
+      ultimoBaralhoId,
+      jogadores,
+      [],
+      sacolaAlvosAtual,
+      rodadaAtual
+    );
+
+    cartaAtual.leitorId = proximoLeitorId;
+    cartaAtual.leitorNome = proximoLeitorNome;
+    cartaAtual.puxadaPeloLeitor = false;
+    cartaAtual.revelada = false;
+
+    const cartaSanitizada = sanitizarDadosFirebase(cartaAtual);
+
+    await refSala.child("partida").update({
+      rodadaAtual: rodadaAtual,
+      ultimoBaralhoId: novoUltimo || null,
+      sacolaAlvos: novaSacolaAlvos || [],
+      cartaAtual: cartaSanitizada,
+      interacoes: {
+        votos: {},
+        dilema: {},
+        escolha: null,
+        euNunca: {},
+        verdadeDesafio: null,
+        lacuna: {},
+        reacoes: {}
+      }
+    });
+    console.log("[PROGRESSAO-RODADA] Rodada avançada com sucesso para:", rodadaAtual, "Novo leitor:", proximoLeitorNome);
+  } catch (err) {
+    console.error("[PROGRESSAO-RODADA] Erro fatal em avancarProximaCarta:", err);
+    throw err;
+  }
 }
 
 // Mecânicas de Voto e Interações
@@ -1033,14 +1079,22 @@ async function revelarResultadoCarta(codigo) {
 }
 
 async function reiniciarPartida(codigo) {
-  const refSala = db.ref("salas/" + codigo);
-  await refSala.update({
-    status: "lobby",
-    partida: {
-      status: "aguardando",
-      rodadaAtual: 0,
-      cartaAtual: null,
-      interacoes: {}
-    }
-  });
+  try {
+    const refSala = db.ref("salas/" + codigo);
+    await refSala.update({
+      status: "lobby",
+      tutorial: null,
+      transicaoInicio: null,
+      partida: {
+        status: "aguardando",
+        rodadaAtual: 0,
+        cartaAtual: null,
+        interacoes: {}
+      }
+    });
+    console.log("[REINICIAR-PARTIDA] Sala reiniciada com sucesso para o lobby:", codigo);
+  } catch (erro) {
+    console.error("[REINICIAR-PARTIDA] Erro ao reiniciar partida:", erro);
+    throw erro;
+  }
 }

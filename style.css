@@ -2324,11 +2324,19 @@ body.tela-inicio {
 
 /* 2. A CARTA FÍSICA 2.5D (PROPORÇÃO DE BARALHO 5/7 COM FLIP 3D) */
 .carta-flip-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: clamp(170px, 46vw, 235px);
   max-height: clamp(230px, 34vh, 320px);
   aspect-ratio: 5 / 7;
   perspective: 1200px;
-  z-index: 6;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .carta-flip-card {
@@ -5326,7 +5334,7 @@ body.tela-gameplay-v3 {
   position: fixed;
   bottom: clamp(14px, 3vh, 24px);
   right: clamp(14px, 3vw, 24px);
-  z-index: 60;
+  z-index: 1000;
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
@@ -5405,15 +5413,22 @@ body.tela-gameplay-v3 {
 
 /* 8. ZONA INFERIOR HUD FIXA NA BASE */
 .zona-inferior-hud {
-  width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 8px 12px clamp(8px, 2vh, 16px) 12px;
+  position: fixed;
+  bottom: clamp(10px, 2vh, 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 480px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
-  z-index: 40;
-  position: relative;
+  z-index: 850;
+  pointer-events: none;
+}
+
+.zona-inferior-hud * {
+  pointer-events: auto;
 }
 
 .deck-lobby-img {

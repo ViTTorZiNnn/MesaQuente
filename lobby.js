@@ -301,6 +301,58 @@ let configLocal = {
   totalCartas: 20
 };
 
+// Diagnóstico da Mesa Gameplay (Parte 1)
+function executarDiagnosticoMesa(origem = "geral") {
+  const baralhoImg = document.getElementById("img-baralho-mesa") || document.querySelector(".baralho-img");
+  const redemoinhoEl = document.querySelector(".redemoinho-vortex-wrapper") || document.querySelector(".redemoinho-img");
+  const camadaRadial = document.getElementById("camada-jogadores-radial");
+  const deckContainer = document.getElementById("deck-central-area");
+  const centroMesa = document.getElementById("centro-mesa-v3");
+  const palcoContainer = document.getElementById("palco-mesa-circular");
+  const cenarioStage = document.getElementById("cenario-gameplay-stage");
+  const painelMesa = document.getElementById("painel-mesa-jogo");
+  const hudInferior = document.getElementById("zona-inferior-hud");
+
+  const elementosParaVerificar = [
+    { label: "Painel Mesa Jogo (#painel-mesa-jogo)", el: painelMesa },
+    { label: "Palco Cenário Gameplay (#cenario-gameplay-stage)", el: cenarioStage },
+    { label: "Palco Circular Container (#palco-mesa-circular)", el: palcoContainer },
+    { label: "Container Avatares Radiais (#camada-jogadores-radial)", el: camadaRadial },
+    { label: "Centro Mesa V3 (#centro-mesa-v3)", el: centroMesa },
+    { label: "Redemoinho Vortex (.redemoinho-vortex-wrapper)", el: redemoinhoEl },
+    { label: "Baralho Central Container (#deck-central-area)", el: deckContainer },
+    { label: "Baralho Img (#img-baralho-mesa / baralho.png)", el: baralhoImg },
+    { label: "HUD Inferior (#zona-inferior-hud)", el: hudInferior }
+  ];
+
+  console.group(`[DIAGNOSTICO-PARTE1] MESA GAMEPLAY - Origem: ${origem}`);
+  elementosParaVerificar.forEach(({ label, el }) => {
+    if (!el) {
+      console.error(`❌ ${label}: NÃO ENCONTRADO NO DOM!`);
+      return;
+    }
+    const cs = window.getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    const visivel = cs.display !== "none" && cs.visibility !== "hidden" && parseFloat(cs.opacity) > 0 && rect.width > 0 && rect.height > 0;
+    console.log(`${visivel ? "✅ VISÍVEL" : "⚠️ OCULTO/ZERADO"}: ${label}`, {
+      display: cs.display,
+      visibility: cs.visibility,
+      opacity: cs.opacity,
+      zIndex: cs.zIndex,
+      position: cs.position,
+      width: Math.round(rect.width),
+      height: Math.round(rect.height),
+      top: Math.round(rect.top),
+      left: Math.round(rect.left),
+      classList: Array.from(el.classList).join(" "),
+      styleInline: el.getAttribute("style") || "nenhum",
+      temBlocoOculto: el.classList.contains("bloco-oculto"),
+      numFilhos: el.children.length
+    });
+  });
+  console.groupEnd();
+}
+
 // Alternância de Telas integrada
 function mostrarApenasPainel(painelAtivo) {
   const elLobby = document.getElementById("painel-lobby") || painelLobby;
@@ -342,6 +394,9 @@ function mostrarApenasPainel(painelAtivo) {
     if (typeof renderizarJogadoresRadial === "function") {
       renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
     }
+    // Diagnóstico imediato e pós-render da tela de gameplay
+    executarDiagnosticoMesa("mostrarApenasPainel(elMesa) imediato");
+    setTimeout(() => executarDiagnosticoMesa("mostrarApenasPainel(elMesa) + 300ms"), 300);
   } else {
     // Modo Padrão: Sala de Espera / Lobby (CENÁRIO DE GAMEPLAY OBRIGATORIAMENTE EM DISPLAY: NONE)
     if (elConfig) { elConfig.classList.add("bloco-oculto"); elConfig.style.display = "none"; }
@@ -407,23 +462,8 @@ async function executarSaidaSala() {
   window.location.href = "index.html";
 }
 
-// Gerenciamento de Saída e Desconexão Global (beforeunload)
-window.addEventListener("beforeunload", () => {
-  if (!codigoSala) return;
-  const idJogador = idJogadorAtual || obterIdJogador();
-
-  if (souHost) {
-    // Se for o Host: encerra a sala imediatamente no Firebase
-    try {
-      db.ref("salas/" + codigoSala + "/status").set("encerrada");
-    } catch (e) {}
-  } else {
-    // Se for Convidado: remove o nó do jogador para sumir instantaneamente da tela dos outros
-    try {
-      db.ref("salas/" + codigoSala + "/jogadores/" + idJogador).remove();
-    } catch (e) {}
-  }
-});
+// Desconexão é gerenciada EXCLUSIVAMENTE pelo Firebase onDisconnect() em sala.js
+// para evitar desconexões indevidas ao minimizar no celular ou trocar de app.
 
 if (btnSairSala) {
   btnSairSala.addEventListener("click", executarSaidaSala);
@@ -1128,6 +1168,9 @@ function finalizarRoletaVencedor(vencedorId, vencedorObj, avatarVencedor) {
       corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
     }
     renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
+    if (typeof executarDiagnosticoMesa === "function") {
+      executarDiagnosticoMesa("finalizarRoletaVencedor");
+    }
   }, 2600);
 }
 
@@ -1142,21 +1185,44 @@ function renderizarLobbyMesa(jogadores) {
 // MESA CIRCULAR RADIAL (JOGADORES AO REDOR COM MOLDURA CARTOON)
 // ============================================================
 function renderizarJogadoresRadial(jogadores, cartaAtual) {
+  console.log("[DIAGNOSTICO-PARTE1] renderizarJogadoresRadial INICIADO", {
+    jogadoresPassados: jogadores ? Object.keys(jogadores).length : null,
+    dadosJogadoresCache: dadosJogadoresCache ? Object.keys(dadosJogadoresCache).length : null,
+    cartaAtual: cartaAtual ? cartaAtual.id || cartaAtual.deck_nome : null
+  });
+
   const container = document.getElementById("camada-jogadores-radial") || camadaJogadoresRadial;
   if (!container) {
-    console.warn("[DEBUG-MESA] camadaJogadoresRadial não encontrado no DOM!");
     return;
   }
-  container.innerHTML = "";
 
   const fonteJogadores = (jogadores && Object.keys(jogadores).length > 0) ? jogadores : dadosJogadoresCache;
-  const ids = Object.keys(fonteJogadores || {}).filter(
+  let ids = Object.keys(fonteJogadores || {}).filter(
     (id) => fonteJogadores[id] && fonteJogadores[id].conectado !== false
   );
 
-  console.log("[DEBUG-MESA] renderizarJogadoresRadial executado. Jogadores encontrados:", ids.length, ids);
+  if (ids.length === 0) {
+    // Se o container já tem avatares renderizados, não apaga a tela
+    if (container.children.length > 0) {
+      return;
+    }
+    // Se não há dados remotos ainda, usa o jogador atual local para não deixar a mesa vazia
+    const meuNome = localStorage.getItem("mesaQuente_nome") || "Você";
+    const meuId = idJogadorAtual || "eu";
+    ids = [meuId];
+    if (!fonteJogadores) {
+      dadosJogadoresCache = {};
+    }
+    if (dadosJogadoresCache) {
+      dadosJogadoresCache[meuId] = {
+        nome: meuNome,
+        avatar: localStorage.getItem("mesaQuente_avatar") || "1",
+        conectado: true
+      };
+    }
+  }
 
-  if (ids.length === 0) return;
+  container.innerHTML = "";
 
   const leitorId = cartaAtual ? cartaAtual.leitorId : null;
   const alvoId = cartaAtual ? cartaAtual.alvoId : null;
@@ -1231,6 +1297,8 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
     seat.appendChild(molduraWrapper);
     container.appendChild(seat);
   });
+
+  console.log("[DIAGNOSTICO-PARTE1] renderizarJogadoresRadial CONCLUÍDO COM SUCESSO: Avatares montados no DOM =", container.children.length);
 }
 
 function renderizarAvataresFim(jogadores) {
@@ -1247,17 +1315,37 @@ function renderizarAvataresFim(jogadores) {
     const item = document.createElement("div");
     item.className = "item-avatar-fim";
 
+    const molduraWrapper = document.createElement("div");
+    molduraWrapper.className = "moldura-avatar-fim-wrapper";
+    molduraWrapper.style.position = "relative";
+    molduraWrapper.style.display = "inline-flex";
+    molduraWrapper.style.alignItems = "center";
+    molduraWrapper.style.justifyContent = "center";
+
     const av = document.createElement("div");
     av.className = "avatar-fim-3d";
     av.style.backgroundColor = avatarData.cor;
     av.style.borderColor = avatarData.corBorda;
     av.textContent = avatarData.emoji;
 
+    const molduraImg = document.createElement("img");
+    molduraImg.src = "moldura-playeres.png";
+    molduraImg.alt = "Moldura";
+    molduraImg.className = "moldura-player-asset";
+    molduraImg.style.position = "absolute";
+    molduraImg.style.inset = "-8px";
+    molduraImg.style.width = "calc(100% + 16px)";
+    molduraImg.style.height = "calc(100% + 16px)";
+    molduraImg.style.pointerEvents = "none";
+
+    molduraWrapper.appendChild(av);
+    molduraWrapper.appendChild(molduraImg);
+
     const nome = document.createElement("span");
     nome.className = "nome-fim-jogador";
     nome.textContent = id === idJogadorAtual ? `${j.nome} (Você)` : j.nome;
 
-    item.appendChild(av);
+    item.appendChild(molduraWrapper);
     item.appendChild(nome);
     gradeAvataresFim.appendChild(item);
   });
@@ -1902,28 +1990,33 @@ if (barraReacoes) {
 // GERENCIADOR DAS MECÂNICAS DE JOGO NO HUD
 // ============================================================
 function renderizarMecanicas(carta, interacoes, jogadores) {
-  const mechanic = carta.mechanic || "CONFISSAO";
-  const target = carta.target || "SELF";
-  const isRevelada = carta.revelada === true;
+  try {
+    if (!carta) return;
+    jogadores = jogadores || dadosJogadoresCache || {};
+    interacoes = interacoes || {};
 
-  [mecanicaAlvo, mecanicaVerdadeDesafio, mecanicaEuNunca, mecanicaLacuna, mecanicaEscolha, mecanicaDilema].forEach((m) => {
-    if (m) m.classList.add("bloco-oculto");
-  });
+    const mechanic = carta.mechanic || "CONFISSAO";
+    const target = carta.target || "SELF";
+    const isRevelada = carta.revelada === true;
 
-  const idsJogadores = Object.keys(jogadores).filter((id) => jogadores[id] && jogadores[id].conectado !== false);
-  const totalJogadores = idsJogadores.length;
+    [mecanicaAlvo, mecanicaVerdadeDesafio, mecanicaEuNunca, mecanicaLacuna, mecanicaEscolha, mecanicaDilema].forEach((m) => {
+      if (m) m.classList.add("bloco-oculto");
+    });
 
-  const souOLeitor = carta.leitorId === idJogadorAtual;
+    const idsJogadores = Object.keys(jogadores).filter((id) => jogadores[id] && jogadores[id].conectado !== false);
+    const totalJogadores = idsJogadores.length;
 
-  if (btnRevelarResultado) {
-    if (souOLeitor && (mechanic === "ALVO" || mechanic === "DILEMA" || mechanic === "EU_NUNCA")) {
-      btnRevelarResultado.classList.remove("bloco-oculto");
-      btnRevelarResultado.textContent = isRevelada ? "✅ Resultados Revelados" : "🎯 Revelar Resultados da Roda";
-      btnRevelarResultado.disabled = isRevelada;
-    } else {
-      btnRevelarResultado.classList.add("bloco-oculto");
+    const souOLeitor = carta.leitorId === idJogadorAtual;
+
+    if (btnRevelarResultado) {
+      if (souOLeitor && (mechanic === "ALVO" || mechanic === "DILEMA" || mechanic === "EU_NUNCA")) {
+        btnRevelarResultado.classList.remove("bloco-oculto");
+        btnRevelarResultado.textContent = isRevelada ? "✅ Resultados Revelados" : "🎯 Revelar Resultados da Roda";
+        btnRevelarResultado.disabled = isRevelada;
+      } else {
+        btnRevelarResultado.classList.add("bloco-oculto");
+      }
     }
-  }
 
   // 1. MECÂNICA: ALVO (target: VOTE / QUEM É MAIS PROVÁVEL)
   if (mechanic === "ALVO" || target === "VOTE") {
@@ -2277,6 +2370,9 @@ function renderizarMecanicas(carta, interacoes, jogadores) {
     const countEl = document.getElementById(`count-reacao-${emoji}`);
     if (countEl) countEl.textContent = contadores[emoji];
   });
+  } catch (erroMecanica) {
+    console.error("[DEBUG-MECANICA] Erro capturado em renderizarMecanicas:", erroMecanica);
+  }
 }
 
 // Botões de Voto do Dilema
@@ -2387,9 +2483,27 @@ function executarTransicaoFadeCenario(aoEscurecerTotal, aoClarearCenario) {
   }, 800);
 }
 
+function fecharTodosOverlays() {
+  const ids = [
+    "overlay-tutorial-minigame",
+    "overlay-tutorial-regras",
+    "overlay-sorteio-roleta",
+    "overlay-contagem-regressiva",
+    "overlay-sorteio-dado",
+    "transicao-iris-overlay"
+  ];
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add("bloco-oculto");
+      el.style.display = "none";
+    }
+  });
+}
+
 let gameplayIniciadaTransicao = false;
 
-// 2. Status Geral da Sala
+// 2. Status Geral da Sala (Fonte Única de Verdade do Firebase para Host e Convidados)
 escutarStatusSala(codigoSala, (status) => {
   console.log("[DEBUG-TRANSICAO] escutarStatusSala recebido:", status, "souHost:", souHost);
   statusSalaCache = status;
@@ -2405,15 +2519,7 @@ escutarStatusSala(codigoSala, (status) => {
     transicaoEmExecucao = false;
     gameplayIniciadaTransicao = false;
     tutorialJaDisparadoSorteio = false;
-    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
-    if (overlayTutorial) {
-      overlayTutorial.classList.add("bloco-oculto");
-      overlayTutorial.style.display = "none";
-    }
-    if (overlaySorteioRoleta) {
-      overlaySorteioRoleta.classList.add("bloco-oculto");
-      overlaySorteioRoleta.style.display = "none";
-    }
+    fecharTodosOverlays();
     if (corpoPaginaSala) {
       corpoPaginaSala.classList.remove("tela-gameplay-v3");
       corpoPaginaSala.classList.add("tela-lobby-espera-ativa");
@@ -2432,49 +2538,27 @@ escutarStatusSala(codigoSala, (status) => {
   } else if (status === "iniciando_partida") {
     // Sala iniciou a transição (Roleta / Contagem)
     console.log("[DEBUG-TRANSICAO] Sala em iniciando_partida. Fechando tutorial...");
-    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
-    if (overlayTutorial) {
-      overlayTutorial.classList.add("bloco-oculto");
-      overlayTutorial.style.display = "none";
-    }
-    if (overlayTutorialRegras) {
-      overlayTutorialRegras.classList.add("bloco-oculto");
-      overlayTutorialRegras.style.display = "none";
-    }
-    if (overlayTutorialMinigame) {
-      overlayTutorialMinigame.classList.add("bloco-oculto");
-      overlayTutorialMinigame.style.display = "none";
-    }
+    fecharTodosOverlays();
   } else if (status === "em_partida" || status === "jogando") {
-    console.log("[DEBUG-TRANSICAO] Sala em", status, "- garantindo mesa de jogo ativa.");
-    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
-    if (overlayTutorial) {
-      overlayTutorial.classList.add("bloco-oculto");
-      overlayTutorial.style.display = "none";
+    console.log("[DEBUG-TRANSICAO] Sala em", status, "- garantindo mesa de jogo ativa para TODOS.");
+    fecharTodosOverlays();
+    transicaoEmExecucao = false;
+    mostrarApenasPainel(painelMesaJogo);
+    if (corpoPaginaSala) {
+      corpoPaginaSala.classList.add("tela-gameplay-v3");
+      corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
     }
-    if (overlayTutorialRegras) {
-      overlayTutorialRegras.classList.add("bloco-oculto");
-      overlayTutorialRegras.style.display = "none";
-    }
-    if (overlayTutorialMinigame) {
-      overlayTutorialMinigame.classList.add("bloco-oculto");
-      overlayTutorialMinigame.style.display = "none";
-    }
-
-    if (!transicaoEmExecucao) {
-      mostrarApenasPainel(painelMesaJogo);
-      if (corpoPaginaSala) {
-        corpoPaginaSala.classList.add("tela-gameplay-v3");
-        corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
-      }
-      renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
-    }
+    renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
   }
 });
 
 // Escuta o Tutorial de Regras
 escutarTutorialRegras(codigoSala, (tutorialData) => {
   console.log("[DEBUG-TRANSICAO] escutarTutorialRegras recebido:", tutorialData);
+  if (statusSalaCache === "jogando" || statusSalaCache === "em_partida" || (partidaCache && partidaCache.status === "jogando")) {
+    fecharTodosOverlays();
+    return;
+  }
   if (tutorialData) {
     tutorialDataCache = tutorialData;
     renderizarTutorialRegras(tutorialData, dadosJogadoresCache);
@@ -2484,68 +2568,49 @@ escutarTutorialRegras(codigoSala, (tutorialData) => {
 // Escuta a transição sincronizada de início (Roleta / Contagem + Dado)
 escutarTransicaoInicio(codigoSala, (transicao) => {
   console.log("[DEBUG-TRANSICAO] escutarTransicaoInicio recebido:", transicao, "transicaoEmExecucao:", transicaoEmExecucao);
-  if (transicao && !transicaoEmExecucao) {
-    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
-    if (overlayTutorial) {
-      overlayTutorial.classList.add("bloco-oculto");
-      overlayTutorial.style.display = "none";
-    }
-    if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
-    if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
-
+  if (transicao && !transicaoEmExecucao && statusSalaCache !== "jogando" && statusSalaCache !== "em_partida") {
+    fecharTodosOverlays();
     executarAnimacaoTransicao(transicao);
   }
 });
 
 // 3. Sincronização da Partida, Cartas Secretas e Fim de Jogo
 escutarPartida(codigoSala, (partida) => {
-  if (!partida || partida.status === "aguardando") return;
+  try {
+    if (!partida || partida.status === "aguardando") return;
 
-  interacoesCache = partida.interacoes || {};
+    interacoesCache = partida.interacoes || {};
 
-  // FIM DE PARTIDA
-  if (partida.status === "finalizada") {
-    mostrarApenasPainel(painelFimPartida);
-    if (textoResumoFim) {
-      textoResumoFim.textContent = `A mesa completou com sucesso todas as ${partida.totalRodadas || 20} cartas sorteadas!`;
-    }
-    renderizarAvataresFim(dadosJogadoresCache);
-    return;
-  }
-
-  // PARTIDA EM ANDAMENTO
-  if (partida.status === "jogando" && partida.cartaAtual) {
-    console.log("[DEBUG-TRANSICAO] escutarPartida: Partida em andamento com carta:", partida.cartaAtual ? partida.cartaAtual.id : "null");
-    partidaCache = partida;
-
-    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
-    if (overlayTutorial) {
-      overlayTutorial.classList.add("bloco-oculto");
-      overlayTutorial.style.display = "none";
-    }
-    if (overlayTutorialRegras) {
-      overlayTutorialRegras.classList.add("bloco-oculto");
-      overlayTutorialRegras.style.display = "none";
-    }
-    if (overlayTutorialMinigame) {
-      overlayTutorialMinigame.classList.add("bloco-oculto");
-      overlayTutorialMinigame.style.display = "none";
-    }
-
-    if (!transicaoEmExecucao) {
-      if (overlaySorteioRoleta) {
-        overlaySorteioRoleta.classList.add("bloco-oculto");
-        overlaySorteioRoleta.style.display = "none";
+    // FIM DE PARTIDA (MÓDULO 6)
+    if (partida.status === "finalizada") {
+      fecharTodosOverlays();
+      mostrarApenasPainel(painelFimPartida);
+      if (textoResumoFim) {
+        textoResumoFim.textContent = "Fim de Jogo! Obrigado por jogarem Mesa Quente.";
       }
-      if (overlayContagemRegressiva) overlayContagemRegressiva.classList.add("bloco-oculto");
-      if (overlaySorteioDado) overlaySorteioDado.classList.add("bloco-oculto");
+      renderizarAvataresFim(dadosJogadoresCache);
 
+      if (souHost) {
+        if (controlesHostFim) controlesHostFim.classList.remove("bloco-oculto");
+        if (avisoJogadorFim) avisoJogadorFim.classList.add("bloco-oculto");
+      } else {
+        if (controlesHostFim) controlesHostFim.classList.add("bloco-oculto");
+        if (avisoJogadorFim) avisoJogadorFim.classList.remove("bloco-oculto");
+      }
+      return;
+    }
+
+    // PARTIDA EM ANDAMENTO
+    if (partida.status === "jogando" && partida.cartaAtual) {
+      console.log("[DEBUG-TRANSICAO] escutarPartida: Partida em andamento com carta:", partida.cartaAtual ? partida.cartaAtual.id : "null");
+      partidaCache = partida;
+
+      fecharTodosOverlays();
       mostrarApenasPainel(painelMesaJogo);
       if (corpoPaginaSala) {
         corpoPaginaSala.classList.add("tela-gameplay-v3");
         corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
       }
-    }
     const carta = partida.cartaAtual;
     cartaAtualCache = carta;
 
@@ -2574,6 +2639,9 @@ escutarPartida(codigoSala, (partida) => {
     }
 
     renderizarJogadoresRadial(dadosJogadoresCache, carta);
+    if (typeof executarDiagnosticoMesa === "function") {
+      executarDiagnosticoMesa("escutarPartida(status=jogando)");
+    }
 
     const isPuxada = carta.puxadaPeloLeitor === true;
     const isRevelada = carta.revelada === true;
@@ -2742,6 +2810,9 @@ escutarPartida(codigoSala, (partida) => {
         textoAvisoRodaEspera.textContent = `💬 Aguarde ${carta.leitorNome || "o jogador da vez"} concluir a rodada...`;
       }
     }
+  }
+  } catch (errPartida) {
+    console.error("[DEBUG-TRANSICAO] Erro capturado em escutarPartida:", errPartida);
   }
 });
 
