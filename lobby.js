@@ -291,6 +291,8 @@ let reacoesAnimadasSet = new Set();
 let timerTutorialInterval = null;
 let tutorialDataCache = null;
 let transicaoEmExecucao = false;
+let statusSalaCache = "lobby";
+let partidaCache = null;
 
 // Configuração padrão da partida
 let configLocal = {
@@ -306,6 +308,8 @@ function mostrarApenasPainel(painelAtivo) {
   const elMesa = document.getElementById("painel-mesa-jogo") || painelMesaJogo;
   const elFim = document.getElementById("painel-fim-partida") || painelFimPartida;
   const boxLeitor = document.getElementById("box-leitor-rodada");
+
+  console.log("[DEBUG-TRANSICAO] mostrarApenasPainel chamado para:", painelAtivo ? (painelAtivo.id || painelAtivo.className) : "null");
 
   if (painelAtivo === elConfig) {
     // Tela de Configurações do Host
@@ -328,11 +332,15 @@ function mostrarApenasPainel(painelAtivo) {
     if (elConfig) { elConfig.classList.add("bloco-oculto"); elConfig.style.display = "none"; }
     if (elFim) { elFim.classList.add("bloco-oculto"); elFim.style.display = "none"; }
     if (elLobby) { elLobby.classList.add("bloco-oculto"); elLobby.style.display = "none"; }
-    if (elMesa) { elMesa.classList.remove("bloco-oculto"); elMesa.style.display = "flex"; }
+    if (elMesa) { elMesa.classList.remove("bloco-oculto"); elMesa.style.display = "block"; }
     if (boxLeitor) boxLeitor.classList.remove("bloco-oculto");
     if (corpoPaginaSala) {
       corpoPaginaSala.classList.add("tela-gameplay-v3");
       corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+    }
+    // Renderiza radialmente os jogadores ao entrar na mesa
+    if (typeof renderizarJogadoresRadial === "function") {
+      renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
     }
   } else {
     // Modo Padrão: Sala de Espera / Lobby (CENÁRIO DE GAMEPLAY OBRIGATORIAMENTE EM DISPLAY: NONE)
@@ -945,7 +953,7 @@ if (btnOkEntendiTutorial) {
     if (typeof audioApp !== "undefined" && audioApp && typeof audioApp.tocarClique === "function") {
       try { audioApp.tocarClique(); } catch (e) { console.warn(e); }
     }
-    if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
+    console.log("[DEBUG-TRANSICAO] btnOkEntendiTutorial clicado! souHost:", souHost, "idJogador:", idJogadorAtual);
 
     try {
       if (typeof marcarProntoTutorial === "function") {
@@ -955,15 +963,21 @@ if (btnOkEntendiTutorial) {
       console.warn("Erro ao marcar pronto tutorial:", e);
     }
 
-    if (souHost && !tutorialJaDisparadoSorteio) {
-      tutorialJaDisparadoSorteio = true;
-      setTimeout(async () => {
+    if (souHost) {
+      if (!tutorialJaDisparadoSorteio) {
+        tutorialJaDisparadoSorteio = true;
+        console.log("[DEBUG-TRANSICAO] Host clicou no tutorial. Disparando iniciarTransicaoPartida...");
         try {
           await iniciarTransicaoPartida(codigoSala, (tutorialDataCache && tutorialDataCache.configTemp) || configLocal);
         } catch (e) {
-          console.error("Erro ao iniciar transição da partida:", e);
+          console.error("Erro ao iniciar transição da partida pelo Host:", e);
         }
-      }, 500);
+      }
+    } else {
+      if (btnOkEntendiTutorial) {
+        btnOkEntendiTutorial.disabled = true;
+        btnOkEntendiTutorial.innerHTML = "<span>✅ Você confirmou! Aguardando início...</span>";
+      }
     }
   });
 }
@@ -971,20 +985,31 @@ if (btnOkEntendiTutorial) {
 // ============================================================
 // ETAPA 4B: SORTEIO DE QUEM COMEÇA COM ROLETA ANIMADA
 // ============================================================
-function dispararSorteioRoletaInicial(jogadores) {
+function dispararSorteioRoletaInicial(jogadores, transicaoData = null) {
   if (!overlaySorteioRoleta) return;
+  console.log("[DEBUG-TRANSICAO] dispararSorteioRoletaInicial disparado com:", { jogadores, transicaoData });
+
+  // Fecha qualquer overlay de tutorial de regras ou minigame
+  const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+  if (overlayTutorial) {
+    overlayTutorial.classList.add("bloco-oculto");
+    overlayTutorial.style.display = "none";
+  }
+
   overlaySorteioRoleta.classList.remove("bloco-oculto");
+  overlaySorteioRoleta.style.display = "flex";
 
   if (sorteioContadorArea) sorteioContadorArea.classList.remove("bloco-oculto");
   if (sorteioRoletaArea) sorteioRoletaArea.classList.add("bloco-oculto");
   if (sorteioVencedorAnuncio) sorteioVencedorAnuncio.classList.add("bloco-oculto");
 
-  const listaJogadores = Object.entries(jogadores || {}).filter(
+  const listaJogadores = Object.entries(jogadores || dadosJogadoresCache || {}).filter(
     ([, j]) => j && j.conectado !== false
   );
 
   if (listaJogadores.length === 0) {
     overlaySorteioRoleta.classList.add("bloco-oculto");
+    overlaySorteioRoleta.style.display = "none";
     return;
   }
 
@@ -1008,17 +1033,26 @@ function dispararSorteioRoletaInicial(jogadores) {
       atualizarNumeroContagem(count);
     } else {
       clearInterval(intervaloContagem);
-      iniciarAnimacaoRoleta(listaJogadores);
+      iniciarAnimacaoRoleta(listaJogadores, transicaoData);
     }
   }, 1000);
 }
 
-function iniciarAnimacaoRoleta(listaJogadores) {
+function iniciarAnimacaoRoleta(listaJogadores, transicaoData = null) {
   if (sorteioContadorArea) sorteioContadorArea.classList.add("bloco-oculto");
   if (sorteioRoletaArea) sorteioRoletaArea.classList.remove("bloco-oculto");
 
-  // Sorteia quem vai ser o primeiro leitor da mesa
-  const indiceSorteado = Math.floor(Math.random() * listaJogadores.length);
+  // Se transicaoData já determinou o vencedor ou leitor inicial, usa ele para sincronizar todas as telas!
+  let indiceSorteado = 0;
+  let vencedorIdDefinido = transicaoData && (transicaoData.vencedorId || transicaoData.leitorId);
+
+  if (vencedorIdDefinido) {
+    const idx = listaJogadores.findIndex(([id]) => id === vencedorIdDefinido);
+    if (idx !== -1) indiceSorteado = idx;
+  } else {
+    indiceSorteado = Math.floor(Math.random() * listaJogadores.length);
+  }
+
   const [vencedorId, vencedorObj] = listaJogadores[indiceSorteado];
   const avatarVencedor = obterAvatarJogador(vencedorObj);
 
@@ -1075,7 +1109,10 @@ function finalizarRoletaVencedor(vencedorId, vencedorObj, avatarVencedor) {
   }
 
   setTimeout(async () => {
-    if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
+    if (overlaySorteioRoleta) {
+      overlaySorteioRoleta.classList.add("bloco-oculto");
+      overlaySorteioRoleta.style.display = "none";
+    }
     if (souHost && typeof concluirTransicaoParaPartida === "function") {
       try {
         await concluirTransicaoParaPartida(codigoSala);
@@ -1090,6 +1127,7 @@ function finalizarRoletaVencedor(vencedorId, vencedorObj, avatarVencedor) {
       corpoPaginaSala.classList.add("tela-gameplay-v3");
       corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
     }
+    renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
   }, 2600);
 }
 
@@ -1104,12 +1142,19 @@ function renderizarLobbyMesa(jogadores) {
 // MESA CIRCULAR RADIAL (JOGADORES AO REDOR COM MOLDURA CARTOON)
 // ============================================================
 function renderizarJogadoresRadial(jogadores, cartaAtual) {
-  if (!camadaJogadoresRadial) return;
-  camadaJogadoresRadial.innerHTML = "";
+  const container = document.getElementById("camada-jogadores-radial") || camadaJogadoresRadial;
+  if (!container) {
+    console.warn("[DEBUG-MESA] camadaJogadoresRadial não encontrado no DOM!");
+    return;
+  }
+  container.innerHTML = "";
 
-  const ids = Object.keys(jogadores || {}).filter(
-    (id) => jogadores[id] && jogadores[id].conectado !== false
+  const fonteJogadores = (jogadores && Object.keys(jogadores).length > 0) ? jogadores : dadosJogadoresCache;
+  const ids = Object.keys(fonteJogadores || {}).filter(
+    (id) => fonteJogadores[id] && fonteJogadores[id].conectado !== false
   );
+
+  console.log("[DEBUG-MESA] renderizarJogadoresRadial executado. Jogadores encontrados:", ids.length, ids);
 
   if (ids.length === 0) return;
 
@@ -1121,7 +1166,7 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
   const raioY = 32;
 
   ids.forEach((id, index) => {
-    const j = jogadores[id];
+    const j = fonteJogadores[id];
     const isLeitor = id === leitorId;
     const isAlvo = id === alvoId;
     const isMe = id === idJogadorAtual;
@@ -1184,7 +1229,7 @@ function renderizarJogadoresRadial(jogadores, cartaAtual) {
     }
 
     seat.appendChild(molduraWrapper);
-    camadaJogadoresRadial.appendChild(seat);
+    container.appendChild(seat);
   });
 }
 
@@ -1407,8 +1452,20 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
   tutorialDataCache = tutorialData;
 
   const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+
+  // Se a partida já estiver em andamento ou transicionando, o tutorial DEVE permanecer fechado!
+  if (statusSalaCache === "jogando" || statusSalaCache === "iniciando_partida" || statusSalaCache === "em_partida" || (partidaCache && partidaCache.status === "jogando")) {
+    console.log("[DEBUG-TRANSICAO] renderizarTutorialRegras ignorado: sala já em gameplay.");
+    if (overlayTutorial) {
+      overlayTutorial.classList.add("bloco-oculto");
+      overlayTutorial.style.display = "none";
+    }
+    return;
+  }
+
   if (overlayTutorial) {
     overlayTutorial.classList.remove("bloco-oculto");
+    overlayTutorial.style.display = "flex";
   }
 
   // Preenche dados do Minigame no overlay cartoon
@@ -1524,12 +1581,17 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
   }
 
   if (btnOkEntendiTutorial) {
-    if (euJaPronto) {
-      btnOkEntendiTutorial.disabled = true;
-      btnOkEntendiTutorial.innerHTML = "<span>✅ Você já confirmou! Aguardando...</span>";
-    } else {
+    if (souHost) {
       btnOkEntendiTutorial.disabled = false;
-      btnOkEntendiTutorial.innerHTML = "<span>👍 Ok, Entendi!</span>";
+      btnOkEntendiTutorial.innerHTML = "<span>🔥 Iniciar Rodada Agora</span>";
+    } else {
+      if (euJaPronto) {
+        btnOkEntendiTutorial.disabled = true;
+        btnOkEntendiTutorial.innerHTML = "<span>✅ Você já confirmou! Aguardando o anfitrião...</span>";
+      } else {
+        btnOkEntendiTutorial.disabled = false;
+        btnOkEntendiTutorial.innerHTML = "<span>👍 Ok, Entendi!</span>";
+      }
     }
   }
 
@@ -1537,6 +1599,7 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
   const todosProntos = totalConectados > 0 && totalProntos >= totalConectados;
   if (todosProntos && !tutorialJaDisparadoSorteio) {
     tutorialJaDisparadoSorteio = true;
+    console.log("[DEBUG-TRANSICAO] Todos os jogadores prontos! Disparando transição de partida...");
     if (souHost) {
       setTimeout(async () => {
         try {
@@ -1544,7 +1607,7 @@ function renderizarTutorialRegras(tutorialData, jogadores) {
         } catch (e) {
           console.error("Erro ao iniciar transição da partida:", e);
         }
-      }, 600);
+      }, 500);
     }
   }
 
@@ -1628,9 +1691,9 @@ function executarAnimacaoTransicao(transicaoData) {
   if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
   if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
 
-  // Se o overlay cartoon de roleta estiver presente no HTML, dispara a roleta
+  // Se o overlay cartoon de roleta estiver presente no HTML, dispara a roleta sincronizada
   if (overlaySorteioRoleta && typeof dispararSorteioRoletaInicial === "function") {
-    dispararSorteioRoletaInicial(dadosJogadoresCache);
+    dispararSorteioRoletaInicial(dadosJogadoresCache, transicaoData);
     return;
   }
 
@@ -2328,6 +2391,9 @@ let gameplayIniciadaTransicao = false;
 
 // 2. Status Geral da Sala
 escutarStatusSala(codigoSala, (status) => {
+  console.log("[DEBUG-TRANSICAO] escutarStatusSala recebido:", status, "souHost:", souHost);
+  statusSalaCache = status;
+
   if (status === "encerrada" || status === null) {
     if (!souHost) {
       executarExpulsaoSuave();
@@ -2339,8 +2405,15 @@ escutarStatusSala(codigoSala, (status) => {
     transicaoEmExecucao = false;
     gameplayIniciadaTransicao = false;
     tutorialJaDisparadoSorteio = false;
-    if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
-    if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
+    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+    if (overlayTutorial) {
+      overlayTutorial.classList.add("bloco-oculto");
+      overlayTutorial.style.display = "none";
+    }
+    if (overlaySorteioRoleta) {
+      overlaySorteioRoleta.classList.add("bloco-oculto");
+      overlaySorteioRoleta.style.display = "none";
+    }
     if (corpoPaginaSala) {
       corpoPaginaSala.classList.remove("tela-gameplay-v3");
       corpoPaginaSala.classList.add("tela-lobby-espera-ativa");
@@ -2350,31 +2423,76 @@ escutarStatusSala(codigoSala, (status) => {
       btnIniciarPartida.disabled = false;
       btnIniciarPartida.textContent = "🔥 Iniciar Partida";
     }
-  } else if ((status === "jogando" || status === "transicao" || status === "tutorial_regras" || status === "iniciando_partida" || status === "em_partida") && !gameplayIniciadaTransicao) {
-    gameplayIniciadaTransicao = true;
-    
-    // Executa Transição Fade In/Out (Cortina Black 0.8s)
-    executarTransicaoFadeCenario(() => {
+  } else if (status === "tutorial_regras") {
+    // Sala entrou na fase de introdução e regras do Minigame
+    console.log("[DEBUG-TRANSICAO] Sala em tutorial_regras. Preparando popup tutorial...");
+    if (tutorialDataCache) {
+      renderizarTutorialRegras(tutorialDataCache, dadosJogadoresCache);
+    }
+  } else if (status === "iniciando_partida") {
+    // Sala iniciou a transição (Roleta / Contagem)
+    console.log("[DEBUG-TRANSICAO] Sala em iniciando_partida. Fechando tutorial...");
+    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+    if (overlayTutorial) {
+      overlayTutorial.classList.add("bloco-oculto");
+      overlayTutorial.style.display = "none";
+    }
+    if (overlayTutorialRegras) {
+      overlayTutorialRegras.classList.add("bloco-oculto");
+      overlayTutorialRegras.style.display = "none";
+    }
+    if (overlayTutorialMinigame) {
+      overlayTutorialMinigame.classList.add("bloco-oculto");
+      overlayTutorialMinigame.style.display = "none";
+    }
+  } else if (status === "em_partida" || status === "jogando") {
+    console.log("[DEBUG-TRANSICAO] Sala em", status, "- garantindo mesa de jogo ativa.");
+    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+    if (overlayTutorial) {
+      overlayTutorial.classList.add("bloco-oculto");
+      overlayTutorial.style.display = "none";
+    }
+    if (overlayTutorialRegras) {
+      overlayTutorialRegras.classList.add("bloco-oculto");
+      overlayTutorialRegras.style.display = "none";
+    }
+    if (overlayTutorialMinigame) {
+      overlayTutorialMinigame.classList.add("bloco-oculto");
+      overlayTutorialMinigame.style.display = "none";
+    }
+
+    if (!transicaoEmExecucao) {
       mostrarApenasPainel(painelMesaJogo);
       if (corpoPaginaSala) {
         corpoPaginaSala.classList.add("tela-gameplay-v3");
         corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
       }
       renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
-    });
+    }
   }
 });
 
 // Escuta o Tutorial de Regras
 escutarTutorialRegras(codigoSala, (tutorialData) => {
+  console.log("[DEBUG-TRANSICAO] escutarTutorialRegras recebido:", tutorialData);
   if (tutorialData) {
+    tutorialDataCache = tutorialData;
     renderizarTutorialRegras(tutorialData, dadosJogadoresCache);
   }
 });
 
-// Escuta a transição sincronizada de início (Contagem + Dado)
+// Escuta a transição sincronizada de início (Roleta / Contagem + Dado)
 escutarTransicaoInicio(codigoSala, (transicao) => {
+  console.log("[DEBUG-TRANSICAO] escutarTransicaoInicio recebido:", transicao, "transicaoEmExecucao:", transicaoEmExecucao);
   if (transicao && !transicaoEmExecucao) {
+    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+    if (overlayTutorial) {
+      overlayTutorial.classList.add("bloco-oculto");
+      overlayTutorial.style.display = "none";
+    }
+    if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
+    if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
+
     executarAnimacaoTransicao(transicao);
   }
 });
@@ -2397,16 +2515,36 @@ escutarPartida(codigoSala, (partida) => {
 
   // PARTIDA EM ANDAMENTO
   if (partida.status === "jogando" && partida.cartaAtual) {
-    if (overlayTutorialRegras) overlayTutorialRegras.classList.add("bloco-oculto");
-    if (overlayTutorialMinigame) overlayTutorialMinigame.classList.add("bloco-oculto");
-    if (overlaySorteioRoleta) overlaySorteioRoleta.classList.add("bloco-oculto");
-    if (overlayContagemRegressiva) overlayContagemRegressiva.classList.add("bloco-oculto");
-    if (overlaySorteioDado) overlaySorteioDado.classList.add("bloco-oculto");
+    console.log("[DEBUG-TRANSICAO] escutarPartida: Partida em andamento com carta:", partida.cartaAtual ? partida.cartaAtual.id : "null");
+    partidaCache = partida;
 
-    mostrarApenasPainel(painelMesaJogo);
-    if (corpoPaginaSala) {
-      corpoPaginaSala.classList.add("tela-gameplay-v3");
-      corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+    const overlayTutorial = document.getElementById("overlay-tutorial-minigame") || overlayTutorialMinigame || overlayTutorialRegras;
+    if (overlayTutorial) {
+      overlayTutorial.classList.add("bloco-oculto");
+      overlayTutorial.style.display = "none";
+    }
+    if (overlayTutorialRegras) {
+      overlayTutorialRegras.classList.add("bloco-oculto");
+      overlayTutorialRegras.style.display = "none";
+    }
+    if (overlayTutorialMinigame) {
+      overlayTutorialMinigame.classList.add("bloco-oculto");
+      overlayTutorialMinigame.style.display = "none";
+    }
+
+    if (!transicaoEmExecucao) {
+      if (overlaySorteioRoleta) {
+        overlaySorteioRoleta.classList.add("bloco-oculto");
+        overlaySorteioRoleta.style.display = "none";
+      }
+      if (overlayContagemRegressiva) overlayContagemRegressiva.classList.add("bloco-oculto");
+      if (overlaySorteioDado) overlaySorteioDado.classList.add("bloco-oculto");
+
+      mostrarApenasPainel(painelMesaJogo);
+      if (corpoPaginaSala) {
+        corpoPaginaSala.classList.add("tela-gameplay-v3");
+        corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
+      }
     }
     const carta = partida.cartaAtual;
     cartaAtualCache = carta;
@@ -2442,8 +2580,14 @@ escutarPartida(codigoSala, (partida) => {
 
     // ESTADO A: A CARTA AINDA NÃO FOI PUXADA PELO LEITOR
     if (!isPuxada) {
-      if (deckCentralArea) deckCentralArea.classList.remove("bloco-oculto");
-      if (cartaFlipWrapper) cartaFlipWrapper.classList.add("bloco-oculto");
+      if (deckCentralArea) {
+        deckCentralArea.classList.remove("bloco-oculto");
+        deckCentralArea.style.display = "flex";
+      }
+      if (cartaFlipWrapper) {
+        cartaFlipWrapper.classList.add("bloco-oculto");
+        cartaFlipWrapper.style.display = "none";
+      }
       if (focoCartaBackdrop) focoCartaBackdrop.classList.add("bloco-oculto");
       if (btnRevelarCartaMesa) btnRevelarCartaMesa.classList.add("bloco-oculto");
 
@@ -2471,13 +2615,19 @@ escutarPartida(codigoSala, (partida) => {
     }
     // ESTADO B: PUXADA PELO LEITOR, MAS AINDA NÃO REVELADA PARA TODOS
     else if (!isRevelada) {
-      if (deckCentralArea) deckCentralArea.classList.add("bloco-oculto");
+      if (deckCentralArea) {
+        deckCentralArea.classList.add("bloco-oculto");
+        deckCentralArea.style.display = "none";
+      }
       if (baralhoAssetWrapper) baralhoAssetWrapper.classList.remove("baralho-ativo-vez");
       if (badgeSuaVez) badgeSuaVez.classList.add("bloco-oculto");
       if (btnPuxarCartaMesa) btnPuxarCartaMesa.classList.add("bloco-oculto");
       if (boxEsperaPuxar) boxEsperaPuxar.classList.add("bloco-oculto");
 
-      if (cartaFlipWrapper) cartaFlipWrapper.classList.remove("bloco-oculto");
+      if (cartaFlipWrapper) {
+        cartaFlipWrapper.classList.remove("bloco-oculto");
+        cartaFlipWrapper.style.display = "flex";
+      }
       if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
 
       if (souOLeitor) {
@@ -2529,14 +2679,20 @@ escutarPartida(codigoSala, (partida) => {
     }
     // ESTADO C: REVELADA PARA TODOS NA MESA
     else {
-      if (deckCentralArea) deckCentralArea.classList.add("bloco-oculto");
+      if (deckCentralArea) {
+        deckCentralArea.classList.add("bloco-oculto");
+        deckCentralArea.style.display = "none";
+      }
       if (baralhoAssetWrapper) baralhoAssetWrapper.classList.remove("baralho-ativo-vez");
       if (badgeSuaVez) badgeSuaVez.classList.add("bloco-oculto");
       if (btnPuxarCartaMesa) btnPuxarCartaMesa.classList.add("bloco-oculto");
       if (btnRevelarCartaMesa) btnRevelarCartaMesa.classList.add("bloco-oculto");
       if (boxEsperaPuxar) boxEsperaPuxar.classList.add("bloco-oculto");
 
-      if (cartaFlipWrapper) cartaFlipWrapper.classList.remove("bloco-oculto");
+      if (cartaFlipWrapper) {
+        cartaFlipWrapper.classList.remove("bloco-oculto");
+        cartaFlipWrapper.style.display = "flex";
+      }
       if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
 
       // Todos na mesa agora veem a frente da carta aberta
@@ -2611,12 +2767,12 @@ btnCopiarCodigo.addEventListener("click", () => {
   });
 });
 
-// Iniciar Partida (Ação do Host na Sala de Espera com Efeito Fade In / Out)
+// Iniciar Partida (Ação do Host na Sala de Espera sincronizada via Firebase)
 async function iniciarPartidaGameplay() {
   try {
-    console.log("iniciarPartidaGameplay disparado:", { codigoSala, souHost, configLocal });
+    console.log("[DEBUG-TRANSICAO] iniciarPartidaGameplay disparado:", { codigoSala, souHost, configLocal });
     if (!souHost) {
-      console.warn("iniciarPartidaGameplay cancelado: souHost é falso");
+      console.warn("[DEBUG-TRANSICAO] iniciarPartidaGameplay cancelado: souHost é falso");
       return;
     }
     if (btnIniciarPartida) {
@@ -2627,40 +2783,18 @@ async function iniciarPartidaGameplay() {
       try { audioApp.tocarClique(); } catch (e) { console.warn("Erro ao tocar clique:", e); }
     }
 
-    // Executa o Efeito Fade In / Out
-    executarTransicaoFadeCenario(
-      () => {
-        try {
-          // Ocorre aos 800ms com a tela 100% preta
-          mostrarApenasPainel(painelMesaJogo);
-          if (corpoPaginaSala) {
-            corpoPaginaSala.classList.add("tela-gameplay-v3");
-            corpoPaginaSala.classList.remove("tela-lobby-espera-ativa");
-          }
-          if (typeof renderizarJogadoresRadial === "function") {
-            renderizarJogadoresRadial(dadosJogadoresCache, cartaAtualCache);
-          }
-        } catch (errFade) {
-          console.error("Erro na transição visual (aoEscurecerTotal):", errFade);
-        }
-      },
-      async () => {
-        // Ao clarear a tela revelando o novo cenário 2.5D: sincroniza no Firebase
-        try {
-          console.log("Chamando iniciarPartida no Firebase com:", codigoSala, configLocal);
-          await iniciarPartida(codigoSala, configLocal);
-        } catch (erro) {
-          console.error("Erro ao iniciar gameplay no Firebase:", erro);
-          if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
-          if (btnIniciarPartida) {
-            btnIniciarPartida.disabled = false;
-            btnIniciarPartida.textContent = "🔥 Iniciar Partida";
-          }
-        }
+    // Marca o Host como pronto de antemão
+    try {
+      if (typeof marcarProntoTutorial === "function") {
+        await marcarProntoTutorial(codigoSala);
       }
-    );
+    } catch (e) {}
+
+    // Sincroniza via Firebase para que todos (host e convidados) recebam juntos!
+    console.log("[DEBUG-TRANSICAO] Chamando iniciarPartida no Firebase com:", codigoSala, configLocal);
+    await iniciarPartida(codigoSala, configLocal);
   } catch (erroGlobal) {
-    console.error("Erro fatal em iniciarPartidaGameplay:", erroGlobal);
+    console.error("[DEBUG-TRANSICAO] Erro fatal em iniciarPartidaGameplay:", erroGlobal);
     if (mensagemErroLobby) mensagemErroLobby.textContent = "Erro ao iniciar partida. Tente novamente.";
     if (btnIniciarPartida) {
       btnIniciarPartida.disabled = false;

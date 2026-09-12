@@ -3366,14 +3366,22 @@ body.tela-inicio {
   line-height: 1.35;
 }
 
-/* Garante que o container principal da Mesa / Gameplay fique sempre montado e visível */
+/* Garante que o container principal da Mesa / Gameplay fique sempre montado e visível em tela cheia */
 #painel-mesa-jogo,
 #tela-gameplay,
 .painel-mesa-jogo-v3 {
-  display: block;
-  z-index: 10;
-  position: relative;
-  width: 100%;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: 10 !important;
 }
 
 /* ============================================================
