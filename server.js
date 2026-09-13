@@ -25,7 +25,16 @@ import {
   cardSaficoSvg,
   cardPicanteSvg,
   cardEspecialSvg,
+  cardTempoSvg,
+  cardConfissoesSvg,
+  frontCardVotacaoSvg,
+  frontCardConfissoesSvg,
+  frontCardTempoSvg,
+  frontCardDesafiosSvg,
+  frontCardPicanteSvg,
+  frontCardSurpresaSvg,
   criarCardCategoriaSvg,
+  criarFrontCardSvg,
 } from "./assets-data.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -204,6 +213,43 @@ app.get(["/cartas-safico.png", "/cartas-safico.svg"], (req, res) => {
 app.get(["/cartas-especial.png", "/cartas-especial.svg"], (req, res) => {
   res.setHeader("Content-Type", "image/svg+xml");
   res.send(cardEspecialSvg);
+});
+
+// ROTAS DE CARTAS ABERTAS / FRENTE (VISÃO DO LEITOR)
+app.get(["/front-card-votação.png", "/front-card-vota%C3%A7%C3%A3o.png", "/front-card-votacao.png", "/front-card-votação.svg", "/front-card-votacao.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardVotacaoSvg);
+});
+
+app.get(["/front-card-confissões.png", "/front-card-confiss%C3%B5es.png", "/front-card-confissoes.png", "/front-card-confissões.svg", "/front-card-confissoes.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardConfissoesSvg);
+});
+
+app.get(["/front-card-tempo.png", "/front-card-tempo.svg", "/front-card-contra-o-tempo.png", "/front-card-contra-o-tempo.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardTempoSvg);
+});
+
+app.get(["/front-card-desafios.png", "/front-card-desafios.svg", "/front-card-desafio.png", "/front-card-desafio.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardDesafiosSvg);
+});
+
+app.get(["/front-card-picante.png", "/front-card-picante.svg", "/front-card-picantes.png", "/front-card-picantes.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardPicanteSvg);
+});
+
+app.get(["/front-card-surpresa.png", "/front-card-surpresa.svg"], (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardSurpresaSvg);
+});
+
+// Fallbacks de cartas
+app.get(/front-card-.*\.png/, (req, res) => {
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.send(frontCardDesafiosSvg);
 });
 
 // Generic card pattern fallback

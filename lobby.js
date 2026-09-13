@@ -275,6 +275,78 @@ const modalRegrasNome = document.getElementById("modal-regras-nome");
 const modalRegrasBanner = document.getElementById("modal-regras-banner");
 const modalRegrasLista = document.getElementById("modal-regras-lista");
 
+// ============================================================
+// AJUSTE 2: SELEÇÃO DE ARTE DA CARTA POR CATEGORIA DO MINIGAME
+// ============================================================
+const MAPA_ARTES_CARTAS_CATEGORIA = {
+  confissoes: {
+    categoria: "confissoes",
+    fechada: "cartas-confissões.png",
+    frente: "front-card-confissões.png"
+  },
+  tempo: {
+    categoria: "tempo",
+    fechada: "cartas-contra-o-tempo.png",
+    frente: "front-card-tempo.png"
+  },
+  desafios: {
+    categoria: "desafios",
+    fechada: "cartas-desafios.png",
+    frente: "front-card-desafios.png"
+  },
+  picante: {
+    categoria: "picante",
+    fechada: "cartas-picantes.png",
+    frente: "front-card-picante.png"
+  },
+  surpresa: {
+    categoria: "surpresa",
+    fechada: "cartas-surpresa.png",
+    frente: "front-card-surpresa.png"
+  },
+  votacao: {
+    categoria: "votacao",
+    fechada: "cartas-votação.png",
+    frente: "front-card-votação.png"
+  }
+};
+
+function normalizarNomeCategoria(catRaw) {
+  if (!catRaw || typeof catRaw !== "string") return "desafios";
+  const s = catRaw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+  if (s.includes("confiss") || s.includes("intimi") || s.includes("gelo") || s.includes("dilema")) {
+    return "confissoes";
+  }
+  if (s.includes("tempo") || s.includes("contra") || s.includes("caos") || s.includes("debate")) {
+    return "tempo";
+  }
+  if (s.includes("desafio") || s.includes("roleta") || s.includes("palavra")) {
+    return "desafios";
+  }
+  if (s.includes("picant") || s.includes("hot") || s.includes("sintonia") || s.includes("casal") || s.includes("safico")) {
+    return "picante";
+  }
+  if (s.includes("surpres") || s.includes("blefe") || s.includes("espiao") || s.includes("especial") || s.includes("lacuna")) {
+    return "surpresa";
+  }
+  if (s.includes("vota") || s.includes("provavel") || s.includes("fogo") || s.includes("nunca")) {
+    return "votacao";
+  }
+  return "desafios";
+}
+
+function obterArtesCartaPorCategoria(categoriaOuMinigame) {
+  let catStr = "";
+  if (typeof categoriaOuMinigame === "string") {
+    catStr = categoriaOuMinigame;
+  } else if (categoriaOuMinigame && typeof categoriaOuMinigame === "object") {
+    catStr = categoriaOuMinigame.categoria || categoriaOuMinigame.deck_id || categoriaOuMinigame.id || "";
+  }
+  const chave = normalizarNomeCategoria(catStr);
+  return MAPA_ARTES_CARTAS_CATEGORIA[chave] || MAPA_ARTES_CARTAS_CATEGORIA.desafios;
+}
+
 // Estado Local
 if (textoCodigoSala) textoCodigoSala.textContent = codigoSala;
 if (hudCodigoSalaTopo) hudCodigoSalaTopo.textContent = codigoSala;
@@ -2646,6 +2718,17 @@ escutarPartida(codigoSala, (partida) => {
     const isPuxada = carta.puxadaPeloLeitor === true;
     const isRevelada = carta.revelada === true;
 
+    // AJUSTE 2: Obter artes das cartas mapeadas para a categoria do minigame atual
+    let categoriaMinigame = carta.categoria;
+    if (!categoriaMinigame && carta.deck_id && typeof obterBaralhoPorId === "function") {
+      const bObj = obterBaralhoPorId(carta.deck_id);
+      if (bObj && bObj.categoria) categoriaMinigame = bObj.categoria;
+    }
+    if (!categoriaMinigame && partida && partida.modoInfo) {
+      categoriaMinigame = partida.modoInfo.categoria;
+    }
+    const artesCarta = obterArtesCartaPorCategoria(categoriaMinigame || carta.deck_id);
+
     // ESTADO A: A CARTA AINDA NÃO FOI PUXADA PELO LEITOR
     if (!isPuxada) {
       if (deckCentralArea) {
@@ -2699,10 +2782,13 @@ escutarPartida(codigoSala, (partida) => {
       if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
 
       if (souOLeitor) {
-        // Leitor vê a frente da carta legível
+        // Leitor vê a frente da carta legível (front-card-{categoria}.png com texto sobreposto)
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("carta-secreta-oculta");
           cartaJogoElemento.classList.add("carta-aberta-leitor");
+        }
+        if (cartaFaceFrente) {
+          cartaFaceFrente.style.backgroundImage = `url("${artesCarta.frente}")`;
         }
         if (cartaDeckIcone) cartaDeckIcone.textContent = carta.deck_icone || "🃏";
         if (cartaDeckNome) cartaDeckNome.textContent = carta.deck_nome || "Baralho";
@@ -2733,10 +2819,13 @@ escutarPartida(codigoSala, (partida) => {
           ultimaCartaPuxadaId = carta.id + "_pux";
         }
       } else {
-        // Demais jogadores veem apenas o verso secreto da carta fechada
+        // Demais jogadores veem apenas o verso secreto da carta fechada (cartas-{categoria}.png sem texto)
         if (cartaJogoElemento) {
           cartaJogoElemento.classList.remove("carta-aberta-leitor");
           cartaJogoElemento.classList.add("carta-secreta-oculta");
+        }
+        if (cartaFaceVerso) {
+          cartaFaceVerso.style.backgroundImage = `url("${artesCarta.fechada}")`;
         }
         if (cartaTexto) cartaTexto.textContent = "";
         if (textoOucaLeitor) {
@@ -2763,10 +2852,13 @@ escutarPartida(codigoSala, (partida) => {
       }
       if (focoCartaBackdrop) focoCartaBackdrop.classList.remove("bloco-oculto");
 
-      // Todos na mesa agora veem a frente da carta aberta
+      // Todos na mesa agora veem a frente da carta aberta (front-card-{categoria}.png)
       if (cartaJogoElemento) {
         cartaJogoElemento.classList.remove("carta-secreta-oculta");
         cartaJogoElemento.classList.add("carta-aberta-leitor");
+      }
+      if (cartaFaceFrente) {
+        cartaFaceFrente.style.backgroundImage = `url("${artesCarta.frente}")`;
       }
       if (cartaDeckIcone) cartaDeckIcone.textContent = carta.deck_icone || "🃏";
       if (cartaDeckNome) cartaDeckNome.textContent = carta.deck_nome || "Baralho";

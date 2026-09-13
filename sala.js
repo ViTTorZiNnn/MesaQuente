@@ -743,6 +743,7 @@ function sortearProximaCartaDoPool(baralhosAtivosIds, ultimoBaralhoId, jogadores
       id: cartaSorteada.id + "_" + Date.now().toString(36),
       template_id: cartaSorteada.id,
       deck_id: cartaSorteada.deck_id,
+      categoria: baralhoObj.categoria || "desafios",
       deck_nome: baralhoObj.nome,
       deck_icone: baralhoObj.icone || "🔥",
       text: cartaSorteada.text,

@@ -2458,58 +2458,52 @@ body.tela-inicio {
 }
 
 .carta-face-frente {
-  background: linear-gradient(160deg, #261f33 0%, #151120 100%);
-  border: 2px solid var(--border-gold-card);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 3px solid #0b0b0b;
   box-shadow: var(--shadow-25d-card);
   padding: 16px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-align: left;
+  text-align: center;
+  position: relative;
 }
 
 .carta-face-frente::after {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1px dashed rgba(255, 183, 3, 0.22);
-  border-radius: calc(var(--radius-lg) - 4px);
-  pointer-events: none;
+  display: none;
 }
 
 .carta-face-verso {
-  background: linear-gradient(135deg, #1f1a2c 0%, #0d0b14 100%);
-  border: 2px solid var(--border-gold-card);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 3px solid #0b0b0b;
   box-shadow: var(--shadow-25d-card);
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
+  padding: 0;
+  position: relative;
 }
 
 .padrao-verso-geometrico {
   width: 100%;
   height: 100%;
-  border: 2px dashed rgba(255, 183, 3, 0.4);
-  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-end;
+  padding-bottom: 12px;
 }
 
-.simbolo-verso-central {
-  font-size: 42px;
-  filter: drop-shadow(0 0 14px rgba(255, 77, 46, 0.6));
-}
-
+.simbolo-verso-central,
 .texto-verso-central {
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: var(--accent-gold);
+  display: none;
 }
 
 .carta-cabecalho-fisica {
@@ -2557,12 +2551,14 @@ body.tela-inicio {
 }
 
 .carta-texto-fisica {
-  font-size: clamp(14px, 3vw, 18px);
+  font-size: clamp(14px, 3.2vw, 19px);
   font-weight: 800;
-  line-height: 1.4;
+  line-height: 1.45;
   color: #ffffff;
   letter-spacing: -0.2px;
   text-align: center;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.98), 0 0 14px rgba(0, 0, 0, 0.9);
+  padding: 0 10px;
 }
 
 .carta-rodape-fisica {
@@ -5062,22 +5058,36 @@ body.tela-gameplay-v3 {
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85));
 }
 
-/* A foto de perfil fica sob a moldura no orifício circular central */
+/* A foto de perfil fica sob a moldura perfeitamente contida no orifício circular central */
 .avatar-radial-fundo {
   position: absolute;
   top: 35.4%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 54%;
+  width: 48%;
+  height: 48%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(26px, 5.5vw, 40px);
+  font-size: clamp(18px, 3.8vw, 26px);
+  line-height: 1;
   z-index: 1;
-  box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.4), 0 4px 10px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 3px 8px rgba(0, 0, 0, 0.6);
   user-select: none;
+  box-sizing: border-box;
+}
+
+.avatar-radial-wrapper.avatar-radial-glow-vez {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.avatar-radial-wrapper.avatar-radial-glow-alvo {
+  box-shadow: none !important;
+  border: none !important;
 }
 
 /* A moldura PNG por cima do avatar (z-index maior) */

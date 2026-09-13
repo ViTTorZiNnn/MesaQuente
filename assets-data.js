@@ -505,29 +505,34 @@ export const molduraPlayerSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox
       <stop offset="0%" stop-color="#240508"/>
       <stop offset="100%" stop-color="#0d0002"/>
     </linearGradient>
+    <!-- Máscara precisa: orifício central perfeitamente vazado de raio 49 para o avatar interno -->
+    <mask id="avatar-hole-cutout">
+      <rect width="200" height="240" fill="#ffffff"/>
+      <circle cx="100" cy="85" r="49" fill="#000000"/>
+    </mask>
   </defs>
 
-  <g filter="url(#player-frame-shadow)">
+  <g filter="url(#player-frame-shadow)" mask="url(#avatar-hole-cutout)">
     <!-- AVATAR RING MOLDURA -->
-    <!-- Solid Black Outer Rim -->
+    <!-- Borda Externa Preta -->
     <circle cx="100" cy="85" r="76" fill="#0b0b0b"/>
     <circle cx="100" cy="85" r="70" fill="url(#frame-gold-border)" stroke="#000000" stroke-width="6"/>
     <circle cx="100" cy="85" r="60" fill="#1a0204" stroke="#000000" stroke-width="4"/>
 
-    <!-- Clear Inner Window for Avatar Photo/Emoji to Sit Underneath -->
-    <circle cx="100" cy="85" r="54" fill="none"/>
+    <!-- Anel interno decorativo dourado ao redor da janela transparente -->
+    <circle cx="100" cy="85" r="54" fill="none" stroke="#ffda00" stroke-width="2" opacity="0.6"/>
 
-    <!-- Frame Rivets -->
+    <!-- Rebites da Moldura -->
     <circle cx="45" cy="45" r="4" fill="#ffffff" stroke="#000000" stroke-width="2"/>
     <circle cx="155" cy="45" r="4" fill="#ffffff" stroke="#000000" stroke-width="2"/>
     <circle cx="34" cy="95" r="4" fill="#ffffff" stroke="#000000" stroke-width="2"/>
     <circle cx="166" cy="95" r="4" fill="#ffffff" stroke="#000000" stroke-width="2"/>
 
-    <!-- THICK BOTTOM NAMEPLATE BASE -->
+    <!-- PLAQUETA INFERIOR COM NOME -->
     <g transform="translate(100, 190)">
       <rect x="-86" y="-22" width="172" height="44" rx="12" fill="#0b0b0b"/>
       <rect x="-82" y="-18" width="164" height="36" rx="9" fill="url(#nameplate-grad)" stroke="url(#frame-gold-border)" stroke-width="3"/>
-      <!-- Decorative Screws on Nameplate -->
+      <!-- Parafusos da Plaqueta -->
       <circle cx="-70" cy="0" r="3.5" fill="#ffd166" stroke="#000000" stroke-width="1.5"/>
       <circle cx="70" cy="0" r="3.5" fill="#ffd166" stroke="#000000" stroke-width="1.5"/>
     </g>
@@ -643,7 +648,7 @@ export const sairSalaSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
 </svg>`;
 
 // ============================================================
-// 12. CARTAS DE CATEGORIA (CARTOON / COMIC)
+// 12. CARTAS DE CATEGORIA FECHADAS (CARTOON / COMIC)
 // ============================================================
 export function criarCardCategoriaSvg(titulo, icone, corGrad1, corGrad2, corBorda) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 220" width="160" height="220">
@@ -652,12 +657,12 @@ export function criarCardCategoriaSvg(titulo, icone, corGrad1, corGrad2, corBord
       <stop offset="0%" stop-color="${corGrad1}"/>
       <stop offset="100%" stop-color="${corGrad2}"/>
     </linearGradient>
-    <filter id="card-drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <filter id="card-drop-shadow-${corGrad1.replace('#','')}" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="4" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.8"/>
     </filter>
   </defs>
 
-  <g filter="url(#card-drop-shadow)">
+  <g filter="url(#card-drop-shadow-${corGrad1.replace('#','')})">
     <!-- Moldura Externa Preta Grossa -->
     <rect x="8" y="8" width="144" height="204" rx="14" fill="#0b0b0b" stroke="#000000" stroke-width="4"/>
     
@@ -668,7 +673,7 @@ export function criarCardCategoriaSvg(titulo, icone, corGrad1, corGrad2, corBord
     <rect x="18" y="18" width="124" height="184" rx="7" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="4,4"/>
 
     <!-- Ícone Central Flutuante -->
-    <circle cx="80" cy="95" r="38" fill="#000000" opacity="0.35"/>
+    <circle cx="80" cy="95" r="38" fill="#0b0b0b" opacity="0.35"/>
     <circle cx="80" cy="92" r="35" fill="#140306" stroke="${corBorda}" stroke-width="2.5"/>
     <text x="80" y="103" font-size="36" text-anchor="middle" font-family="'Outfit', sans-serif">${icone}</text>
 
@@ -679,16 +684,87 @@ export function criarCardCategoriaSvg(titulo, icone, corGrad1, corGrad2, corBord
 </svg>`;
 }
 
+// ============================================================
+// 13. CARTAS DE CATEGORIA FRENTE / ABERTA (COM ÁREA CENTRAL PARA TEXTO SOBREPOSTO)
+// ============================================================
+export function criarFrontCardSvg(titulo, icone, corGrad1, corGrad2, corBorda) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" width="200" height="280">
+  <defs>
+    <linearGradient id="front-bg-${corGrad1.replace('#','')}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#180b18"/>
+      <stop offset="50%" stop-color="#100512"/>
+      <stop offset="100%" stop-color="#08020a"/>
+    </linearGradient>
+    <linearGradient id="front-accent-${corGrad1.replace('#','')}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${corGrad1}"/>
+      <stop offset="100%" stop-color="${corGrad2}"/>
+    </linearGradient>
+    <filter id="front-shadow-${corGrad1.replace('#','')}" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#000000" flood-opacity="0.85"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#front-shadow-${corGrad1.replace('#','')})">
+    <!-- Moldura Externa Preta Grossa -->
+    <rect x="6" y="6" width="188" height="268" rx="16" fill="#0b0b0b" stroke="#000000" stroke-width="4"/>
+    
+    <!-- Fundo Interno Escuro com Tonalidade da Categoria -->
+    <rect x="10" y="10" width="180" height="260" rx="12" fill="url(#front-bg-${corGrad1.replace('#','')})" stroke="${corBorda}" stroke-width="3"/>
+    
+    <!-- Borda Decorativa Interna Pontilhada -->
+    <rect x="16" y="16" width="168" height="248" rx="8" fill="none" stroke="${corBorda}" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+    <!-- Faixa de Topo com Nome da Categoria -->
+    <rect x="20" y="18" width="160" height="34" rx="8" fill="#0b0b0b" stroke="${corBorda}" stroke-width="2"/>
+    <text x="100" y="40" font-size="11" font-weight="900" text-anchor="middle" fill="#ffffff" font-family="'Outfit', sans-serif" letter-spacing="1">${icone}  ${titulo}</text>
+
+    <!-- Área Central Translúcida para Máxima Legibilidade do Texto Sobreposto -->
+    <rect x="18" y="58" width="164" height="162" rx="10" fill="#040106" fill-opacity="0.75" stroke="${corBorda}" stroke-width="1.5" stroke-opacity="0.35"/>
+
+    <!-- Detalhes de Canto (Estilo Comic) -->
+    <circle cx="26" cy="66" r="2.5" fill="${corBorda}" opacity="0.7"/>
+    <circle cx="174" cy="66" r="2.5" fill="${corBorda}" opacity="0.7"/>
+    <circle cx="26" cy="212" r="2.5" fill="${corBorda}" opacity="0.7"/>
+    <circle cx="174" cy="212" r="2.5" fill="${corBorda}" opacity="0.7"/>
+
+    <!-- Faixa Inferior de Rodapé -->
+    <rect x="34" y="228" width="132" height="24" rx="6" fill="#0b0b0b" stroke="${corBorda}" stroke-width="1.5"/>
+    <text x="100" y="244" font-size="9" font-weight="900" text-anchor="middle" fill="${corBorda}" font-family="'Outfit', sans-serif" letter-spacing="1">🔥 MESA QUENTE</text>
+  </g>
+</svg>`;
+}
+
+// 1. VOTAÇÃO
 export const cardVotacaoSvg = criarCardCategoriaSvg("VOTAÇÃO", "🎯", "#e63946", "#670710", "#ffb703");
-export const cardDilemasSvg = criarCardCategoriaSvg("DILEMAS", "🤐", "#9d4edd", "#3a0ca3", "#f72585");
-export const cardBlefeSvg = criarCardCategoriaSvg("BLEFE", "🎭", "#4361ee", "#101f6e", "#4cc9f0");
-export const cardDebateSvg = criarCardCategoriaSvg("DEBATE", "⚔️", "#d90429", "#590d22", "#ffb703");
-export const cardSintoniaSvg = criarCardCategoriaSvg("SINTONIA", "🌡️", "#ff007f", "#7928ca", "#ffd166");
-export const cardDesafiosSvg = criarCardCategoriaSvg("DESAFIO", "⚡", "#ff5400", "#7a1a00", "#ffda00");
-export const cardCasaisSvg = cardSintoniaSvg;
-export const cardSaficoSvg = cardDilemasSvg;
-export const cardPicanteSvg = cardSintoniaSvg;
-export const cardEspecialSvg = cardBlefeSvg;
+export const frontCardVotacaoSvg = criarFrontCardSvg("VOTAÇÃO", "🎯", "#e63946", "#670710", "#ffb703");
+
+// 2. CONFISSÕES
+export const cardConfissoesSvg = criarCardCategoriaSvg("CONFISSÕES", "🤐", "#9d4edd", "#3a0ca3", "#f72585");
+export const frontCardConfissoesSvg = criarFrontCardSvg("CONFISSÕES", "🤐", "#9d4edd", "#3a0ca3", "#f72585");
+export const cardDilemasSvg = cardConfissoesSvg;
+
+// 3. CONTRA O TEMPO
+export const cardTempoSvg = criarCardCategoriaSvg("CONTRA O TEMPO", "⏱️", "#d90429", "#590d22", "#ffb703");
+export const frontCardTempoSvg = criarFrontCardSvg("CONTRA O TEMPO", "⏱️", "#d90429", "#590d22", "#ffb703");
+export const cardDebateSvg = cardTempoSvg;
+
+// 4. DESAFIOS
+export const cardDesafiosSvg = criarCardCategoriaSvg("DESAFIOS", "⚡", "#ff5400", "#7a1a00", "#ffda00");
+export const frontCardDesafiosSvg = criarFrontCardSvg("DESAFIOS", "⚡", "#ff5400", "#7a1a00", "#ffda00");
+
+// 5. PICANTE
+export const cardPicanteSvg = criarCardCategoriaSvg("PICANTE", "🌶️", "#ff007f", "#7928ca", "#ffd166");
+export const frontCardPicanteSvg = criarFrontCardSvg("PICANTE", "🌶️", "#ff007f", "#7928ca", "#ffd166");
+export const cardSintoniaSvg = cardPicanteSvg;
+
+// 6. SURPRESA
+export const cardSurpresaSvg = criarCardCategoriaSvg("SURPRESA", "🎁", "#4361ee", "#101f6e", "#4cc9f0");
+export const frontCardSurpresaSvg = criarFrontCardSvg("SURPRESA", "🎁", "#4361ee", "#101f6e", "#4cc9f0");
+export const cardBlefeSvg = cardSurpresaSvg;
+
+export const cardCasaisSvg = cardPicanteSvg;
+export const cardSaficoSvg = cardConfissoesSvg;
+export const cardEspecialSvg = cardSurpresaSvg;
 
 // Write all assets to root filesystem so both direct file serving and routes work
 try {
@@ -703,36 +779,68 @@ try {
   fs.writeFileSync("redemoinho.svg", redemoinhoSvg);
   fs.writeFileSync("baralho.svg", baralhoSvg);
   fs.writeFileSync("moldura-playeres.svg", molduraPlayerSvg);
+  fs.writeFileSync("moldura-playeres.png", molduraPlayerSvg);
   fs.writeFileSync("engrenagem.svg", engrenagemSvg);
   fs.writeFileSync("reacoes.svg", reacoesSvg);
   fs.writeFileSync("sair-da-sala.svg", sairSalaSvg);
 
+  // 1. VOTAÇÃO
   fs.writeFileSync("cartas-votação.png", cardVotacaoSvg);
   fs.writeFileSync("cartas-votacao.png", cardVotacaoSvg);
   fs.writeFileSync("cartas-votação.svg", cardVotacaoSvg);
   fs.writeFileSync("cartas-votacao.svg", cardVotacaoSvg);
+  fs.writeFileSync("front-card-votação.png", frontCardVotacaoSvg);
+  fs.writeFileSync("front-card-votacao.png", frontCardVotacaoSvg);
+  fs.writeFileSync("front-card-votação.svg", frontCardVotacaoSvg);
+  fs.writeFileSync("front-card-votacao.svg", frontCardVotacaoSvg);
 
-  fs.writeFileSync("cartas-confissões.png", cardDilemasSvg);
-  fs.writeFileSync("cartas-confissoes.png", cardDilemasSvg);
-  fs.writeFileSync("cartas-confissões.svg", cardDilemasSvg);
-  fs.writeFileSync("cartas-confissoes.svg", cardDilemasSvg);
+  // 2. CONFISSÕES
+  fs.writeFileSync("cartas-confissões.png", cardConfissoesSvg);
+  fs.writeFileSync("cartas-confissoes.png", cardConfissoesSvg);
+  fs.writeFileSync("cartas-confissões.svg", cardConfissoesSvg);
+  fs.writeFileSync("cartas-confissoes.svg", cardConfissoesSvg);
+  fs.writeFileSync("front-card-confissões.png", frontCardConfissoesSvg);
+  fs.writeFileSync("front-card-confissoes.png", frontCardConfissoesSvg);
+  fs.writeFileSync("front-card-confissões.svg", frontCardConfissoesSvg);
+  fs.writeFileSync("front-card-confissoes.svg", frontCardConfissoesSvg);
 
-  fs.writeFileSync("cartas-surpresa.png", cardBlefeSvg);
-  fs.writeFileSync("cartas-surpresa.svg", cardBlefeSvg);
+  // 3. CONTRA O TEMPO (cartas-contra-o-tempo.png vs front-card-tempo.png)
+  fs.writeFileSync("cartas-contra-o-tempo.png", cardTempoSvg);
+  fs.writeFileSync("cartas-contra-o-tempo.svg", cardTempoSvg);
+  fs.writeFileSync("cartas-tempo.png", cardTempoSvg);
+  fs.writeFileSync("cartas-tempo.svg", cardTempoSvg);
+  fs.writeFileSync("front-card-tempo.png", frontCardTempoSvg);
+  fs.writeFileSync("front-card-tempo.svg", frontCardTempoSvg);
+  fs.writeFileSync("front-card-contra-o-tempo.png", frontCardTempoSvg);
+  fs.writeFileSync("front-card-contra-o-tempo.svg", frontCardTempoSvg);
 
-  fs.writeFileSync("cartas-contra-o-tempo.png", cardDebateSvg);
-  fs.writeFileSync("cartas-contra-o-tempo.svg", cardDebateSvg);
-
-  fs.writeFileSync("cartas-picantes.png", cardSintoniaSvg);
-  fs.writeFileSync("cartas-picantes.svg", cardSintoniaSvg);
-  fs.writeFileSync("cartas-picante.png", cardSintoniaSvg);
-  fs.writeFileSync("cartas-picante.svg", cardSintoniaSvg);
-
+  // 4. DESAFIOS (cartas-desafios.png vs front-card-desafios.png)
   fs.writeFileSync("cartas-desafios.png", cardDesafiosSvg);
   fs.writeFileSync("cartas-desafios.svg", cardDesafiosSvg);
   fs.writeFileSync("cartas-desafio.png", cardDesafiosSvg);
   fs.writeFileSync("cartas-desafio.svg", cardDesafiosSvg);
+  fs.writeFileSync("front-card-desafios.png", frontCardDesafiosSvg);
+  fs.writeFileSync("front-card-desafios.svg", frontCardDesafiosSvg);
+  fs.writeFileSync("front-card-desafio.png", frontCardDesafiosSvg);
+  fs.writeFileSync("front-card-desafio.svg", frontCardDesafiosSvg);
 
+  // 5. PICANTE (cartas-picantes.png vs front-card-picante.png)
+  fs.writeFileSync("cartas-picantes.png", cardPicanteSvg);
+  fs.writeFileSync("cartas-picantes.svg", cardPicanteSvg);
+  fs.writeFileSync("cartas-picante.png", cardPicanteSvg);
+  fs.writeFileSync("cartas-picante.svg", cardPicanteSvg);
+  fs.writeFileSync("front-card-picante.png", frontCardPicanteSvg);
+  fs.writeFileSync("front-card-picante.svg", frontCardPicanteSvg);
+  fs.writeFileSync("front-card-picantes.png", frontCardPicanteSvg);
+  fs.writeFileSync("front-card-picantes.svg", frontCardPicanteSvg);
+
+  // 6. SURPRESA (cartas-surpresa.png vs front-card-surpresa.png)
+  fs.writeFileSync("cartas-surpresa.png", cardSurpresaSvg);
+  fs.writeFileSync("cartas-surpresa.svg", cardSurpresaSvg);
+  fs.writeFileSync("front-card-surpresa.png", frontCardSurpresaSvg);
+  fs.writeFileSync("front-card-surpresa.svg", frontCardSurpresaSvg);
+
+  // Compatibilidade legada
   fs.writeFileSync("cartas-casais.svg", cardCasaisSvg);
   fs.writeFileSync("cartas-casais.png", cardCasaisSvg);
   fs.writeFileSync("cartas-safico.svg", cardSaficoSvg);
@@ -740,7 +848,7 @@ try {
   fs.writeFileSync("cartas-especial.svg", cardEspecialSvg);
   fs.writeFileSync("cartas-especial.png", cardEspecialSvg);
 
-  console.log("All V3 vector assets and category cards generated successfully!");
+  console.log("All V3 vector assets, category cards and front cards generated successfully!");
 } catch (err) {
   console.error("Error writing asset files:", err);
 }

@@ -26,7 +26,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "niveis_intimidade",
     nome: "Níveis de Intimidade",
-    categoria: "casal",
+    categoria: "confissoes",
     descricao: "Perguntas de vulnerabilidade e flerte em 3 níveis (Percepção, Conexão e +18 Íntimo).",
     icone: "💜",
     age_rating: "18+",
@@ -180,7 +180,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "roleta_consequencias",
     nome: "Roleta de Consequências",
-    categoria: "casal",
+    categoria: "desafios",
     descricao: "Verdade ou Desafio adaptado para o ambiente online, fotos de galeria e revelações.",
     icone: "🎭",
     age_rating: "18+",
@@ -260,7 +260,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "eu_nunca",
     nome: "Eu Nunca: Vale Tudo",
-    categoria: "amigas",
+    categoria: "votacao",
     descricao: "O clássico Eu Nunca com confissões hilárias e revelações sem filtro.",
     icone: "🍷",
     age_rating: "18+",
@@ -350,7 +350,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "quem_e_mais_provavel",
     nome: "Quem é Mais Provável?",
-    categoria: "amigas",
+    categoria: "votacao",
     descricao: "Coloque as amigas na fogueira apontando o dedo para a pessoa mais provável da situação.",
     icone: "🎯",
     age_rating: "18+",
@@ -429,7 +429,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "preencha_a_lacuna",
     nome: "Preencha a Lacuna",
-    categoria: "amigas",
+    categoria: "surpresa",
     descricao: "Humor ácido e +18 completando a frase preta com opções brancas bizarras e explícitas.",
     icone: "🃏",
     age_rating: "18+",
@@ -516,7 +516,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "quebra_gelo",
     nome: "Quebra-Gelo Clássico",
-    categoria: "especial",
+    categoria: "confissoes",
     descricao: "Perguntas leves e curiosas para esquentar a conversa e soltar a galera.",
     icone: "🧊",
     age_rating: "geral",
@@ -581,7 +581,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "fogo_no_parquinho",
     nome: "Fogo no Parquinho",
-    categoria: "especial",
+    categoria: "picante",
     descricao: "Clima tenso, votos polêmicos e discussões que vão incendiar a mesa.",
     icone: "🔥",
     age_rating: "18+",
