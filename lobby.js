@@ -2789,6 +2789,8 @@ escutarPartida(codigoSala, (partida) => {
         }
         if (cartaFaceFrente) {
           cartaFaceFrente.style.backgroundImage = `url("${artesCarta.frente}")`;
+          cartaFaceFrente.style.backgroundSize = "cover";
+          cartaFaceFrente.style.backgroundPosition = "center";
         }
         if (cartaDeckIcone) cartaDeckIcone.textContent = carta.deck_icone || "🃏";
         if (cartaDeckNome) cartaDeckNome.textContent = carta.deck_nome || "Baralho";
@@ -2826,6 +2828,8 @@ escutarPartida(codigoSala, (partida) => {
         }
         if (cartaFaceVerso) {
           cartaFaceVerso.style.backgroundImage = `url("${artesCarta.fechada}")`;
+          cartaFaceVerso.style.backgroundSize = "cover";
+          cartaFaceVerso.style.backgroundPosition = "center";
         }
         if (cartaTexto) cartaTexto.textContent = "";
         if (textoOucaLeitor) {
@@ -2859,6 +2863,8 @@ escutarPartida(codigoSala, (partida) => {
       }
       if (cartaFaceFrente) {
         cartaFaceFrente.style.backgroundImage = `url("${artesCarta.frente}")`;
+        cartaFaceFrente.style.backgroundSize = "cover";
+        cartaFaceFrente.style.backgroundPosition = "center";
       }
       if (cartaDeckIcone) cartaDeckIcone.textContent = carta.deck_icone || "🃏";
       if (cartaDeckNome) cartaDeckNome.textContent = carta.deck_nome || "Baralho";

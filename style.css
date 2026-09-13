@@ -2458,15 +2458,17 @@ body.tela-inicio {
 }
 
 .carta-face-frente {
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #1a0f28; /* Fallback discreto caso a imagem falhe */
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
   border: 3px solid #0b0b0b;
   box-shadow: var(--shadow-25d-card);
   padding: 16px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   text-align: center;
   position: relative;
 }
@@ -2475,10 +2477,20 @@ body.tela-inicio {
   display: none;
 }
 
+/* Ocultar elementos genéricos do cabeçalho da carta para exibir puramente a arte da categoria */
+.carta-topo-fisica,
+.carta-deck-badge,
+.badge-mecanica-carta,
+.carta-cabecalho-fisica,
+.carta-naipe-tipo {
+  display: none !important;
+}
+
 .carta-face-verso {
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #120b1c;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
   border: 3px solid #0b0b0b;
   box-shadow: var(--shadow-25d-card);
   transform: rotateY(180deg);
@@ -2498,40 +2510,24 @@ body.tela-inicio {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 12px;
+  padding-bottom: 14px;
 }
 
 .simbolo-verso-central,
 .texto-verso-central {
-  display: none;
+  display: none !important;
 }
 
 .carta-cabecalho-fisica {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 1;
+  display: none !important;
 }
 
 .carta-naipe-tipo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 900;
-  color: var(--accent-gold);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  display: none !important;
 }
 
 .badge-mecanica-carta {
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0.8px;
-  padding: 3px 8px;
-  border-radius: 10px;
-  text-transform: uppercase;
+  display: none !important;
 }
 
 .tag-mechanic-ALVO { background: rgba(255, 77, 46, 0.25); color: #ff6b4a; border: 1px solid rgba(255, 77, 46, 0.5); }
@@ -2542,23 +2538,33 @@ body.tela-inicio {
 
 .carta-corpo-fisica {
   flex: 1;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
+  padding: 10px 6px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .carta-texto-fisica {
+  font-family: 'Outfit', sans-serif;
   font-size: clamp(14px, 3.2vw, 19px);
   font-weight: 800;
-  line-height: 1.45;
+  line-height: 1.42;
   color: #ffffff;
   letter-spacing: -0.2px;
   text-align: center;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.98), 0 0 14px rgba(0, 0, 0, 0.9);
-  padding: 0 10px;
+  /* Contraste garantido com backdrop sutil atrás apenas do texto + text-shadow escuro */
+  background: rgba(10, 6, 16, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 218, 0, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+  max-width: 96%;
 }
 
 .carta-rodape-fisica {
@@ -7223,6 +7229,298 @@ body.tela-lobby-espera-ativa .gameplay-viewport-container {
   font-size: 12px;
   color: #fca5a5;
 }
+
+/* ============================================================
+   CORREÇÃO 2: LAYOUT MOBILE ESPECÍFICO (CELULAR / PORTRAIT)
+   Sem NENHUM scroll (vertical ou horizontal), viewport 100dvh fixa,
+   jogadores em lista vertical à esquerda, HUD nos 4 cantos compacto,
+   e carta central com visualização limpa e espaçamento confortável.
+   ============================================================ */
+@media screen and (max-width: 768px) {
+  /* 1. Trava geral da viewport e eliminação total de scroll */
+  html,
+  body {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: 100vw !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    inset: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    touch-action: manipulation;
+  }
+
+  body.tela-gameplay-v3 {
+    overflow: hidden !important;
+    height: 100dvh !important;
+    width: 100vw !important;
+  }
+
+  .painel-mesa-jogo-v3 {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: 100vw !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .cenario-gameplay-stage {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .cenario-mesa-container {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* 2. HUD SUPERIOR E CABEÇALHO COMPACTOS (SEM COLISÃO) */
+  .hud-lado-esquerdo {
+    top: max(8px, env(safe-area-inset-top)) !important;
+    left: 8px !important;
+    gap: 4px !important;
+    z-index: 1000 !important;
+  }
+
+  .hud-lado-direito {
+    top: max(8px, env(safe-area-inset-top)) !important;
+    right: 8px !important;
+    gap: 4px !important;
+    z-index: 1000 !important;
+  }
+
+  .btn-hud-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .btn-hud-mini {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 11px !important;
+  }
+
+  .cabecalho-rodada-mesa {
+    top: max(8px, env(safe-area-inset-top)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 3px 8px !important;
+    gap: 4px !important;
+    font-size: 10px !important;
+    max-width: calc(100vw - 160px) !important;
+    z-index: 900 !important;
+  }
+
+  .tag-deck-discreta {
+    font-size: 10px !important;
+    letter-spacing: 0px !important;
+  }
+
+  .contador-rodada-discreto {
+    font-size: 10px !important;
+    padding-left: 4px !important;
+  }
+
+  .tag-leitor-vez-discreta {
+    top: calc(max(8px, env(safe-area-inset-top)) + 30px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 2px 10px !important;
+    font-size: 10.5px !important;
+    max-width: calc(100vw - 160px) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    z-index: 900 !important;
+  }
+
+  .leitor-instrucao-curta {
+    display: none !important; /* Oculta instrução secundária longa para não colidir com botões laterais */
+  }
+
+  /* 3. AVATARES DOS JOGADORES: LISTA VERTICAL NO CANTO ESQUERDO */
+  .camada-jogadores-radial {
+    position: absolute !important;
+    left: 8px !important;
+    top: 76px !important;
+    bottom: 68px !important;
+    width: 68px !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 6px !important;
+    z-index: 35 !important;
+    pointer-events: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .camada-jogadores-radial::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .assento-radial-jogador {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 60px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .avatar-radial-wrapper {
+    width: 50px !important;
+    height: 60px !important; /* proporção 200/240 da moldura */
+    position: relative !important;
+  }
+
+  .avatar-radial-fundo {
+    font-size: 13px !important;
+  }
+
+  .nome-radial-jogador {
+    font-size: 8px !important;
+    max-width: 52px !important;
+    letter-spacing: 0px !important;
+  }
+
+  .badge-radial-status {
+    top: -5px !important;
+    font-size: 7px !important;
+    padding: 1px 4px !important;
+  }
+
+  /* 4. ÁREA CENTRAL: REDEMOINHO, BARALHO E CARTA FÍSICA */
+  .centro-mesa-v3 {
+    left: calc(50% + 22px) !important;
+    top: 48% !important;
+    transform: translate(-50%, -50%) !important;
+    width: clamp(140px, 44vw, 190px) !important;
+    height: clamp(140px, 44vw, 190px) !important;
+  }
+
+  .redemoinho-vortex-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .baralho-asset-wrapper {
+    width: clamp(88px, 28vw, 120px) !important;
+  }
+
+  .badge-vez-flutuante {
+    font-size: 10px !important;
+    padding: 2px 8px !important;
+    top: -26px !important;
+  }
+
+  .botao-puxar-carta-3d {
+    padding: 7px 14px !important;
+    font-size: 11px !important;
+    border-radius: 12px !important;
+  }
+
+  .box-espera-puxar {
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+  }
+
+  /* Carta Central Aberta / Revelada */
+  .carta-flip-wrapper {
+    left: calc(50% + 22px) !important;
+    top: 48% !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(60vw, 215px) !important;
+    max-height: 48vh !important;
+    aspect-ratio: 5 / 7 !important;
+    z-index: 60 !important;
+  }
+
+  .carta-face-frente {
+    padding: 12px 10px !important;
+  }
+
+  .carta-texto-fisica {
+    font-size: clamp(12.5px, 3.4vw, 15px) !important;
+    line-height: 1.35 !important;
+    padding: 10px 12px !important;
+  }
+
+  .instrucao-leitor-voz-alta {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
+
+  .botao-revelar-carta-3d {
+    padding: 7px 12px !important;
+    font-size: 10.5px !important;
+    margin-top: 4px !important;
+  }
+
+  /* 5. HUD INFERIOR: BOTÕES DE CANTOS E CONTROLES DE AVANÇO */
+  #btn-regras-jogo,
+  .btn-hud-regras {
+    bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    left: 8px !important;
+    width: 38px !important;
+    height: 38px !important;
+    z-index: 950 !important;
+  }
+
+  .bloco-reacoes-retratil {
+    bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    right: 8px !important;
+    z-index: 950 !important;
+  }
+
+  .btn-hud-reacoes {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .popover-reacoes-menu {
+    width: min(84vw, 250px) !important;
+    bottom: 46px !important;
+    right: 0 !important;
+  }
+
+  .zona-inferior-hud {
+    bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    left: calc(50% + 16px) !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 110px) !important;
+    max-width: 290px !important;
+    gap: 4px !important;
+    z-index: 850 !important;
+  }
+
+  .btn-proxima-rodada-docked {
+    font-size: 11px !important;
+    padding: 7px 12px !important;
+  }
+}
+
 
 
 
