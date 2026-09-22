@@ -8,7 +8,7 @@
 // ============================================================
 
 const firebaseConfig = {
- apiKey: "AIzaSyCTtxOifcCNB7lObqu1CNwBj288vYwf_zQ",
+  apiKey: "AIzaSyCTtxOifcCNB7lObqu1CNwBj288vYwf_zQ",
   authDomain: "mesaquente-d7ec5.firebaseapp.com",
   databaseURL: "https://mesaquente-d7ec5-default-rtdb.firebaseio.com",
   projectId: "mesaquente-d7ec5",
