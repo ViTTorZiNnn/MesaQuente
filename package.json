@@ -1,0 +1,1 @@
+{"name":"mesa-quente","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs"},"dependencies":{"firebase-admin":"^13.0.0"}}

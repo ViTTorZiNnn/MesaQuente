@@ -1,10 +1,1 @@
-{
-  "rules": {
-    "salas": {
-      "$codigoSala": {
-        ".read": true,
-        ".write": true
-      }
-    }
-  }
-}
+{"rules":{".read":false,".write":false}}

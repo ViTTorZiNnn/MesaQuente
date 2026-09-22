@@ -1,3 +1,11 @@
+# Mesa Quente — 3D com servidor de partidas
+
+Para ativar esta versão, siga [ATIVAR-ONLINE.md](ATIVAR-ONLINE.md). O site fica em `public/` e requer a API da Vercel. As regras e credenciais precisam ser configuradas antes do uso.
+
+## Guia histórico da versão anterior
+
+O conteúdo abaixo descreve a versão antiga sem proteção; **não use suas regras abertas na versão nova**.
+
 # Mesa Quente — Etapa 1: Esqueleto de Sala
 
 Esta é a **Etapa 1** do projeto: só a parte de criar sala, entrar em sala e
