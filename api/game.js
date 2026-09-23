@@ -5,6 +5,7 @@ import { randomInt, randomUUID } from 'node:crypto';
 
 import {
   applyAction,
+  settleVoting,
   connected,
   validateConfig
 } from '../server/motor.js';
@@ -329,6 +330,7 @@ export default async function handler(req, res) {
         }
 
         presence(room, uid, now);
+        settleVoting(room, now);
 
         if (body.op === 'leave') {
           delete room.jogadores[uid];
@@ -417,3 +419,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
