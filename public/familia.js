@@ -1,0 +1,18 @@
+import {Mesa3D} from './mesa3d.js?v=mesaviva05';
+import {GameAudio,mountAudioControls} from './som.js?v=mesaviva05';
+import {renderPlayerDock} from './mobile-ui.js?v=mesaviva05';
+import {mountVisualControls} from './visual.js?v=mesaviva05';
+import {familyModes,parsePlayers,nextFamilyCard,toneFor} from './familia-content.js?v=mesaviva05';
+import {TONES} from './editorial.js?v=mesaviva05';
+const $=id=>document.getElementById(id);let mesa,players=[],mode,turn=0,round=0,phase='deck',card='',used=[],tones=['leve'],currentTone='leve',timer,toastTimer;
+function toast(message){$('toast').textContent=message.message||message;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6000);}
+const audio=new GameAudio(toast);mountAudioControls(audio);mountVisualControls();
+for(const [id,m]of Object.entries(familyModes)){const option=document.createElement('option');option.value=id;option.textContent=m.nome;$('family-mode').append(option);}
+$('family-mode').onchange=()=>{$('family-rule').textContent=familyModes[$('family-mode').value].regra;};$('family-mode').onchange();
+function render(){const m=familyModes[mode],reader=players[turn];$('game-mode').textContent=m.nome+' · '+TONES[currentTone]+' · Rodada '+round;$('turn-title').textContent='Vez de '+reader.nome;$('turn-hint').textContent=m.regra;$('local-draw').hidden=phase!=='deck';$('local-next').hidden=phase==='deck'||phase==='reading';$('local-readout').hidden=phase==='deck';$('local-readout').textContent=phase==='deck'?'':card;mesa.setCard({id:'local-'+round,deckIndex:m.deck,phase:phase==='deck'?'deck':'public',showFront:true,text:phase==='deck'?'':card,canDraw:phase==='deck'});mesa.setPlayers(players,reader.id,reader.id);renderPlayerDock(players,reader.id,reader.id);}
+function next(){clearInterval(timer);round++;turn=(round-1)%players.length;phase='deck';currentTone=toneFor(tones,round);card=nextFamilyCard(mode,used,Math.random,currentTone);$('local-status').textContent='Toque no baralho para começar.';render();audio.effect('turn');}
+function draw(){if(phase!=='deck')return;phase=mode==='votacao'?'reading':'public';render();audio.effect('draw');if(mode==='votacao'){const end=Date.now()+5000;const tick=()=>{const seconds=Math.max(0,Math.ceil((end-Date.now())/1000));$('local-status').textContent=seconds?'Leia a pergunta. Votação em '+seconds+'…':'3, 2, 1… Todos apontam para sua escolha!';if(!seconds){clearInterval(timer);phase='public';render();audio.effect('reveal');}};tick();timer=setInterval(tick,200);}else $('local-status').textContent='Conversem à vontade. Avancem quando terminarem.';}
+$('family-form').onsubmit=e=>{e.preventDefault();audio.startFromGesture();try{const names=parsePlayers($('family-names').value);players=names.map((nome,i)=>({id:'p'+i,nome,avatar:{emoji:['🦊','🐸','🐱','🐻','🐼','🐯'][i%6],cor:'#97587b'}}));mode=$('family-mode').value;const tone=$('family-tone').value;if(tone==='adulto'&&!$('family-adult').checked)throw Error('Confirme a escolha do tom adulto.');tones=tone==='mix'?['leve','profundo']:[tone];round=0;used=[];$('family-setup').hidden=true;$('game').hidden=false;if(!mesa)mesa=new Mesa3D($('stage'),{onDraw:draw,onError:toast});mesa.pause(false);next();}catch(e){$('family-error').textContent=e.message;}};
+$('local-draw').onclick=draw;$('local-next').onclick=()=>{if(phase!=='deck'&&phase!=='reading')next();};$('local-exit').onclick=()=>{clearInterval(timer);mesa.pause(true);$('game').hidden=true;$('family-setup').hidden=false;};
+
+$('family-tone').onchange=()=>{const adult=$('family-tone').value==='adulto';$('family-adult-label').hidden=!adult;$('family-adult').required=adult;};$('local-skip').onclick=()=>next();
