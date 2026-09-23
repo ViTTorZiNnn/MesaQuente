@@ -75,6 +75,8 @@ export class RoomService {
   async create(name,avatar,config){const result=await this.request('create',{name,avatar,config});this.remember(name,avatar);return result.code;}
   async join(code,name,avatar){const result=await this.request('join',{code:code.trim().toUpperCase(),name,avatar});this.remember(name,avatar);return result.code;}
   async action(type,payload={}){await this.request('action',{type,payload});}
+  async chat(text,messageId){await this.request('chat',{text,messageId});}
   async react(emoji){await this.request('react',{emoji});}
   async leave(){clearTimeout(this.timer);try{if(this.code)await this.request('leave');}catch(e){this.poll();throw e;}this.code=null;this.lastRoom=null;sessionStorage.removeItem('mq3_room');sessionStorage.removeItem('mq3_profile');}
 }
+

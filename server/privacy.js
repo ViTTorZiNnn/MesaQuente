@@ -4,6 +4,7 @@ export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');
  const out={};for(const k of ['schemaVersion','hostId','status','minigames','modoLivre','numeroRodadas','ready','reactions','tones','adultConfirmed'])if(room[k]!==undefined)out[k]=structuredClone(room[k]);
  out.jogadores={};for(const [id,p] of Object.entries(room.jogadores))out.jogadores[id]={nome:p.nome,avatar:p.avatar,conectado:p.conectado,entrouEm:p.entrouEm};
+ out.chat=Object.entries(room.chat||{}).sort((a,b)=>a[1].at-b[1].at||a[0].localeCompare(b[0])).slice(-60).map(([id,m])=>({id,uid:m.uid,name:m.name,emoji:m.emoji,text:m.text,at:m.at}));
  const p=room.partida,c=p?.cartaAtual;if(!c)return out;
  const own=c.readerId===uid,participant=c.participants.includes(uid),results=c.phase==='results'&&!c.skipped,visible=results||!c.skipped&&(c.phase==='public'||participant&&own&&['private','voting'].includes(c.phase));
  const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);

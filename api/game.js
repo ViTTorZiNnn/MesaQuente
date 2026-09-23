@@ -1,3 +1,4 @@
+import {appendChat} from '../server/chat.js';
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
@@ -356,6 +357,8 @@ export default async function handler(req, res) {
             () => randomInt(0, 2 ** 30) / (2 ** 30),
             now
           );
+        } else if (body.op === 'chat') {
+          appendChat(room,uid,body.text,body.messageId,now);
         } else if (body.op === 'react') {
           if (!['🔥', '😂', '👏', '😳'].includes(body.emoji)) {
             throw new Error('Reação inválida.');
@@ -419,4 +422,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
 

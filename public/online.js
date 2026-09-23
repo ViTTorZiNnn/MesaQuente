@@ -1,19 +1,21 @@
-import {LocalRoomService} from './local-room.js?v=mesaviva06';
-import {FLOWS,guidance,outcome} from './gameplay-ui.js?v=mesaviva06';
-import {TONES} from './editorial.js?v=mesaviva06';
-import {mountSettings} from './settings.js?v=mesaviva06';
-import {GameAudio} from './som.js?v=mesaviva06';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=mesaviva06';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=mesaviva06';
+import {mountChat} from './chat-ui.js?v=arcade07';
+import {LocalRoomService} from './local-room.js?v=arcade07';
+import {FLOWS,guidance,outcome} from './gameplay-ui.js?v=arcade07';
+import {TONES} from './editorial.js?v=arcade07';
+import {mountSettings} from './settings.js?v=arcade07';
+import {GameAudio} from './som.js?v=arcade07';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=arcade07';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=arcade07';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=mesaviva06';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=arcade07';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
 function btn(text,handler,cls){const b=el('button',text,cls);b.type='button';b.onclick=handler;b.disabled=busy||!service?.online;return b;}
 function toast(error){$('toast').textContent=error?.message||String(error);$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
-function setScreen(s){const changed=screen!==s;screen=s;for(const id of ['home','lobby','game','end'])$(id).hidden=id!==s;document.body.dataset.screen=s;if(changed)mesa?.pause(s!=='game');}
+function setScreen(s){const changed=screen!==s;screen=s;for(const id of ['home','lobby','game','end'])$(id).hidden=id!==s;document.body.dataset.screen=s;if(s==='home')chatUI.update(null,'');if(changed)mesa?.pause(s!=='game');}
 function profileNode(id,p){const n=el('div',undefined,'player'),a=el('span',p.avatar?.emoji||'🙂');a.style.background=p.avatar?.cor||'#662233';n.append(a,el('b',p.nome+(id===service.uid?' · você':'')),el('small',id===room.hostId?'Anfitrião':p.conectado===false?'Desconectado':'Na mesa'));if(room.local&&room.status==='lobby'&&id!==room.hostId)n.append(btn('Remover',()=>service.removePlayer(id).catch(toast),'remove-local'));return n;}
+const chatUI=mountChat({send:(text,id)=>service.chat(text,id),getIdentity:()=>service?.uid});
 const gameAudio=new GameAudio(toast);mountSettings(gameAudio);mountReactionTray();
 function tone(kind='draw'){gameAudio.effect(kind);}
 async function action(type,payload={}){if(busy)return;busy=true;render();try{await service.action(type,{cardId:room?.partida?.cartaAtual?.id,...payload});}catch(e){toast(e);}finally{busy=false;render();}}
@@ -28,7 +30,7 @@ $('open-local').onclick=()=>openSetup('local');$('add-local-player').onclick=()=
 $('open-create').onclick=()=>openSetup('create');$('open-join').onclick=()=>openSetup('join');$('edit-config').onclick=()=>openSetup('edit');
 for(const b of document.querySelectorAll('[data-close]'))b.onclick=()=>$(b.dataset.close).close();
 $('setup-form').onsubmit=async e=>{e.preventDefault();if(busy)return;gameAudio.startFromGesture();busy=true;$('setup-submit').disabled=true;const submitLabel=$('setup-submit').textContent;$('setup-submit').textContent=['local','add-local'].includes(formMode)?'Preparando a mesa…':'Conectando…';$('setup-submit').setAttribute('aria-busy','true');$('setup-error').textContent='';try{const name=$('player-name').value,avatar=avatars[avatarIndex],config={minigames:[...chosen],modoLivre:$('free-mode').checked,numeroRodadas:Number($('round-count').value),tones:[...document.querySelectorAll('[name=tone]:checked')].map(i=>i.value),adultConfirmed:$('adult-confirm').checked};if(formMode==='edit'){await service.action('config',config);}else if(formMode==='add-local'){await service.addPlayer(name,avatar);}else{localStorage.setItem('mq3_name',name);localStorage.setItem('mq3_avatar',String(avatarIndex));if(formMode==='local'){service=new LocalRoomService({modes,decks,onRoom:value=>{room=value;render();},onConnection:setOnline});}else{service=onlineService;if(!service)throw Error('A conexão online não iniciou. Recarregue a página para tentar novamente.');}const code=['create','local'].includes(formMode)?await service.create(name,avatar,config):await service.join($('join-code').value,name,avatar);roomCode=code;history.replaceState(null,'',service.local?'?modo=solo':'?sala='+code);} $('setup').close();}catch(e){$('setup-error').textContent=e.message;$('setup-error').scrollIntoView({block:'nearest'});}finally{busy=false;$('setup-submit').disabled=false;$('setup-submit').textContent=submitLabel;$('setup-submit').removeAttribute('aria-busy');render();}};
-function render(){if(!room)return;const host=room.hostId===service.uid,ids=connected(room);roomCode=service.code||roomCode;
+function render(){chatUI.update(room,service?.code||roomCode);if(!room)return;const host=room.hostId===service.uid,ids=connected(room);roomCode=service.code||roomCode;
  if(!room.jogadores?.[service.uid]){toast('Você saiu da sala.');room=null;setScreen('home');return;}
  if(['lobby','tutorial'].includes(room.status)){setScreen('lobby');$('room-code').textContent=roomCode;$('online-invite').hidden=!!room.local;$('local-lobby-note').hidden=!room.local;$('add-local-player').hidden=!room.local;document.querySelector('.lobby-foot').textContent=room.local?'Uma mesa, os mesmos jogos. Troque o jogador ativo ao passar o aparelho.':'Perguntas reveladas aparecem nos aparelhos. Conversem e respondam no seu ritmo.';$('player-count').textContent=ids.length+' '+(ids.length===1?'jogador':'jogadores')+' na mesa';$('lobby-players').replaceChildren(...Object.entries(room.jogadores).map(([id,p])=>profileNode(id,p)));$('lobby-modes').replaceChildren(...room.minigames.map(id=>el('span',modes[id]?.nome||id,'mode-pill')));$('lobby-rounds').textContent=room.numeroRodadas+' rodadas · '+(room.tones||['leve']).map(t=>TONES[t]).join(' + ')+(room.modoLivre?' · Modo Livre':'');$('lobby-mode-title').textContent=room.modoLivre?'Mistura livre':modes[room.minigames[0]]?.categoriaNome||'Minijogos';$('edit-config').hidden=!host;$('start-tutorial').hidden=!host;$('start-tutorial').disabled=busy||!service.online||ids.length<(room.local?1:2);$('lobby-wait').textContent=room.local?'Comece sozinho para experimentar, ou adicione quem vai participar.':host?(ids.length<2?'Falta pelo menos mais um jogador para começar.':'Quando todos chegarem, comece a partida.'):'Aguardando o anfitrião iniciar a partida.';if(room.status==='tutorial')renderTutorial(host,ids);else $('tutorial').close();}
  else if(room.status==='jogando'){$('tutorial').close();setScreen('game');renderGame(host,ids);}

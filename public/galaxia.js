@@ -1,10 +1,10 @@
-import {visual,reducedMotion} from './visual.js?v=mesaviva06';
+import {visual,reducedMotion} from './visual.js?v=arcade07';
 for(const canvas of document.querySelectorAll('#galaxy,#lobby-sky')){
  const ctx=canvas.getContext('2d');let w=360,h=240,last=0,dirty=true;const stars=Array.from({length:100},(_,i)=>({x:(i*.618034)%1,y:(i*.414214)%1}));
  function resize(){w=Math.max(240,Math.min(480,Math.round(canvas.clientWidth/3)));h=Math.max(160,Math.round(w*canvas.clientHeight/Math.max(1,canvas.clientWidth)));canvas.width=w;canvas.height=h;dirty=true;}
  new ResizeObserver(resize).observe(canvas);window.addEventListener('mq-visual',()=>dirty=true);
  function square(x,y,size,color){ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),size,size);}
- function draw(t){requestAnimationFrame(draw);if(document.hidden||!canvas.clientHeight||canvas.id==='lobby-sky'&&document.body.dataset.screen==='game'||t-last<50)return;const still=reducedMotion();if(still&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000;ctx.globalAlpha=1;ctx.fillStyle=visual.scene==='lava'?'#230c1f':visual.scene==='floresta'?'#081e26':'#0d0828';ctx.fillRect(0,0,w,h);
+ function draw(t){requestAnimationFrame(draw);if(visual.scene==='arcade'||document.hidden||!canvas.clientHeight||canvas.id==='lobby-sky'&&document.body.dataset.screen==='game'||t-last<50)return;const still=reducedMotion();if(still&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000;ctx.globalAlpha=1;ctx.fillStyle=visual.scene==='lava'?'#230c1f':visual.scene==='floresta'?'#081e26':'#0d0828';ctx.fillRect(0,0,w,h);
  if(visual.scene==='galaxia'){
   for(let arm=0;arm<3;arm++)for(let i=0;i<160;i++){const r=7+i*.55,a=i*.036+arm*Math.PI*2/3+time*.07;const x=w*.58+Math.cos(a)*r*1.5,y=h*.33+Math.sin(a)*r*.55;ctx.globalAlpha=.16+(i%5)*.09;square(x,y,3,i%3===0?'#fa79d4':i%3===1?'#8b69ef':'#46add8');}ctx.globalAlpha=1;square(w*.58-3,h*.33-3,6,'#ffe0b3');
   stars.forEach((s,i)=>{ctx.globalAlpha=.4+.5*Math.abs(Math.sin(time+i));square((s.x*w+time*(i%3+1))%w,s.y*h,i%7===0?2:1,'#f3dbff');});
