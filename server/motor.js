@@ -11,7 +11,7 @@ export function makeRound(room,modes,decks,rng=Math.random,now=Date.now()){
  const chosen=room.minigames||[],modeId=chosen[(round-1)%chosen.length],mode=modes[modeId];if(!mode)throw Error('Minijogo não encontrado.');if(modeId==='o_espiao'&&ids.length<3)throw Error('O Espião precisa de pelo menos 3 jogadores.');
  const old=room.partida?.cartaAtual?.readerId,index=ids.indexOf(old),readerId=old?ids[(index+1)%ids.length]:ids[Math.floor(rng()*ids.length)];
  const tone=toneFor(room.tones,round),used=room.partida?.used||[],selection=selectUnused(editorialCards(modeId,tone),modeId+'_'+tone,used,rng);
- const card={id:'c_'+now+'_'+Math.floor(rng()*1e9),flowVersion:4,modeId,tone,deckIndex:SPECIAL[modeId]??CATEGORY_DECK[mode.categoria],readerId,participants:ids,phase:'deck',text:'',options:[],createdAt:now,...structuredClone(selection.x)};
+ const card={id:'c_'+now+'_'+Math.floor(rng()*1e9),flowVersion:6,modeId,tone,deckIndex:SPECIAL[modeId]??CATEGORY_DECK[mode.categoria],readerId,participants:ids,phase:'deck',text:'',options:[],createdAt:now,...structuredClone(selection.x)};
  if(modeId==='o_espiao'){card.spyId=ids[Math.floor(rng()*ids.length)];card.text='Façam perguntas uns aos outros sem dizer a palavra secreta.';card.votingReady=false;}
  if(modeId==='batalha_de_argumentos'){card.debaters=[readerId,ids[(ids.indexOf(readerId)+1)%ids.length]];card.votingReady=false;}
  if(modeId==='o_termometro')card.secretNumber=1+Math.floor(rng()*10);
@@ -36,10 +36,10 @@ export function applyAction(room,uid,action,payload={},modes,decks,rng=Math.rand
  else {requireCard();
  if(action==='skip'){if(!c.participants.includes(uid)||c.phase==='results')throw Error('Esta carta não pode mais ser pulada.');c.skipped=true;c.phase='results';p.answers={};}
  else if(action==='openVoting'){if(!reader&&!host)throw Error('Aguarde quem conduz a rodada.');if(c.phase!=='public'||!['o_espiao','batalha_de_argumentos'].includes(c.modeId)||c.votingReady!==false)throw Error('Votação indisponível.');c.votingReady=true;}
- else if(action==='draw'){if(!reader||c.phase!=='deck')throw Error('Aguarde sua vez de puxar.');c.phase='private';if(c.modeId==='quem_e_mais_provavel')c.voteOpensAt=now+5000;}
+ else if(action==='draw'){if(!reader||c.phase!=='deck')throw Error('Aguarde sua vez de puxar.');c.phase='private';}
  else if(action==='truth'){if(!reader||c.modeId!=='verdade_ou_desafio_hot'||c.phase!=='private'||!['truth','dare'].includes(payload.choice))throw Error('Escolha indisponível.');c.text=c[payload.choice];c.choice=payload.choice;}
  else if(action==='statements'){if(!reader||c.modeId!=='duas_verdades_uma_mentira'||c.phase!=='private')throw Error('Aguarde sua vez.');if(!Array.isArray(payload.statements)||payload.statements.length!==3||payload.statements.some(s=>typeof s!=='string'||!s.trim()||s.length>140)||![0,1,2].includes(payload.lie))throw Error('Preencha os três fatos e marque a mentira.');c.statements=payload.statements.map(s=>s.trim());c.lie=payload.lie;c.text=c.statements.map((s,i)=>(i+1)+'. '+s).join('\n');}
- else if(action==='reveal'){if(c.modeId==='quem_e_mais_provavel')throw Error('A carta será revelada quando todos votarem.');if(!reader||c.phase!=='private')throw Error('Somente o leitor pode revelar a carta.');if(c.modeId==='duas_verdades_uma_mentira'&&!c.statements)throw Error('Escreva os três fatos primeiro.');if(c.modeId==='verdade_ou_desafio_hot'&&!c.choice)throw Error('Escolha Verdade ou Desafio primeiro.');c.phase='public';}
+ else if(action==='reveal'){if(!reader||c.phase!=='private')throw Error('Somente o leitor pode revelar a carta.');if(c.modeId==='duas_verdades_uma_mentira'&&!c.statements)throw Error('Escreva os três fatos primeiro.');if(c.modeId==='verdade_ou_desafio_hot'&&!c.choice)throw Error('Escolha Verdade ou Desafio primeiro.');c.phase='public';}
  else if(action==='answer'){if(!['public','voting'].includes(c.phase)||!c.participants.includes(uid))throw Error('Aguarde a próxima rodada ou a revelação da carta.');if(c.votingReady===false)throw Error('Conversem antes de abrir a votação.');const value=String(payload.value??'').trim();if(!value||value.length>140)throw Error('Use uma resposta de até 140 caracteres.');const allowed=allowedAnswers(c,uid,room);if(allowed&&!allowed.includes(value))throw Error('Resposta inválida para este jogo.');if(['niveis_intimidade','verdade_ou_desafio_hot'].includes(c.modeId))throw Error('Esta rodada é respondida em voz alta.');if(c.modeId==='apenas_uma_dica'){if(uid===c.readerId||c.hintsRevealed)throw Error('As dicas já foram encerradas.');if(/\s/.test(value))throw Error('A dica deve ter uma só palavra.');if(normalize(value)===normalize(c.secret))throw Error('A dica não pode ser a própria palavra secreta.');}if(c.modeId==='palavra_proibida'&&reader)throw Error('O leitor dá a dica em voz alta.');p.answers??={};p.answers[uid]=value;}
  else if(action==='hints'){if(!reader&&!host)throw Error('Somente o leitor ou anfitrião.');if(c.modeId!=='apenas_uma_dica'||c.phase!=='public')throw Error('Ação indisponível.');if(replyIds(room).some(id=>!Object.hasOwn(p.answers||{},id)))throw Error('Ainda faltam dicas.');c.hintsRevealed=true;}
  else if(action==='guess'){if(!reader||c.modeId!=='apenas_uma_dica'||!c.hintsRevealed||c.phase!=='public')throw Error('Aguarde as dicas.');const g=String(payload.value||'').trim();if(!g||g.length>80)throw Error('Digite seu palpite.');c.guess=g;c.phase='results';}
@@ -59,10 +59,10 @@ export function textForViewer(card,uid){if(card.skipped)return'Carta pulada. Nin
 export function uniqueHints(answers){const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();const vals=Object.values(answers||{});return vals.filter(v=>vals.filter(x=>norm(x)===norm(v)).length===1);}
 
 
-// Server-owned timing; polling advances the phase even when the reader does nothing.
+// Answers finish voting; only the reader explicitly reveals new cards.
 export function settleVoting(room,now=Date.now()){
  const p=room?.partida,c=p?.cartaAtual;if(room?.status!=='jogando'||!c||c.skipped)return room;
- if(c.modeId==='quem_e_mais_provavel'&&c.phase==='private'&&Number.isFinite(c.voteOpensAt)&&now>=c.voteOpensAt)c.phase='voting';
+ if(c.modeId==='quem_e_mais_provavel'&&c.phase==='voting'){c.phase='public';delete c.voteOpensAt;}
  if(!['public','voting'].includes(c.phase)||c.votingReady===false)return room;
  const eligible=replyIds(room),complete=eligible.length>0&&eligible.every(id=>Object.hasOwn(p.answers||{},id));
  if(complete&&AUTO_RESULTS.includes(c.modeId)){c.phase='results';c.revealedAt=now;}

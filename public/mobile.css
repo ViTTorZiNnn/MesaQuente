@@ -27,3 +27,45 @@ body{background:var(--surface-deep);color:var(--ink)}button,input,select,textare
  .lobby{padding:14px}.room-header{flex-wrap:wrap}.room-header img{width:56px;height:60px}.room-header h1{font-size:21px}.room-header [data-audio-settings]{margin-left:0}.room-header>.leave{margin-left:auto}.lobby .panel{padding:20px}.family-setup{margin:18px 12px}.family-setup .primary{min-height:48px}#audio-settings .dialog-scroll{max-height:70dvh}
 }
 @media(max-width:350px){.game-header button{width:31px;min-width:31px;height:38px}.game-header nav{gap:3px}.game-header strong{font-size:10px}.screen.game{padding-left:8px;padding-right:8px}.game-header .hud-icon{width:21px;height:21px}}
+
+/* Mesa Viva 06: one menu language, one settings panel and shared local play. */
+#lobby-sky{position:fixed;inset:0;width:100%;height:100%;image-rendering:pixelated;opacity:.7}
+body[data-screen=game] .ambient-room{visibility:hidden}
+.ambient-room .architecture{opacity:.24;pointer-events:none}
+.lobby-table{position:fixed;left:50%;bottom:-32vh;width:min(1100px,140vw);height:65vh;transform:translateX(-50%) rotateX(55deg);border:3px solid var(--accent,#dfa160);border-radius:50%;background:radial-gradient(ellipse,#77365188,#180d2499 68%);box-shadow:0 0 65px #e3978033,inset 0 0 0 14px #110d21,inset 0 0 0 17px #aa788c55;pointer-events:none}
+.lobby-table i{position:absolute;left:calc(36% + var(--offset,0%));top:16%;width:65px;height:94px;background:url('cartas-confissões.png') center/cover;border:2px solid #e9b9d6;border-radius:6px;box-shadow:0 10px 12px #0009;animation:menu-card-drift 6s ease-in-out infinite}
+.lobby-table i:nth-child(2){--offset:12%;animation-delay:-2s;background-image:url('cartas-contra-o-tempo.png')}
+.lobby-table i:nth-child(3){--offset:24%;animation-delay:-4s;background-image:url('cartas-votação.png')}
+.home{position:relative;isolation:isolate}.home-logo{filter:drop-shadow(0 10px 0 #140b24) drop-shadow(0 0 28px #f0785055);animation:logo-hover 7s ease-in-out infinite}
+.home .eyebrow{color:var(--accent,#edb07c);text-shadow:0 2px 0 #180c22}.home>p{text-shadow:0 2px 0 #12091d}
+.home-actions{width:min(100%,400px)}
+.home-actions button,.home>#open-local,.home>[data-settings]{width:min(100%,400px);min-height:62px;border:2px solid var(--edge);background:linear-gradient(145deg,var(--surface),var(--surface-deep));border-radius:12px;box-shadow:0 5px 0 #080710;transition:transform .18s,box-shadow .18s,border-color .18s,filter .18s;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none}
+.home-actions .menu-art{max-height:58px;max-width:100%;object-fit:contain}
+.home button:is(:hover,:focus-visible){border-color:var(--accent,#edb07c);transform:translateY(-3px);box-shadow:0 8px 0 #080710,0 0 24px #eb947033;filter:brightness(1.12)}
+.home button:active{transform:translateY(2px);box-shadow:0 2px 0 #080710}
+.home>[data-settings] .hud-label{display:inline}.home>[data-settings] img{width:38px;height:38px}
+#settings{width:min(94vw,600px)}#settings .settings-sections{display:grid;gap:20px}
+#settings section{border:1px solid var(--edge);border-radius:12px;padding:14px;background:var(--surface)}
+#settings section header{padding:0 0 10px}#settings section header h2{font-size:1.08rem}#settings section header button{display:none}
+#settings section .dialog-scroll{padding:0;max-height:none;overflow:visible}#settings #master-volume{width:100%}
+#handoff::backdrop{background:#0e091a}#handoff{z-index:100;width:min(94vw,450px)}
+#local-controls{position:absolute;z-index:12;left:16px;top:105px;max-width:300px;border:1px solid var(--edge);padding:10px;background:var(--surface);border-radius:12px}
+#local-players{display:flex;gap:6px;flex-wrap:wrap}#local-players button{font-size:.8rem;min-height:40px}#local-controls>span{display:block;font-size:.8rem;margin-bottom:6px}
+#add-local-player{margin:12px 0}.player .remove-local{min-height:30px;font-size:.75rem}
+@keyframes menu-card-drift{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-20px) rotate(6deg)}}
+@keyframes logo-hover{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+html[data-motion=off] .home-logo,html[data-motion=off] .lobby-table i{animation:none}html[data-motion=off] .home button{transition:none}
+@media(max-width:800px){
+ #game{grid-template-areas:'header' 'local' 'players' 'banner' 'stage' 'zoom' 'guide' 'choices' 'actions'}
+ #local-controls{grid-area:local;position:relative;inset:auto;max-width:none;margin:0 12px}
+ #local-players{flex-wrap:nowrap;overflow-x:auto}#local-players button{white-space:nowrap;flex:none}
+ .home{padding-inline:22px}.home-logo{max-width:240px}.home .home-actions{gap:12px}.home>[data-settings],.home>#open-local{margin-top:10px}
+ .lobby-table{bottom:-24vh;height:52vh}.lobby-table i{width:44px;height:66px}
+ .room-header{flex-wrap:wrap}.room-header>div{flex:1;min-width:160px}
+}
+@media(prefers-reduced-motion:reduce){html:not([data-motion=on]) .home-logo,html:not([data-motion=on]) .lobby-table i{animation:none}}
+
+body{isolation:isolate}
+#settings #visual-settings,#settings #audio-settings{width:auto;max-width:none}
+html[data-motion=off] .light-beam{animation:none}
+#local-players button.selected{background:var(--accent);color:var(--surface-deep);border-color:var(--ink)}

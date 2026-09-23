@@ -5,7 +5,7 @@ import {editorialCards,TONES,toneFor} from '../server/editorial.js';
 import {FLOWS,guidance,outcome} from '../public/gameplay-ui.js';
 function setup(mode,tone='leve'){const r={schemaVersion:3,status:'jogando',hostId:'a',minigames:[mode],tones:[tone],numeroRodadas:12,jogadores:Object.fromEntries(['a','b','c'].map((id,i)=>[id,{nome:id,conectado:true,entrouEm:i+1}]))};r.partida=makeRound(r,modes,decks,()=>0,100);return r;}
 function act(r,uid,action,data={},now=1000){return applyAction(r,uid,action,{cardId:r.partida.cartaAtual.id,...data},modes,decks,()=>0,now);}
-function open(r){act(r,'a','draw');const c=r.partida.cartaAtual;if(c.modeId==='quem_e_mais_provavel')return;if(c.modeId==='duas_verdades_uma_mentira')act(r,'a','statements',{statements:['fato um','fato dois','fato três'],lie:1});if(c.modeId==='verdade_ou_desafio_hot')act(r,'a','truth',{choice:'truth'});act(r,'a','reveal');}
+function open(r){act(r,'a','draw');const c=r.partida.cartaAtual;if(c.modeId==='duas_verdades_uma_mentira')act(r,'a','statements',{statements:['fato um','fato dois','fato três'],lie:1});if(c.modeId==='verdade_ou_desafio_hot')act(r,'a','truth',{choice:'truth'});act(r,'a','reveal');}
 for(const mode of Object.keys(modes))test('complete server flow: '+mode,()=>{const r=setup(mode);open(r);const c=r.partida.cartaAtual;
  if(c.votingReady===false){assert.throws(()=>act(r,'b','answer',{value:'a'}));act(r,'a','openVoting');}
  const values={quem_e_mais_provavel:'b',eu_nunca:'JA_FIZ',o_que_voce_prefere:'0',bandeiras_vermelhas:'0',duas_verdades_uma_mentira:'1',o_termometro:'1',o_espiao:'a',batalha_de_argumentos:'a'};

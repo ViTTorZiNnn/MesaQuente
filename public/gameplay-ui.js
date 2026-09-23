@@ -1,5 +1,5 @@
 export const FLOWS={
- quem_e_mais_provavel:{steps:['Comprar','Ler','Votar','Revelar'],read:'Leia a pergunta em voz alta. Os votos abrem após cinco segundos.',play:'Escolha a pessoa que mais combina com a pergunta.',reveal:'Abrir votação'},
+ quem_e_mais_provavel:{steps:['Puxar','Revelar','Votar','Resultado'],read:'Leia sua carta e toque em Revelar. A pergunta aparecerá para todos antes dos votos.',play:'Escolha a pessoa que mais combina com a pergunta.',reveal:'Revelar e abrir votação'},
  eu_nunca:{steps:['Comprar','Ler','Responder','Descobrir'],read:'Leia a frase para a mesa e abra as respostas.',play:'Marque Já fiz ou Nunca fiz. Conte a história se quiser.',reveal:'Abrir respostas'},
  o_que_voce_prefere:{steps:['Comprar','Ler','Escolher','Comparar'],read:'Leia as duas alternativas e abra as escolhas.',play:'Escolha uma alternativa. Depois, contem seus motivos.',reveal:'Abrir escolhas'},
  preencha_a_lacuna:{steps:['Comprar','Ler','Completar','Escolher'],read:'Leia a frase incompleta e entregue as opções à mesa.',play:'Complete a frase com a opção que você prefere.',reader:'Aguarde todas as respostas e escolha a que mais gostou.',reveal:'Entregar respostas'},
@@ -18,7 +18,7 @@ export function guidance(c,p,uid,now=Date.now()){
  if(c.phase==='results'){text=c.skipped?'Carta pulada sem penalidade. Sigam quando quiserem.':'Resultado na mesa. Conversem antes de seguir.';index=f.steps.length-1;}
  else if(!participant){text='Você entrou durante a rodada. Participará da próxima.';index=0;}
  else if(c.phase==='deck'){text=own?'O baralho está com você. Puxe uma carta.':'Aguarde o leitor comprar a carta.';index=0;}
- else if(c.phase==='private'){text=own?f.read:'O leitor está preparando a rodada. Aguarde.';index=1;if(c.voteOpensAt)text+=(now<c.voteOpensAt?' Votação em '+Math.ceil((c.voteOpensAt-now)/1000)+'s.':' Abrindo votação…');}
+ else if(c.phase==='private'){text=own?f.read:'O leitor está preparando a rodada. Aguarde.';index=1;}
  else if(c.votingReady===false){text=f.discussion;index=2;}
  else if(c.modeId==='apenas_uma_dica'&&c.hintsRevealed){text=own?'Leia as dicas que sobraram e envie seu palpite.':'O leitor está tentando adivinhar. Não revele a palavra.';index=3;}
  else{text=own&&f.reader?f.reader:f.play;index=f.steps.length===5&&c.modeId!=='apenas_uma_dica'?3:2;}
