@@ -26,7 +26,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "niveis_intimidade",
     nome: "Níveis de Intimidade",
-    categoria: "confissoes",
+    categoria: "casal",
     descricao: "Perguntas de vulnerabilidade e flerte em 3 níveis (Percepção, Conexão e +18 Íntimo).",
     icone: "💜",
     age_rating: "18+",
@@ -40,7 +40,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_p01",
         deck_id: "niveis_intimidade",
-        text: "Qual você acha que é o meu tipo de pessoa ideal para me relacionar?",
+        text: "Que tipo de pessoa você acha que combina comigo?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "geral",
@@ -51,7 +51,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_p02",
         deck_id: "niveis_intimidade",
-        text: "Qual foi a sua primeira impressão sobre mim que hoje você descobriu que estava errada?",
+        text: "O que você pensou sobre mim quando nos conhecemos? Sua opinião mudou?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "geral",
@@ -62,7 +62,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_p03",
         deck_id: "niveis_intimidade",
-        text: "O que você acha que eu mais valorizo em uma parceira ou amiga próxima?",
+        text: "O que você acha que eu mais valorizo em alguém próximo?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "geral",
@@ -85,7 +85,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_c01",
         deck_id: "niveis_intimidade",
-        text: "Qual foi a melhor experiência ou detalhe mais marcante de um encontro romântico que você já teve?",
+        text: "Qual detalhe tornou um encontro romântico inesquecível para você?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "geral",
@@ -96,7 +96,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_c02",
         deck_id: "niveis_intimidade",
-        text: "O que alguém precisa fazer para você se sentir verdadeiramente segura(o) e compreendida(o)?",
+        text: "Que atitude faz você se sentir à vontade com alguém?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "geral",
@@ -107,7 +107,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_c03",
         deck_id: "niveis_intimidade",
-        text: "Qual é a sua memória afetiva mais doce ou um momento em que você sentiu seu coração bater mais forte?",
+        text: "Qual lembrança com alguém querido faz você sorrir?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "geral",
@@ -163,7 +163,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "ni_i04",
         deck_id: "niveis_intimidade",
-        text: "Descreva sem censura uma fantasia ou cenário provocativo que você adoraria viver comigo ou com alguém.",
+        text: "Se quiser contar, qual fantasia você gostaria de realizar com alguém?",
         mechanic: "CONFISSAO",
         target: "ALL",
         age_rating: "18+",
@@ -180,7 +180,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "roleta_consequencias",
     nome: "Roleta de Consequências",
-    categoria: "desafios",
+    categoria: "casal",
     descricao: "Verdade ou Desafio adaptado para o ambiente online, fotos de galeria e revelações.",
     icone: "🎭",
     age_rating: "18+",
@@ -200,7 +200,7 @@ const BARALHOS_DISPONIVEIS = [
         age_rating: "18+",
         subtype: "Verdade ou Desafio",
         verdadeTexto: "Qual é a história do encontro mais vergonhoso ou desastroso que você já teve?",
-        desafioTexto: "Mande no chat ou mostre a última foto que você apagou da lixeira da sua galeria!",
+        desafioTexto: "Escolha uma foto engraçada da sua galeria que você queira mostrar e conte a história dela.",
         duration: 45
       },
       {
@@ -211,8 +211,8 @@ const BARALHOS_DISPONIVEIS = [
         target: "SELF",
         age_rating: "18+",
         subtype: "Verdade ou Desafio",
-        verdadeTexto: "Você já stalkeou alguém da mesa ou o perfil de alguém recente? Quem foi e o que procurava?",
-        desafioTexto: "Mostre o seu histórico de pesquisa recente do Google / Safari na câmera por 5 segundos!",
+        verdadeTexto: "Você já procurou o perfil de alguém antes de um encontro? O que queria descobrir?",
+        desafioTexto: "Conte qual foi a pesquisa mais curiosa que você lembra de ter feito na internet.",
         duration: 45
       },
       {
@@ -224,7 +224,7 @@ const BARALHOS_DISPONIVEIS = [
         age_rating: "18+",
         subtype: "Verdade ou Desafio",
         verdadeTexto: "Qual foi a mensagem de flerte mais ousada que você já mandou ou recebeu?",
-        desafioTexto: "Grave e envie um áudio de 5 segundos no grupo de amigos sussurrando algo misterioso!",
+        desafioTexto: "Fale uma frase misteriosa por cinco segundos, como um personagem de filme.",
         duration: 45
       },
       {
@@ -236,7 +236,7 @@ const BARALHOS_DISPONIVEIS = [
         age_rating: "18+",
         subtype: "Verdade ou Desafio",
         verdadeTexto: "Já se apaixonou por alguém que não devia (ex-amiga, colega de trabalho, compromissada)?",
-        desafioTexto: "Deixe a mesa escolher uma pessoa da sua lista de contatos para você mandar 'Achei você fofo(a)' agora!",
+        desafioTexto: "Invente uma cantada engraçada e apresente para a mesa.",
         duration: 50
       },
       {
@@ -247,7 +247,7 @@ const BARALHOS_DISPONIVEIS = [
         target: "SELF",
         age_rating: "18+",
         subtype: "Verdade ou Desafio",
-        verdadeTexto: "O que você achou de mais atraente em mim no primeiro minuto em que nos vimos?",
+        verdadeTexto: "Escolha alguém da mesa e diga uma característica que chamou sua atenção.",
         desafioTexto: "Ligue a câmera e faça um olhar sedutor de cinema por 15 segundos sem rir!",
         duration: 40
       }
@@ -260,7 +260,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "eu_nunca",
     nome: "Eu Nunca: Vale Tudo",
-    categoria: "votacao",
+    categoria: "amigas",
     descricao: "O clássico Eu Nunca com confissões hilárias e revelações sem filtro.",
     icone: "🍷",
     age_rating: "18+",
@@ -274,7 +274,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_01",
         deck_id: "eu_nunca",
-        text: "Eu nunca aluguei um caminhão de mudança no segundo encontro (ou passei semanas na casa do date).",
+        text: "Eu nunca passei vários dias na casa de alguém logo no começo de um namoro.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "geral",
@@ -284,7 +284,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_02",
         deck_id: "eu_nunca",
-        text: "Eu nunca me apaixonei perdidamente por uma amiga hétero.",
+        text: "Eu nunca me apaixonei por alguém que não sentia o mesmo por mim.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "geral",
@@ -294,7 +294,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_03",
         deck_id: "eu_nunca",
-        text: "Eu nunca fiz o mapa astral e a sinastria completa de alguém antes mesmo do primeiro beijo.",
+        text: "Eu nunca pesquisei se meu signo combinava com o de alguém antes de um encontro.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "geral",
@@ -304,7 +304,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_04",
         deck_id: "eu_nunca",
-        text: "Eu nunca mandei indireta no Close Friends do Instagram ou TikTok esperando uma única pessoa visualizar.",
+        text: "Eu nunca publiquei uma indireta esperando que uma pessoa específica visse.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "geral",
@@ -314,7 +314,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_05",
         deck_id: "eu_nunca",
-        text: "Eu nunca fiquei amiga da ex da minha ex (ou acabei no mesmo rolê com 3 ex-ficantes).",
+        text: "Eu nunca encontrei mais de uma pessoa com quem já fiquei na mesma festa.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "18+",
@@ -324,7 +324,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_06",
         deck_id: "eu_nunca",
-        text: "Eu nunca chorei ouvindo música triste (Taylor Swift, Reneé Rapp, Phoebe Bridgers) lembrando de alguém que vi 2 vezes.",
+        text: "Eu nunca ouvi uma música triste pensando em alguém com quem saí poucas vezes.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "geral",
@@ -334,7 +334,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "en_07",
         deck_id: "eu_nunca",
-        text: "Eu nunca beijei alguém e no dia seguinte já estava planejando adotar um gato juntas.",
+        text: "Eu nunca imaginei uma vida a dois depois de um único encontro.",
         mechanic: "EU_NUNCA",
         target: "ALL",
         age_rating: "geral",
@@ -350,7 +350,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "quem_e_mais_provavel",
     nome: "Quem é Mais Provável?",
-    categoria: "votacao",
+    categoria: "amigas",
     descricao: "Coloque as amigas na fogueira apontando o dedo para a pessoa mais provável da situação.",
     icone: "🎯",
     age_rating: "18+",
@@ -373,7 +373,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "qp_02",
         deck_id: "quem_e_mais_provavel",
-        text: "Quem da mesa tem mais chance de transformar um 'date casual de sexta' em um noivado em 1 semana?",
+        text: "Quem da mesa começaria a planejar um casamento depois do primeiro encontro?",
         mechanic: "ALVO",
         target: "VOTE",
         age_rating: "geral",
@@ -383,7 +383,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "qp_03",
         deck_id: "quem_e_mais_provavel",
-        text: "Quem na roda seria cancelada na internet em 10 minutos se vazassem o grupo privado do WhatsApp?",
+        text: "Quem da mesa mandaria uma mensagem no grupo errado?",
         mechanic: "ALVO",
         target: "VOTE",
         age_rating: "18+",
@@ -393,7 +393,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "qp_04",
         deck_id: "quem_e_mais_provavel",
-        text: "Quem da mesa se apaixona mais fácil e cria um fã-clube mental pela pessoa em 2 dias?",
+        text: "Quem da mesa se apaixonaria mais rápido por alguém que acabou de conhecer?",
         mechanic: "ALVO",
         target: "VOTE",
         age_rating: "geral",
@@ -403,7 +403,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "qp_05",
         deck_id: "quem_e_mais_provavel",
-        text: "Quem é mais provável de beijar alguém desconhecido no rolê e depois esquecer o nome da criatura?",
+        text: "Quem beijaria alguém numa festa e esqueceria de perguntar o nome?",
         mechanic: "ALVO",
         target: "VOTE",
         age_rating: "18+",
@@ -413,7 +413,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "qp_06",
         deck_id: "quem_e_mais_provavel",
-        text: "Quem da mesa gasta mais dinheiro no cartão de crédito em momentos de carência emocional?",
+        text: "Quem faria compras por impulso depois de um dia ruim?",
         mechanic: "ALVO",
         target: "VOTE",
         age_rating: "geral",
@@ -429,7 +429,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "preencha_a_lacuna",
     nome: "Preencha a Lacuna",
-    categoria: "surpresa",
+    categoria: "amigas",
     descricao: "Humor ácido e +18 completando a frase preta com opções brancas bizarras e explícitas.",
     icone: "🃏",
     age_rating: "18+",
@@ -450,8 +450,8 @@ const BARALHOS_DISPONIVEIS = [
         respostasBrancas: [
           "Terapia de casal no segundo dia de namoro",
           "Compartilhar a senha do cartão e o mapa astral",
-          "Fingir demência quando a ex manda mensagem",
-          "Fazer um mutirão de maratona de The L Word",
+          "Fingir que não vi a mensagem da ex",
+          "Assistir juntos a uma série até de madrugada",
           "Um estoque infinito de vinho e fofoca"
         ],
         duration: 40
@@ -459,7 +459,7 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "pl_02",
         deck_id: "preencha_a_lacuna",
-        text: "No meu primeiro encontro, a maior 'red flag' instantânea é ________.",
+        text: "No primeiro encontro, eu perderia o interesse ao perceber ________.",
         mechanic: "LACUNA",
         target: "ALL",
         age_rating: "18+",
@@ -482,7 +482,7 @@ const BARALHOS_DISPONIVEIS = [
         age_rating: "18+",
         subtype: "Preencha a Lacuna",
         respostasBrancas: [
-          "Uma playlist com Reneé Rapp e luz baixa",
+          "Uma playlist romântica e luz baixa",
           "Comunicação direta sem vergonha de pedir o que gosta",
           "Pizza de madrugada depois de cansar",
           "Massagem demorada nas costas com óleo perfumado",
@@ -493,17 +493,17 @@ const BARALHOS_DISPONIVEIS = [
       {
         id: "pl_04",
         deck_id: "preencha_a_lacuna",
-        text: "O motivo real pelo qual me atrasei 40 minutos para o rolê hoje foi ________.",
+        text: "Hoje eu me atrasei porque ________.",
         mechanic: "LACUNA",
         target: "ALL",
         age_rating: "geral",
         subtype: "Preencha a Lacuna",
         respostasBrancas: [
           "Troquei de roupa 7 vezes e fiquei deitada na cama olhando pro teto",
-          "Fiquei presa numa thread de fofoca no Twitter",
-          "Minha gata dormiu em cima das minhas pernas e não pude acordar ela",
+          "Fiquei lendo uma fofoca na internet",
+          "Meu gato dormiu no meu colo e eu não quis levantar",
           "Estava ensaiando poses no espelho",
-          "Crise existencial antes de sair de casa"
+          "Mudei de ideia sobre a roupa várias vezes"
         ],
         duration: 40
       }
@@ -516,7 +516,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "quebra_gelo",
     nome: "Quebra-Gelo Clássico",
-    categoria: "confissoes",
+    categoria: "especial",
     descricao: "Perguntas leves e curiosas para esquentar a conversa e soltar a galera.",
     icone: "🧊",
     age_rating: "geral",
@@ -581,7 +581,7 @@ const BARALHOS_DISPONIVEIS = [
   {
     id: "fogo_no_parquinho",
     nome: "Fogo no Parquinho",
-    categoria: "picante",
+    categoria: "especial",
     descricao: "Clima tenso, votos polêmicos e discussões que vão incendiar a mesa.",
     icone: "🔥",
     age_rating: "18+",
@@ -668,3 +668,4 @@ function puxarDaSacola(sacolaAtual, listaBase) {
   const itemPuxado = sacola.pop();
   return { itemPuxado, novaSacola: sacola };
 }
+
