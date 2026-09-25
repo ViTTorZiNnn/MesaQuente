@@ -285,3 +285,5 @@ for(const [id,regras] of Object.entries({"quem_e_mais_provavel": ["O leitor comp
 window.MQ_CATALOGO.modos.verdade_ou_desafio_hot.nome='Verdade ou Desafio';
 window.MQ_CATALOGO.modos.niveis_intimidade.descricao='Perguntas para conversar no tom escolhido pela mesa.';
 window.MQ_CATALOGO.modos.verdade_ou_desafio_hot.descricao='Escolha uma pergunta ou um desafio no tom da mesa.';
+
+for(const [id,regras] of Object.entries({"preencha_a_lacuna": ["O leitor revela uma situação com um espaço em branco.", "Cada outro participante escolhe uma das opções para completar a frase. Não precisa inventar uma resposta.", "Quando todas as respostas chegarem, o leitor escolhe a favorita. Não existe resposta obrigatoriamente correta."], "o_termometro": ["O leitor vê o tema, a escala e um número secreto de 1 a 10.", "Ele inventa uma pista que combine com esse número. Exemplo: em uma escala de bagunça, 2 pode ser uma camisa fora do armário.", "O leitor revela a rodada sem dizer o número. Os demais tentam adivinhar seu número pela pista, em vez de dar uma nota pessoal.", "Quando todos responderem, o jogo revela o número e os palpites."]})) window.MQ_CATALOGO.modos[id].regras=regras;

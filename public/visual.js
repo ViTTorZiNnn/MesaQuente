@@ -1,6 +1,6 @@
-export const BUILD='MESA VIVA 07';
+export const BUILD='MESA VIVA 08';
 const get=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
-export const visual={scene:get('mq_scene_version','')==='arcade07'?get('mq_scene','arcade'):'arcade',motion:get('mq_motion','auto')};
+export const visual={scene:get('mq_scene_version','')==='arcade08'?get('mq_scene','arcade'):'arcade',motion:get('mq_motion','auto')};
 export function reducedMotion(){return visual.motion==='off'||visual.motion==='auto'&&matchMedia('(prefers-reduced-motion: reduce)').matches;}
 export function setVisual(key,value){visual[key]=value;try{localStorage.setItem('mq_'+key,value);}catch{}document.documentElement.dataset.scene=visual.scene;document.documentElement.dataset.motion=reducedMotion()?'off':'on';window.dispatchEvent(new Event('mq-visual'));}
 setVisual('scene',['arcade','galaxia','floresta','lava'].includes(visual.scene)?visual.scene:'arcade');
@@ -12,4 +12,4 @@ export function mountVisualControls(container){
  document.querySelectorAll('[data-visual-settings]').forEach(b=>b.onclick=()=>{dialog.querySelector('#graphics-status').textContent=(document.querySelector('#stage')?.dataset.renderer||'O cenário é carregado ao iniciar a partida')+' · '+(reducedMotion()?'Movimento reduzido':'Animações ativadas');dialog.showModal();});
 }
 
-try{localStorage.setItem('mq_scene_version','arcade07');}catch{}
+try{localStorage.setItem('mq_scene_version','arcade08');}catch{}

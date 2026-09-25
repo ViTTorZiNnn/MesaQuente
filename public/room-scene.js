@@ -1,4 +1,4 @@
-import {visual,reducedMotion} from './visual.js?v=arcade07';
+import {visual,reducedMotion} from './visual.js?v=arcade08';
 const backdrop=document.createElement('div');backdrop.className='room-backdrop';backdrop.setAttribute('aria-hidden','true');
 backdrop.innerHTML='<div class="room-sheet"><img src="assets/scene/caverna.png" alt=""><i class="lamp-halo"></i><i class="neon-halo"></i><i class="arcade-screen-glow"></i></div><div class="room-shade"></div><canvas class="room-dust"></canvas>';
  document.body.prepend(backdrop);const canvas=backdrop.querySelector('canvas'),ctx=canvas.getContext('2d');let width=1,height=1,last=0,dirty=true;

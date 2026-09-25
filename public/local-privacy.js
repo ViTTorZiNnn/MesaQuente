@@ -1,4 +1,4 @@
-import {textForViewer,replyIds} from './motor.js?v=arcade07';
+import {textForViewer,replyIds} from './motor.js?v=arcade08';
 // Build a new response from allowed fields; never send the database snapshot.
 export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');

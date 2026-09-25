@@ -1,13 +1,13 @@
-import {mountChat} from './chat-ui.js?v=arcade07';
-import {LocalRoomService} from './local-room.js?v=arcade07';
-import {FLOWS,guidance,outcome} from './gameplay-ui.js?v=arcade07';
-import {TONES} from './editorial.js?v=arcade07';
-import {mountSettings} from './settings.js?v=arcade07';
-import {GameAudio} from './som.js?v=arcade07';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=arcade07';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=arcade07';
+import {mountChat} from './chat-ui.js?v=arcade08';
+import {LocalRoomService} from './local-room.js?v=arcade08';
+import {FLOWS,guidance,outcome} from './gameplay-ui.js?v=arcade08';
+import {TONES} from './editorial.js?v=arcade08';
+import {mountSettings} from './settings.js?v=arcade08';
+import {GameAudio} from './som.js?v=arcade08';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=arcade08';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=arcade08';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=arcade07';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=arcade08';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -64,10 +64,10 @@ function renderInteractions(c,p,host,reader,isParticipant){const box=$('interact
  if(['quem_e_mais_provavel','o_espiao'].includes(c.modeId)){box.append(el('h3',c.modeId==='o_espiao'?'Quem é o espião?':'Em quem você vota?'));c.participants.forEach(id=>choose(room.jogadores[id]?.nome||'Jogador que saiu',id));}
  else if(c.modeId==='eu_nunca'){choose('Já fiz','JA_FIZ');choose('Nunca fiz','INOCENTE');}
  else if(['o_que_voce_prefere','bandeiras_vermelhas'].includes(c.modeId)){c.options.forEach((v,i)=>choose(v,String(i)));}
- else if(c.modeId==='preencha_a_lacuna'){if(reader){box.append(el('h3','Escolha a melhor resposta'));if(p.answerCount>=p.expectedCount)Object.entries(answers).forEach(([id,value])=>box.append(btn(value,()=>action('judge',{winner:id}))));else box.append(el('p','A escolha abre quando todos enviarem suas respostas.'));if(!Object.keys(answers).length)box.append(el('p','Aguardando as cartas brancas da mesa.'));}else c.white.forEach(v=>choose(v,v));}
+ else if(c.modeId==='preencha_a_lacuna'){if(reader){box.append(el('h3','Escolha a resposta que melhor completa a frase'));if(p.answerCount>=p.expectedCount)Object.entries(answers).forEach(([id,value])=>box.append(btn(value,()=>action('judge',{winner:id}))));else box.append(el('p','A escolha abre quando todos enviarem suas respostas.'));if(!Object.keys(answers).length)box.append(el('p','Aguardando as cartas brancas da mesa.'));}else{box.append(el('p','Leia a situação acima. Escolha a opção que completa o espaço em branco; o leitor decide sua favorita.'));c.white.forEach(v=>choose(v,v));}}
  else if(c.modeId==='duas_verdades_uma_mentira'){if(reader)box.append(el('p','Aguarde os palpites. Sua mentira é o fato '+(c.lie+1)+'.'));else c.statements?.forEach((v,i)=>choose((i+1)+'. '+v,String(i)));}
  else if(c.modeId==='batalha_de_argumentos'){box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Jogador')+' defende a ideia. '+(room.jogadores[c.debaters[1]]?.nome||'Jogador')+' argumenta contra.'));c.debaters.forEach(id=>choose('Melhor argumento: '+(room.jogadores[id]?.nome||'Jogador'),id));}
- else if(c.modeId==='o_termometro'){if(reader)box.append(el('p','Dê um exemplo que corresponda ao seu número, sem dizer o número.'));else{const grid=el('div',undefined,'answer-grid');for(let i=1;i<=10;i++){const b=btn(String(i),()=>action('answer',{value:String(i)}),myAnswer===String(i)?'selected':'');b.disabled=busy||!service.online||!active;grid.append(b);}box.append(grid);}}
+ else if(c.modeId==='o_termometro'){if(reader)box.append(el('p','Diga uma pista dentro do tema da carta, compatível com seu número secreto. Os demais tentam descobrir esse número.'));else{const grid=el('div',undefined,'answer-grid');for(let i=1;i<=10;i++){const b=btn(String(i),()=>action('answer',{value:String(i)}),myAnswer===String(i)?'selected':'');b.disabled=busy||!service.online||!active;grid.append(b);}box.append(grid);}}
  else if(c.modeId==='apenas_uma_dica'){if(reader){if(!c.hintsRevealed){box.append(el('p','Aguarde todas as dicas. Elas aparecerão automaticamente, sem as repetidas.'));}else{const hints=uniqueHints(answers);hints.forEach(h=>box.append(el('span',h,'hint-chip')));if(!hints.length)box.append(el('p','Nenhuma dica única recebida.'));submitText('Qual é a palavra?','guess',80);}}else if(c.hintsRevealed){box.append(el('p','As dicas foram entregues ao leitor.'));}else submitText('Sua dica: uma só palavra');}
  else if(c.modeId==='palavra_proibida'){if(reader)box.append(el('p','Explique em voz alta, sem usar os termos da carta.'));else submitText('Seu palpite');}
  else box.append(el('p','Respondam em voz alta. Ao terminar a conversa, concluam a rodada.'));

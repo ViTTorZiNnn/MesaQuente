@@ -1,4 +1,4 @@
-import {visual,reducedMotion} from './visual.js?v=arcade07';
+import {visual,reducedMotion} from './visual.js?v=arcade08';
 for(const canvas of document.querySelectorAll('#galaxy,#lobby-sky')){
  const ctx=canvas.getContext('2d');let w=360,h=240,last=0,dirty=true;const stars=Array.from({length:100},(_,i)=>({x:(i*.618034)%1,y:(i*.414214)%1}));
  function resize(){w=Math.max(240,Math.min(480,Math.round(canvas.clientWidth/3)));h=Math.max(160,Math.round(w*canvas.clientHeight/Math.max(1,canvas.clientWidth)));canvas.width=w;canvas.height=h;dirty=true;}
