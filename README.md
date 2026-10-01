@@ -1,5 +1,13 @@
 # Mesa Quente — 3D com servidor de partidas
 
+## Editar as cartas
+
+- Cartas 18+: `server/cartas-quentes.js` (`QUENTE` = galera adulta, `CASAL` = jogo a dois). Copie o arquivo para `public/cartas-quentes.js` depois de editar.
+- Cartas leves e sérias: `server/editorial.js` (mesma regra: copie para `public/editorial.js`).
+- Nomes, objetivo, regras, pontuação dos minijogos e pacotes prontos: final de `public/catalogo.js` (copie para `server/catalogo.js`).
+- Em Verdade ou Desafio, as listas `truth` e `dare` precisam ter o mesmo tamanho.
+- Rode `npm test` para conferir.
+
 Para ativar esta versão, siga [ATIVAR-ONLINE.md](ATIVAR-ONLINE.md). O site fica em `public/` e requer a API da Vercel. As regras e credenciais precisam ser configuradas antes do uso.
 
 ## Guia histórico da versão anterior

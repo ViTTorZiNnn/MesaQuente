@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {applyAction,makeRound,replyIds} from '../server/motor.js';
+import {modes,decks} from '../server/content.js';import {viewFor} from '../server/privacy.js';
+import {editorialCards,TONES} from '../server/editorial.js';
+function setup(mode,tone='leve'){const r={schemaVersion:3,status:'jogando',hostId:'a',minigames:[mode],tones:[tone],numeroRodadas:5,jogadores:Object.fromEntries(['a','b','c'].map((id,i)=>[id,{nome:id,conectado:true,entrouEm:i+1}]))};r.partida=makeRound(r,modes,decks,()=>0,100);return r;}
+const act=(r,uid,type,data={})=>applyAction(r,uid,type,{cardId:r.partida.cartaAtual.id,...data},modes,decks,()=>0,1000);
+const open=r=>{act(r,'a','draw');act(r,'a','reveal');};
+test('eu nunca: quem já fez ganha ponto de ousadia, uma única vez',()=>{const r=setup('eu_nunca');open(r);act(r,'a','answer',{value:'JA_FIZ'});act(r,'b','answer',{value:'INOCENTE'});act(r,'c','answer',{value:'JA_FIZ'});assert.deepEqual(r.scores,{a:1,c:1});assert.equal(r.stats.c.ousadia,1);assert.throws(()=>act(r,'a','answer',{value:'JA_FIZ'}));assert.deepEqual(r.scores,{a:1,c:1});assert.deepEqual(viewFor(r,'b').scores,{a:1,c:1});assert.deepEqual(viewFor(r,'b').partida.cartaAtual.awards,{a:1,c:1});});
+test('termômetro: acerto vale 2, perto vale 1 e o leitor pontua',()=>{const r=setup('o_termometro');open(r);const n=r.partida.cartaAtual.secretNumber;act(r,'b','answer',{value:String(n)});act(r,'c','answer',{value:String(n===10?9:n+1)});assert.deepEqual(r.scores,{a:1,b:2,c:1});});
+test('espião que escapa ganha 3; desmascarado dá ponto a quem acusou',()=>{let r=setup('o_espiao');open(r);act(r,'a','openVoting');const spy=r.partida.cartaAtual.spyId;const other=['a','b','c'].find(x=>x!==spy);for(const u of ['a','b','c'])act(r,u,'answer',{value:other});assert.equal(r.scores[spy],3);
+ r=setup('o_espiao');open(r);act(r,'a','openVoting');const s2=r.partida.cartaAtual.spyId;for(const u of ['a','b','c'])act(r,u,'answer',{value:s2});for(const u of ['a','b','c'])assert.equal(r.scores[u],1);});
+test('verdade ou desafio: desafio vale 2, carta pulada não pontua nem revela quem pulou',()=>{let r=setup('verdade_ou_desafio_hot','adulto');act(r,'a','draw');act(r,'a','truth',{choice:'dare'});assert.match(r.partida.cartaAtual.text,/^DESAFIO · /);act(r,'a','reveal');act(r,'a','results');assert.deepEqual(r.scores,{a:2});
+ r=setup('eu_nunca');open(r);act(r,'b','skip');assert.equal(Object.keys(r.scores||{}).length,0);assert.equal(viewFor(r,'c').stats,undefined);});
+test('placar zera ao reiniciar',()=>{const r=setup('niveis_intimidade');open(r);act(r,'a','results');assert.deepEqual(r.scores,{a:1});r.status='finalizada';act(r,'a','restart');assert.deepEqual(r.scores,{});});
+test('cartas 18+ (picante e a dois) existem para todos os minijogos, sem repetir texto',()=>{for(const tone of ['adulto','casal'])for(const id of Object.keys(modes)){const cards=editorialCards(id,tone);assert.ok(cards.length>=4,id+' '+tone);const keys=cards.map(c=>c.text+(c.truth||'')+(c.secret||''));assert.equal(new Set(keys).size,keys.length,id+' '+tone);}assert.ok(TONES.casal);});
