@@ -1,12 +1,12 @@
-export const BUILD='MESA QUENTE 13 · MAPAS';
+export const BUILD='MESA QUENTE 17 · EM CHAMAS';
 const get=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
 // Mapas: cenário de fundo + estilo da interface. A mesa e o baralho são os mesmos em todos.
-export const MAPAS={boteco:{nome:'Boteco',desc:'Bar brasileiro, luz quente e varal de lâmpadas.'},galaxia:{nome:'Galáxia',desc:'Nebulosas, planetas e estrelas cadentes.'},noir:{nome:'Noir Glitch',desc:'Preto e branco, chuva, granulado e falhas na tela.'}};
+export const MAPAS={quente:{nome:'Mesa Quente',desc:'Aço, luz vermelha, cartas caindo e chamas em pixel.'},boteco:{nome:'Boteco',desc:'Bar brasileiro, luz quente e varal de lâmpadas.'},galaxia:{nome:'Galáxia',desc:'Nebulosas, planetas e estrelas cadentes.'},noir:{nome:'Noir Glitch',desc:'Preto e branco, chuva, granulado e falhas na tela.'}};
 // O mapa vem da sala (escolhido pelo anfitrião). Cada pessoa pode trocar só no próprio aparelho.
 let roomMap=null,pref=get('mq_scene_pref','sala');if(pref!=='sala'&&!MAPAS[pref])pref='sala';
-export const visual={scene:'boteco',motion:get('mq_motion','auto'),get pref(){return pref;},get roomMap(){return roomMap;}};
+export const visual={scene:'quente',motion:get('mq_motion','auto'),get pref(){return pref;},get roomMap(){return roomMap;}};
 export function reducedMotion(){return visual.motion==='off'||visual.motion==='auto'&&matchMedia('(prefers-reduced-motion: reduce)').matches;}
-function apply(){const scene=pref!=='sala'&&MAPAS[pref]?pref:MAPAS[roomMap]?roomMap:'boteco';const changed=scene!==visual.scene;visual.scene=scene;document.documentElement.dataset.scene=scene;document.documentElement.dataset.motion=reducedMotion()?'off':'on';window.dispatchEvent(new Event('mq-visual'));return changed;}
+function apply(){const scene=pref!=='sala'&&MAPAS[pref]?pref:MAPAS[roomMap]?roomMap:'quente';const changed=scene!==visual.scene;visual.scene=scene;document.documentElement.dataset.scene=scene;document.documentElement.dataset.motion=reducedMotion()?'off':'on';window.dispatchEvent(new Event('mq-visual'));return changed;}
 export function setRoomMap(map){const next=MAPAS[map]?map:null;if(next===roomMap)return false;roomMap=next;return apply();}
 export function setScenePref(value){pref=value==='sala'||!MAPAS[value]?'sala':value;try{localStorage.setItem('mq_scene_pref',pref);}catch{}return apply();}
 export function setVisual(key,value){if(key==='scene')return setScenePref(value);visual[key]=value;try{localStorage.setItem('mq_'+key,value);}catch{}apply();}

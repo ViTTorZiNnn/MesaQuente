@@ -1,0 +1,95 @@
+/* Mesa Quente 17 · mapa padrão com as cores da logo + abertura da partida + corte em relâmpago. */
+html[data-scene=quente] #quente-cena{display:block}
+
+/* ---------- Tema "Mesa Quente": vermelho vivo, branco e preto profundo ---------- */
+html[data-scene=quente]{--warm:#ff1f2d;--warm2:#ff4d4d;--cream:#ffffff;--ink:#ffffff;--muted-ink:#e2d6d6;--tint-rgb:255,255,255;--edge-rgb:255,60,60;--accent-rgb:255,31,45;--hot-rgb:255,31,45;--base-rgb:8,6,8;--cream-rgb:255,255,255;--on-accent:#fff;--hot:#ff1f2d;--accent-hi:#ff4d58;--bg:#050405;--tone-glow:#ff1f2d;--edge:rgba(255,60,60,.28);--glass:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,0) 40%),rgba(10,8,10,.84)}
+html[data-scene=quente] body[data-tone=profundo]{--tone-glow:#ff6a3d}
+html[data-scene=quente] body[data-tone=casal]{--tone-glow:#ff3d7f}
+
+/* Títulos com a mesma pegada da logo: letra grossa, branca, contorno vermelho e sombra dura */
+html[data-scene=quente] h1,html[data-scene=quente] .turn-summary h1,html[data-scene=quente] .room-header h1,html[data-scene=quente] .end h1,html[data-scene=quente] #intro-name,html[data-scene=quente] dialog header h2,html[data-scene=quente] .result-title,html[data-scene=quente] .code-line strong,html[data-scene=quente] .podium-score{font-family:'Bungee',Impact,sans-serif!important;font-weight:400!important;letter-spacing:.01em!important;color:#fff!important;text-shadow:0 3px 0 #b0000c,0 6px 0 #000,0 0 22px rgba(255,31,45,.55)!important;-webkit-text-stroke:1px #000}
+html[data-scene=quente] .eyebrow{font-family:'Bungee',Impact,sans-serif!important;font-weight:400!important;letter-spacing:.12em!important;color:#ff3b45!important;text-shadow:0 0 12px rgba(255,31,45,.5)!important}
+html[data-scene=quente] body{color:#fff}
+html[data-scene=quente] p,html[data-scene=quente] label,html[data-scene=quente] small{text-shadow:0 1px 2px rgba(0,0,0,.6)}
+html[data-scene=quente] .subtle{color:#d9cccc!important}
+
+/* Caixas: preto profundo, borda vermelha e filete de aço no topo */
+html[data-scene=quente] .panel,html[data-scene=quente] .game-footer,html[data-scene=quente] #interactions,html[data-scene=quente] dialog,html[data-scene=quente] .game-header,html[data-scene=quente] #local-controls,html[data-scene=quente] .intro-card,html[data-scene=quente] .title-card,html[data-scene=quente] .how-to,html[data-scene=quente] #chat-panel,html[data-scene=quente] .category-block,html[data-scene=quente] .player-chip,html[data-scene=quente] .preset{border:2px solid rgba(255,40,50,.55)!important;border-radius:14px!important;box-shadow:0 0 0 1px #000,0 10px 0 rgba(0,0,0,.55),0 0 34px rgba(255,31,45,.22),inset 0 2px 0 rgba(255,255,255,.14),inset 0 -2px 0 rgba(0,0,0,.6)!important}
+html[data-scene=quente] dialog{background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,0) 30%),#0a080a!important}
+
+/* Botões de jogo: vermelho vivo, letra grossa, sombra dura que "afunda" ao tocar */
+html[data-scene=quente] body button.primary{font-family:'Bungee',Impact,sans-serif!important;font-weight:400!important;text-transform:uppercase!important;letter-spacing:.03em!important;font-size:15px!important;background:linear-gradient(180deg,#ff4d58 0%,#ff1f2d 45%,#c4000f 100%)!important;color:#fff!important;border:2px solid #000!important;text-shadow:0 2px 0 #7a0009!important;box-shadow:0 5px 0 #000,0 0 0 2px rgba(255,255,255,.12) inset,0 12px 28px rgba(255,31,45,.45)!important}
+html[data-scene=quente] body button.primary:hover:not(:disabled){filter:brightness(1.1) saturate(1.1)}
+html[data-scene=quente] body button.primary:active:not(:disabled){transform:translateY(4px)!important;box-shadow:0 1px 0 #000,0 6px 16px rgba(255,31,45,.45)!important}
+html[data-scene=quente] body button:not(.primary){background:rgba(255,255,255,.06)!important;border:2px solid rgba(255,255,255,.22)!important;color:#fff!important;font-weight:800!important}
+html[data-scene=quente] body button:not(.primary):hover:not(:disabled){background:rgba(255,31,45,.2)!important;border-color:#ff1f2d!important}
+html[data-scene=quente] #interactions button.selected,html[data-scene=quente] .preset[aria-pressed=true]{background:#fff!important;color:#000!important;border-color:#fff!important;box-shadow:0 0 0 3px #ff1f2d!important}
+html[data-scene=quente] .preset[aria-pressed=true] small{color:#000!important}
+html[data-scene=quente] input,html[data-scene=quente] select,html[data-scene=quente] textarea{background:#000!important;border:2px solid rgba(255,255,255,.2)!important;color:#fff!important}
+html[data-scene=quente] input:focus,html[data-scene=quente] select:focus,html[data-scene=quente] textarea:focus{border-color:#ff1f2d!important;box-shadow:0 0 0 3px rgba(255,31,45,.35)!important}
+html[data-scene=quente] .role-chip,html[data-scene=quente] .chip-score,html[data-scene=quente] .tone-badge{background:#ff1f2d!important;color:#fff!important;border:1px solid #000!important;font-weight:900!important}
+html[data-scene=quente] .home-logo{width:min(300px,72vw)!important;filter:drop-shadow(0 0 30px rgba(255,31,45,.55)) drop-shadow(0 14px 18px rgba(0,0,0,.8))!important;animation:logo-pulsa 3.2s ease-in-out infinite}
+@keyframes logo-pulsa{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.035) rotate(-.6deg)}}
+html[data-scene=quente] .home>p{font-weight:800;font-size:18px!important}
+html[data-scene=quente] .home{background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,.7),transparent 70%)!important}
+html[data-scene=quente] .map-card:has(input:checked){outline-color:#ff1f2d}
+html[data-scene=quente][data-motion=off] .home-logo{animation:none}
+
+/* Miniatura do mapa na criação da partida */
+.map-thumb.quente{background:linear-gradient(transparent 62%,#ff1f2d 62% 64%,transparent 64%),repeating-linear-gradient(90deg,#141217 0 22px,#0a090c 22px 24px);}
+.map-thumb.quente:after{content:'';position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(0deg,#fff3d6 0 8%,#ffb030 8% 20%,#ff1f2d 20% 48%,transparent 48%);clip-path:polygon(0 30%,8% 0,16% 40%,26% 60%,36% 55%,50% 70%,64% 55%,74% 60%,84% 40%,92% 0,100% 30%,100% 100%,0 100%);image-rendering:pixelated}
+.map-picker{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:520px){.map-picker{grid-template-columns:1fr 1fr}}
+
+/* ---------- Corte em relâmpago entre telas ---------- */
+.corte{position:fixed;inset:0;z-index:400;pointer-events:none;overflow:hidden}
+.corte-metade{position:absolute;inset:0;background:#050405}
+.corte-metade:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 55% 50%,rgba(255,31,45,.5),transparent 60%)}
+.corte-metade.a{animation:corte-a .62s cubic-bezier(.7,0,.2,1) .14s both}
+.corte-metade.b{animation:corte-b .62s cubic-bezier(.7,0,.2,1) .14s both}
+@keyframes corte-a{to{transform:translate(-62%,-6%) rotate(-4deg)}}
+@keyframes corte-b{to{transform:translate(62%,6%) rotate(4deg)}}
+.corte-raio{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.corte-raio polyline{fill:none;stroke-linejoin:miter;stroke-dasharray:400;stroke-dashoffset:400;animation:raio-desenha .16s linear forwards,raio-some .3s ease-in .3s forwards}
+.corte-raio .brilho{stroke:#ff1f2d;stroke-width:16;filter:blur(6px)}
+.corte-raio .nucleo{stroke:#fff;stroke-width:4}
+@keyframes raio-desenha{to{stroke-dashoffset:0}}
+@keyframes raio-some{to{opacity:0}}
+.corte:after{content:'';position:absolute;inset:0;background:#fff;opacity:0;animation:clarao .3s ease-out .12s}
+@keyframes clarao{0%{opacity:.35}100%{opacity:0}}
+
+/* ---------- Abertura: jogadores + contagem 5→1 ---------- */
+.abertura{position:fixed;inset:0;z-index:390;display:grid;grid-template-rows:auto auto 1fr;justify-items:center;align-content:start;gap:clamp(10px,2.5vh,22px);padding:clamp(24px,7vh,70px) 16px 16px;background:radial-gradient(ellipse at 50% 60%,rgba(120,0,10,.55),rgba(0,0,0,.92) 70%);overflow:hidden;animation:abre .35s ease-out both;color:#fff;text-align:center}
+@keyframes abre{from{opacity:0}to{opacity:1}}
+.abertura-faixas{position:absolute;inset:-20%;background:repeating-linear-gradient(-28deg,transparent 0 70px,rgba(255,31,45,.12) 70px 120px,transparent 120px 190px);animation:faixas 1.4s linear infinite;pointer-events:none}
+@keyframes faixas{to{transform:translateX(220px)}}
+.abertura-titulo{position:relative;display:grid;gap:4px;animation:titulo-entra .5s cubic-bezier(.2,1.6,.4,1) both}
+.abertura-titulo small{font-family:'Bungee',Impact,sans-serif;font-size:12px;letter-spacing:.3em;color:#ff4d58}
+.abertura-titulo strong{font-family:'Bungee',Impact,sans-serif;font-weight:400;font-size:clamp(26px,6vw,54px);line-height:1;color:#fff;-webkit-text-stroke:1.5px #000;text-shadow:0 4px 0 #c4000f,0 8px 0 #000,0 0 30px rgba(255,31,45,.7)}
+@keyframes titulo-entra{from{transform:scale(2.2);opacity:0;filter:blur(6px)}to{transform:none;opacity:1;filter:none}}
+.abertura-jogadores{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:760px}
+.placa{display:flex;align-items:center;gap:10px;padding:8px 18px 8px 8px;background:linear-gradient(90deg,#ff1f2d,#a3000c);border:2px solid #000;box-shadow:0 5px 0 #000;transform:skewX(-10deg);animation:placa-esq .5s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(.25s + var(--i) * .12s)}
+.placa.dir{background:linear-gradient(90deg,#1b1b1f,#3a3a42);border-color:#ff1f2d;animation-name:placa-dir}
+.placa>*{transform:skewX(10deg)}
+.placa b{font-family:'Bungee',Impact,sans-serif;font-weight:400;font-size:clamp(14px,2.4vw,20px);color:#fff;text-shadow:0 2px 0 #000;white-space:nowrap;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+.placa-avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:8px;font-size:22px;border:2px solid #000}
+@keyframes placa-esq{from{transform:translateX(-120vw) skewX(-10deg)}to{transform:skewX(-10deg)}}
+@keyframes placa-dir{from{transform:translateX(120vw) skewX(-10deg)}to{transform:skewX(-10deg)}}
+.abertura-numero{position:relative;align-self:center;font-family:'Bungee',Impact,sans-serif;font-size:clamp(120px,32vmin,280px);line-height:1;color:#fff;-webkit-text-stroke:4px #000;text-shadow:0 8px 0 #c4000f,0 16px 0 #000,0 0 60px rgba(255,31,45,.9)}
+.abertura-numero.bate{animation:numero-bate .9s cubic-bezier(.2,1.5,.4,1) both}
+.abertura-numero.bate:before{content:'';position:absolute;left:50%;top:50%;width:1em;height:1em;margin:-.5em 0 0 -.5em;border-radius:50%;border:6px solid #ff1f2d;animation:anel .7s ease-out both}
+@keyframes numero-bate{0%{transform:scale(2.6) rotate(-8deg);opacity:0}22%{transform:scale(.92) rotate(2deg);opacity:1}36%{transform:scale(1.05)}50%,90%{transform:scale(1);opacity:1}100%{transform:scale(.85);opacity:.4}}
+@keyframes anel{from{transform:scale(.3);opacity:1}to{transform:scale(1.8);opacity:0}}
+.abertura-numero.valendo{font-size:clamp(54px,13vw,150px);color:#ff1f2d;-webkit-text-stroke:3px #fff;text-shadow:0 8px 0 #000,0 0 60px rgba(255,255,255,.6);animation:valendo .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes valendo{from{transform:scale(3);opacity:0}to{transform:none;opacity:1}}
+.abertura[data-n="1"] .abertura-numero,.abertura[data-n="2"] .abertura-numero{color:#ffe1e1}
+.abertura[data-n="1"]{animation:treme .25s linear 2}
+@keyframes treme{25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-2px,-3px)}}
+.abertura.saindo .placa{animation:placa-sai .4s ease-in both}
+@keyframes placa-sai{to{opacity:0;transform:scale(.6) skewX(-10deg)}}
+.abertura.parada *,.abertura.parada{animation:none!important}
+html[data-scene=noir] .placa{background:#f5f5f5;border-color:#000}html[data-scene=noir] .placa b{color:#000;text-shadow:none}
+html[data-scene=noir] .abertura-numero{text-shadow:0 8px 0 #555,0 16px 0 #000}
+@media(max-width:520px){.placa{padding:6px 12px 6px 6px}.placa-avatar{width:30px;height:30px;font-size:18px}}
+/* Garante a fonte grossa mesmo com as regras antigas de tipografia */
+.abertura-titulo small,.abertura-titulo strong,.placa b,.abertura-numero,html[data-scene=quente] body button.primary *{font-family:'Bungee',Impact,sans-serif!important;font-weight:400!important}

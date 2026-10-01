@@ -1,7 +1,7 @@
 // Cenário "Boteco": bar brasileiro moderno e minimalista, tons alaranjados e profundidade.
 // Camada fixa (parede, azulejo, janela para o morro, prateleira, piso, balcão) + camada animada
 // (varal de lâmpadas, letreiro neon, luzes desfocadas em primeiro plano, chuva no tom sério).
-import {visual,reducedMotion} from './visual.js?v=quente16';
+import {visual,reducedMotion} from './visual.js?v=quente17';
 
 const MOODS={
  leve:{wall:['#2b1209','#4a1f0c'],tile:'#5a2a14',tileLine:'#7a3a1c',sky:['#120a1e','#2a1430','#5a2232'],light:'#ffb15c',neon:'#ff8a2b',bokeh:'#ff9a3c',floorA:'#6b2d16',floorB:'#3a1a0e'},
