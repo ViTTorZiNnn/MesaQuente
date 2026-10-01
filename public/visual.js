@@ -1,4 +1,4 @@
-export const BUILD='MESA QUENTE 18 · EM CHAMAS';
+export const BUILD='MESA QUENTE 20 · EM CHAMAS';
 const get=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
 // Mapas: cenário de fundo + estilo da interface. A mesa e o baralho são os mesmos em todos.
 export const MAPAS={quente:{nome:'Mesa Quente',desc:'Aço, luz vermelha, cartas caindo e chamas em pixel.'},boteco:{nome:'Boteco',desc:'Bar brasileiro, luz quente e varal de lâmpadas.'},galaxia:{nome:'Galáxia',desc:'Nebulosas, planetas e estrelas cadentes.'},noir:{nome:'Noir Glitch',desc:'Preto e branco, chuva, granulado e falhas na tela.'}};
