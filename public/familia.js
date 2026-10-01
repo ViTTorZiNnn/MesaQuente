@@ -1,9 +1,9 @@
-import {Mesa3D} from './mesa3d.js?v=quente13';
-import {GameAudio,mountAudioControls} from './som.js?v=quente13';
-import {renderPlayerDock} from './mobile-ui.js?v=quente13';
-import {mountVisualControls} from './visual.js?v=quente13';
-import {familyModes,parsePlayers,nextFamilyCard,toneFor} from './familia-content.js?v=quente13';
-import {TONES} from './editorial.js?v=quente13';
+import {Mesa3D} from './mesa3d.js?v=quente16';
+import {GameAudio,mountAudioControls} from './som.js?v=quente16';
+import {renderPlayerDock} from './mobile-ui.js?v=quente16';
+import {mountVisualControls} from './visual.js?v=quente16';
+import {familyModes,parsePlayers,nextFamilyCard,toneFor} from './familia-content.js?v=quente16';
+import {TONES} from './editorial.js?v=quente16';
 const $=id=>document.getElementById(id);let mesa,players=[],mode,turn=0,round=0,phase='deck',card='',used=[],tones=['leve'],currentTone='leve',timer,toastTimer;
 function toast(message){$('toast').textContent=message.message||message;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6000);}
 const audio=new GameAudio(toast);mountAudioControls(audio);mountVisualControls();

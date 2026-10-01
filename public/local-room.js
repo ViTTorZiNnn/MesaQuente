@@ -1,10 +1,10 @@
-import {applyAction,validateConfig,connected,replyIds} from './motor.js?v=quente13';
-import {viewFor} from './local-privacy.js?v=quente13';
+import {applyAction,validateConfig,connected,replyIds} from './motor.js?v=quente16';
+import {viewFor} from './local-privacy.js?v=quente16';
 
 // This service stays in this tab. No Firebase identities, invitations or network writes.
 export class LocalRoomService {
  constructor({modes,decks,onRoom,onConnection=()=>{}}){Object.assign(this,{modes,decks,onRoom,onConnection});this.local=true;this.online=true;this.uid='local-1';this.code='LOCAL';this.counter=1;}
- emit(){const view=viewFor(this.room,this.uid);view.local=true;this.onRoom(view);this.onConnection(true);}
+ emit(){const view=viewFor(this.room,this.uid);view.local=true;if(view.partida?.cartaAtual&&this.room.partida?.cartaAtual)view.partida.cartaAtual.full=structuredClone(this.room.partida.cartaAtual);this.onRoom(view);this.onConnection(true);}
  async create(name,avatar,config){const valid=validateConfig(config,this.modes);this.room={schemaVersion:3,local:true,status:'lobby',hostId:this.uid,...valid,jogadores:{}};this.addProfile(this.uid,name,avatar);this.emit();return this.code;}
  addProfile(id,name,avatar){if(typeof name!=='string'||!name.trim()||name.trim().length>20)throw Error('Digite um nome de até 20 caracteres.');if(!avatar?.emoji||!avatar?.cor)throw Error('Escolha um avatar.');this.room.jogadores[id]={nome:name.trim(),avatar:structuredClone(avatar),conectado:true,entrouEm:this.counter};}
  async addPlayer(name,avatar){if(this.room.status!=='lobby')throw Error('Adicione participantes no lobby.');if(connected(this.room).length>=12)throw Error('A mesa tem 12 participantes.');const id='local-'+(++this.counter);this.addProfile(id,name,avatar);this.emit();return id;}

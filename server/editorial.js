@@ -61,6 +61,11 @@ bank.leve.questions.push(...["Se você pudesse voltar no tempo, qual é a primei
 bank.profundo.votes.push(...["Tem alguém aqui que segura a barra de todo mundo e nunca pede ajuda. Quem seria?", "Tem uma pessoa na roda que sempre lembra do seu aniversário, mesmo quando ninguém lembra. Quem seria?", "Existe alguém aqui que fala pouco, mas quando fala todo mundo escuta. Quem seria?", "Tem alguém que diz que já superou, mas ainda olha os stories do ex. Quem seria?"]);
 bank.profundo.questions.push(...["Se você pudesse conversar cinco minutos com você de dez anos atrás, o que diria?", "Qual foi o momento mais incrível da sua vida até hoje, e por quê?", "O que você faria diferente se ninguém fosse te julgar?", "Se você encontrasse alguém que te magoou e essa pessoa viesse pedir desculpas, como você reagiria?"]);
 export const editorialBank=bank;
+// Cartas que só funcionam com todo mundo junto (contato físico) ou só online (chat da sala).
+const PRESENCIAL=/me d[aêe]\w* um beijo|beije|ouvido|massagem|à sua (direita|esquerda)|abraç|no colo|de alguém da mesa que topar/i,SO_ONLINE=/no chat|na câmera/i;
+// Só os desafios dependem de estar junto; perguntas sobre beijo, massagem etc. funcionam em qualquer modo.
+function marcar(card){if(card.dare&&PRESENCIAL.test(card.dare))card.presencial=true;if(SO_ONLINE.test(card.dare||''))card.soOnline=true;return card;}
+export function cardsFor(mode,tone,local){const all=editorialCards(mode,tone).map(marcar);const ok=all.filter(c=>local?!c.soOnline:!c.presencial);return ok.length?ok:all;}
 export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const simple=(key)=>b[key].map(text=>({text}));
  switch(mode){
  case'quem_e_mais_provavel':return simple('votes');case'eu_nunca':return simple('never');case'niveis_intimidade':return simple('questions');

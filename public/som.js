@@ -1,4 +1,4 @@
-import {Trilha} from './trilhas.js?v=quente13';
+import {Trilha} from './trilhas.js?v=quente16';
 const clamp=v=>Math.max(0,Math.min(100,Number.isFinite(Number(v))?Number(v):16));
 export class GameAudio extends EventTarget {
  constructor(onError=()=>{}){
