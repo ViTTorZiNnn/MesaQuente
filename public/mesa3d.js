@@ -1,5 +1,5 @@
-import {tableLayout} from './table-layout.js?v=quente19';
-import {visual,reducedMotion} from './visual.js?v=quente19';
+import {tableLayout} from './table-layout.js?v=quente20';
+import {visual,reducedMotion} from './visual.js?v=quente20';
 import * as THREE from './assets/three.module.js';
 export const DECK_ART=[
  {name:'Votação',color:'#ff3038',front:'front-card-votação(1).png',back:'cartas-votação.png'},

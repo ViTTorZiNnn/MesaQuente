@@ -1,7 +1,7 @@
 // Mapa "Mesa Quente" (padrão): as cores da logo — vermelho vivo, branco e preto profundo.
 // Parede e piso de aço, fita de LED vermelha, cartas caindo e espalhadas no chão,
 // e chamas em pixel art subindo pelas bordas e cantos da tela.
-import {visual,reducedMotion} from './visual.js?v=quente19';
+import {visual,reducedMotion} from './visual.js?v=quente20';
 const canvas=document.getElementById('quente-cena'),ctx=canvas.getContext('2d'),base=document.createElement('canvas'),b=base.getContext('2d');
 const fireCanvas=document.createElement('canvas'),fc=fireCanvas.getContext('2d'),topCanvas=document.createElement('canvas'),tc=topCanvas.getContext('2d');
 let W=0,H=0,dpr=1,seed=11,last=0,lastFire=0,dirty=true,L={},fire=null,cols=0,rows=0,px=6,img=null,heat=1,decay=1,tick=0;

@@ -26,6 +26,10 @@ const SONS={
  tick:(c,o)=>{tom(c,o,{f:1200,to:800,dur:.06,type:'square',vol:.1});sopro(c,o,{f:1800,q:6,dur:.04,vol:.25});tom(c,o,{f:90,to:50,dur:.18,vol:.35});},
  go:(c,o)=>{tom(c,o,{f:60,to:40,dur:.5,vol:.5});sopro(c,o,{type:'lowpass',f:6000,to:400,dur:.6,vol:.35});[392,494,587,784].forEach(f=>tom(c,o,{f,dur:.9,type:'sawtooth',vol:.05,a:.02}));},
  zap:(c,o)=>{sopro(c,o,{type:'highpass',f:5000,to:800,dur:.25,vol:.35,a:.001});tom(c,o,{f:1800,to:60,dur:.3,type:'sawtooth',vol:.08});tom(c,o,{t:.05,f:70,to:40,dur:.25,vol:.3});},
+ whoosh:(c,o)=>{sopro(c,o,{type:'bandpass',f:300,to:2400,q:.8,dur:.45,vol:.3,a:.15});tom(c,o,{f:80,to:160,dur:.4,vol:.15,a:.1});},
+ whooshDown:(c,o)=>{sopro(c,o,{type:'bandpass',f:2400,to:250,q:.8,dur:.45,vol:.28,a:.05});},
+ boom:(c,o)=>{tom(c,o,{f:70,to:30,dur:1.1,vol:.5,a:.01});sopro(c,o,{type:'lowpass',f:900,to:80,dur:1,vol:.3});},
+ rodada:(c,o)=>{sopro(c,o,{type:'lowpass',f:200,to:1500,dur:.35,vol:.18,a:.12});tom(c,o,{t:.2,f:660,dur:.25,type:'triangle',vol:.1});},
  end:(c,o)=>{[[523,0],[659,.14],[784,.28],[1047,.42],[784,.62],[1047,.76]].forEach(([f,t])=>tom(c,o,{f,t,dur:t>.6?.6:.16,type:'square',vol:.07}));},
  // Uma reação, um som
  'r:🔥':(c,o)=>{sopro(c,o,{type:'lowpass',f:400,to:2500,dur:.4,vol:.3,a:.1});for(let i=0;i<5;i++)sopro(c,o,{t:Math.random()*.35,f:3000,q:8,dur:.015,vol:.25});},

@@ -1,23 +1,23 @@
-import {mountChat} from './chat-ui.js?v=quente19';
-import {LocalRoomService} from './local-room.js?v=quente19';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente19';
-import {TONES} from './editorial.js?v=quente19';
-import {mountSettings} from './settings.js?v=quente19';
-import {MAPAS,setRoomMap} from './visual.js?v=quente19';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente19';
-import {GameAudio} from './som.js?v=quente19';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente19';
-import {ligarSonsDaInterface} from './sfx.js?v=quente19';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente19';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente19';
+import {mountChat} from './chat-ui.js?v=quente20';
+import {LocalRoomService} from './local-room.js?v=quente20';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente20';
+import {TONES} from './editorial.js?v=quente20';
+import {mountSettings} from './settings.js?v=quente20';
+import {MAPAS,setRoomMap} from './visual.js?v=quente20';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente20';
+import {GameAudio} from './som.js?v=quente20';
+import {contagem,transicao,depois,setSom} from './abertura.js?v=quente20';
+import {ligarSonsDaInterface} from './sfx.js?v=quente20';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente20';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente20';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente19';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente20';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
 function btn(text,handler,cls){const b=el('button',text,cls);b.type='button';b.onclick=handler;b.disabled=busy||!service?.online;return b;}
 function toast(error){try{tone('error');}catch{}$('toast').textContent=error?.message||String(error);$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
-function setScreen(s){const changed=screen!==s,prev=screen;screen=s;if(changed){if(s==='game'&&prev==='lobby'&&room)contagem(connected(room).map(id=>room.jogadores[id]),{titulo:room.local?'BORA, GALERA!':'A MESA ESQUENTOU'});else transicao();}for(const id of ['home','lobby','game','end'])$(id).hidden=id!==s;document.body.dataset.screen=s;if(s!=='game'){delete document.body.dataset.tone;gameAudio.setMood('lobby');}if(s==='home')setRoomMap(null);if(s!=='lobby')lobbyCount=0;if(changed&&s==='end')setTimeout(()=>tone('end'),500);if(s==='home')chatUI.update(null,'');if(changed)mesa?.pause(s!=='game');}
+function setScreen(s){const changed=screen!==s,prev=screen;screen=s;if(changed){if(s==='game'&&prev==='lobby'&&room)contagem(connected(room).map(id=>room.jogadores[id]),{titulo:room.local?'BORA, GALERA!':'A MESA ESQUENTOU'});else if(prev==='home'||s==='lobby')transicao('entrar');else if(s==='end')transicao('fim');else if(s==='home')transicao('sair');}for(const id of ['home','lobby','game','end'])$(id).hidden=id!==s;document.body.dataset.screen=s;if(s!=='game'){delete document.body.dataset.tone;gameAudio.setMood('lobby');}if(s==='home')setRoomMap(null);if(s!=='lobby')lobbyCount=0;if(changed&&s==='end')setTimeout(()=>tone('end'),500);if(s==='home')chatUI.update(null,'');if(changed)mesa?.pause(s!=='game');}
 function profileNode(id,p){const n=el('div',undefined,'player'),a=el('span',p.avatar?.emoji||'🙂');a.style.background=p.avatar?.cor||'#662233';n.append(a,el('b',p.nome+(id===service.uid?' · você':'')),el('small',id===room.hostId?'Anfitrião':p.conectado===false?'Desconectado':'Na mesa'));if(room.local&&room.status==='lobby'&&id!==room.hostId)n.append(btn('Remover',()=>service.removePlayer(id).catch(toast),'remove-local'));return n;}
 const chatUI=mountChat({send:(text,id)=>service.chat(text,id),getIdentity:()=>service?.uid});
 const gameAudio=new GameAudio(toast);setSom(k=>gameAudio.effect(k));ligarSonsDaInterface(k=>gameAudio.effect(k));mountSettings(gameAudio);mountReactionTray();
@@ -135,7 +135,7 @@ if(new URLSearchParams(location.search).get('modo')==='solo')openSetup('local');
 // ---- Mesa Quente 09: camada de jogo (papéis, abertura de rodada, pontos e pódio) ----
 function renderRole(c){const r=roleFor(c,service.uid,textForViewer(c,service.uid));$('role-chip').textContent=r.label;$('role-chip').title=r.text;}
 let introCard='',introTimer;
-function renderIntro(c,p,reader,name){if(c.id===introCard)return;introCard=c.id;if(c.phase!=='deck'){$('round-intro').hidden=true;return;}const m=modes[c.modeId];$('intro-round').textContent='RODADA '+p.rodadaAtual+' / '+p.totalRodadas;$('intro-icon').textContent=m.icone||'🃏';$('intro-name').textContent=m.nome;$('intro-tone').textContent=TONES[c.tone]||'';$('intro-tone').dataset.tone=c.tone||'leve';$('intro-goal').textContent=m.objetivo||m.descricao;$('intro-example').textContent=window.MQ_CATALOGO.exemploPara(c.modeId,c.tone)?'Exemplo: '+window.MQ_CATALOGO.exemploPara(c.modeId,c.tone):'';$('intro-role').textContent=room.local?'Puxe a carta e leia em voz alta para a galera.':reader?'Você é o leitor desta rodada: puxe a carta!':name+' vai puxar a carta.';$('intro-points').textContent=m.pontos&&!room.local?'⭐ '+m.pontos:'';$('round-intro').hidden=true;depois(()=>{if(introCard!==c.id)return;if(p.rodadaAtual>1)transicao();$('round-intro').hidden=false;$('round-intro').classList.remove('show');void $('round-intro').offsetWidth;$('round-intro').classList.add('show');tone('turn');clearTimeout(introTimer);introTimer=setTimeout(()=>$('round-intro').hidden=true,7000);});}
+function renderIntro(c,p,reader,name){if(c.id===introCard)return;introCard=c.id;if(c.phase!=='deck'){$('round-intro').hidden=true;return;}const m=modes[c.modeId];$('intro-round').textContent='RODADA '+p.rodadaAtual+' / '+p.totalRodadas;$('intro-icon').textContent=m.icone||'🃏';$('intro-name').textContent=m.nome;$('intro-tone').textContent=TONES[c.tone]||'';$('intro-tone').dataset.tone=c.tone||'leve';$('intro-goal').textContent=m.objetivo||m.descricao;$('intro-example').textContent=window.MQ_CATALOGO.exemploPara(c.modeId,c.tone)?'Exemplo: '+window.MQ_CATALOGO.exemploPara(c.modeId,c.tone):'';$('intro-role').textContent=room.local?'Puxe a carta e leia em voz alta para a galera.':reader?'Você é o leitor desta rodada: puxe a carta!':name+' vai puxar a carta.';$('intro-points').textContent=m.pontos&&!room.local?'⭐ '+m.pontos:'';$('round-intro').hidden=true;depois(()=>{if(introCard!==c.id)return;if(p.rodadaAtual>1)transicao('rodada');$('round-intro').hidden=false;$('round-intro').classList.remove('show');void $('round-intro').offsetWidth;$('round-intro').classList.add('show');tone('turn');clearTimeout(introTimer);introTimer=setTimeout(()=>$('round-intro').hidden=true,7000);});}
 $('intro-go').onclick=()=>{$('round-intro').hidden=true;clearTimeout(introTimer);};$('round-intro').onclick=e=>{if(e.target===$('round-intro'))$('round-intro').hidden=true;};
 let popsCard='';
 function renderPops(c){if(room.local)return;if(c.phase!=='results'||popsCard===c.id)return;popsCard=c.id;const awards=Object.entries(c.awards||{}).filter(([,n])=>n>0);if(!awards.length)return;tone('score');confetti();awards.forEach(([id,n],i)=>{const pop=el('div',undefined,'score-pop');pop.append(el('b','+'+n),el('span',(room.jogadores[id]?.avatar?.emoji||'')+' '+(room.jogadores[id]?.nome||'Jogador')));pop.style.left=(20+((i*23)%60))+'%';pop.style.animationDelay=(i*.15)+'s';$('score-pops').append(pop);setTimeout(()=>pop.remove(),2600+i*150);});}
