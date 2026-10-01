@@ -9,8 +9,8 @@ export const FLOWS={
  o_espiao:{steps:['Comprar','Distribuir','Investigar','Acusar','Revelar'],read:'Distribua os papéis. Só o espião ficará sem a palavra.',play:'Vote em quem você acha que é o espião.',discussion:'Leiam seus papéis e façam perguntas uns aos outros sem dizer a palavra.',reveal:'Distribuir papéis'},
  bandeiras_vermelhas:{steps:['Comprar','Ler','Escolher','Comparar'],read:'Leia a situação completa e abra as escolhas.',play:'Você daria uma chance? Escolha e explique seu limite.',reveal:'Abrir escolhas'},
  batalha_de_argumentos:{steps:['Comprar','Ler','Debater','Votar','Resultado'],read:'Leia a afirmação e inicie o debate.',play:'Qual argumento convenceu mais? Escolha uma das duas pessoas.',discussion:'O leitor defende a frase. A outra pessoa indicada discorda. Deem espaço para os dois falarem.',reveal:'Começar debate'},
- o_termometro:{steps:['Comprar','Dar exemplo','Adivinhar','Revelar'],read:'Dê um exemplo da intensidade do seu número. Não diga o número.',play:'Ouça o exemplo e escolha uma intensidade de 1 a 10.',reader:'Aguarde os palpites sem revelar seu número.',reveal:'Receber palpites'},
- apenas_uma_dica:{steps:['Comprar','Distribuir','Dar dicas','Adivinhar','Revelar'],read:'Você será quem adivinha. Entregue a palavra secreta aos outros.',play:'Envie uma dica de uma palavra. Não escreva a própria palavra secreta.',reader:'Aguarde as dicas. As repetidas serão removidas automaticamente.',reveal:'Entregar palavra à mesa'},
+ o_termometro:{steps:['Puxar','Dar a pista','Chutar','Revelar'],read:'Veja seu número secreto na carta. Depois, fale UMA pista que combine com ele. Não diga o número!',play:'Ouça a pista e toque no número de 1 a 10 que você acha que é.',reader:'Fale sua pista e espere os chutes. Não diga o número!',reveal:'Pista dada, receber chutes'},
+ apenas_uma_dica:{steps:['Puxar','Distribuir','Dar dicas','Chutar','Revelar'],read:'Você é uma pessoa famosa! Só a mesa sabe quem. Entregue a carta para eles darem as dicas.',play:'Mande UMA palavra que ajude o leitor a descobrir quem ele é. Sem dizer o nome!',reader:'Espere as dicas. As repetidas são canceladas automaticamente.',reveal:'Entregar carta à mesa'},
  palavra_proibida:{steps:['Comprar','Preparar','Adivinhar','Revelar'],read:'Veja a palavra e os termos proibidos. Prepare sua explicação.',play:'Ouça a explicação e envie um palpite. Você pode tentar novamente.',reader:'Explique em voz alta sem usar os termos proibidos.',reveal:'Começar explicação'}
 };
 export function guidance(c,p,uid,now=Date.now()){
@@ -36,7 +36,7 @@ export function outcome(c,p,players){
  if(c.modeId==='o_espiao'){title='O espião era '+name(c.spyId);detail='Palavra secreta: '+c.secret;}
  if(c.modeId==='duas_verdades_uma_mentira'){title='A mentira era o fato '+(c.lie+1);detail=c.statements?.[c.lie]||'';}
  if(c.modeId==='o_termometro'){title='A intensidade era '+c.secretNumber+' de 10';detail=Object.entries(answers).filter(([,v])=>Number(v)===c.secretNumber).map(([id])=>name(id)).join(', ')||'Ninguém acertou exatamente. Comparem as interpretações.';}
- if(c.modeId==='apenas_uma_dica'){title=normalize(c.guess)===normalize(c.secret)?'A mesa conseguiu!':'Quase! Vamos descobrir.';detail=`Palavra: ${c.secret}. Palpite: ${c.guess||'Nenhum'}.`;}
+ if(c.modeId==='apenas_uma_dica'){title=c.correct?'Acertou! Você é '+c.secret+'!':'Errou! Você era '+c.secret+'.';detail=`Palpite: ${c.guess||'nenhum'}.`;}
  if(c.modeId==='preencha_a_lacuna'){title='A resposta escolhida';detail=(answers[c.winner]||'')+' — '+name(c.winner);}
  if(c.modeId==='palavra_proibida'){title=c.winner?name(c.winner)+' acertou!':'A palavra era '+c.secret;detail='Resposta: '+c.secret;}
  if(c.modeId==='niveis_intimidade'){title='Respondeu sem filtro!';detail=name(c.readerId)+' encarou a pergunta. Próxima vítima?';}
@@ -51,7 +51,7 @@ export function roleFor(c,uid,viewerText=''){
  if(c.phase==='deck'||c.phase==='private')return own?{label:'Leitor',text:'Você está com o baralho. Puxe e revele a carta.'}:{label:'Aguardando',text:'O leitor está preparando a carta.'};
  switch(id){
   case'o_espiao':return /ESPIÃO/.test(viewerText)?{label:'🕵️ Espião',text:'Você NÃO sabe a palavra. Finja que sabe e descubra qual é.'}:{label:'🔎 Detetive',text:'Dê dicas sutis da palavra e desmascare o espião.'};
-  case'apenas_uma_dica':return own?{label:'🎯 Adivinho',text:'Só você não vê a palavra. Leia as dicas e chute.'}:{label:'💡 Dica',text:'Mande UMA palavra que ajude o leitor a adivinhar.'};
+  case'apenas_uma_dica':return own?{label:'🎭 Famoso misterioso',text:'Só você não sabe quem é. Leia as dicas e chute.'}:{label:'💡 Dica',text:'Mande UMA palavra que ajude o leitor a descobrir quem é.'};
   case'palavra_proibida':return own?{label:'🗣️ Explicador',text:'Explique a palavra em voz alta sem usar os termos proibidos.'}:{label:'🎯 Adivinho',text:'Ouça e digite seu palpite. O primeiro acerto vence.'};
   case'o_termometro':return own?{label:'🌡️ Dá a pista',text:'Fale uma pista que combine com o seu número secreto.'}:{label:'🎯 Adivinho',text:'Ouça a pista e chute o número de 1 a 10.'};
   case'duas_verdades_uma_mentira':return own?{label:'🎭 Mentiroso',text:'Apresente os três fatos com cara de paisagem.'}:{label:'🔎 Detetive',text:'Descubra qual dos três fatos é a mentira.'};

@@ -1,5 +1,5 @@
-import {applyAction,validateConfig,connected,replyIds} from './motor.js?v=quente11';
-import {viewFor} from './local-privacy.js?v=quente11';
+import {applyAction,validateConfig,connected,replyIds} from './motor.js?v=quente12';
+import {viewFor} from './local-privacy.js?v=quente12';
 
 // This service stays in this tab. No Firebase identities, invitations or network writes.
 export class LocalRoomService {
@@ -21,6 +21,6 @@ export class LocalRoomService {
   if(type==='restart'||next.status==='finalizada')this.uid=next.hostId;
   this.emit();
  }
- async react(emoji){if(!['🔥','😂','👏','😳'].includes(emoji))return;this.room.reactions??={};this.room.reactions['r'+Date.now()]={emoji,uid:this.uid,at:Date.now()};this.emit();}
+ async react(emoji){if(!['🔥','😂','👏','😳','😈','💋','🍻','🙈'].includes(emoji))return;this.room.reactions??={};this.room.reactions['r'+Date.now()]={emoji,uid:this.uid,at:Date.now()};this.emit();}
  async leave(){this.room=null;}
 }

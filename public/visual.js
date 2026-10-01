@@ -1,4 +1,4 @@
-export const BUILD='MESA QUENTE 11 · BOTECO';
+export const BUILD='MESA QUENTE 12 · BOTECO';
 const get=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
 // Um único cenário: o boteco. A escolha de cenários antigos foi removida.
 export const visual={scene:'boteco',motion:get('mq_motion','auto')};

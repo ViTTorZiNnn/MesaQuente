@@ -2,14 +2,14 @@ import {textForViewer,replyIds} from './motor.js';
 // Build a new response from allowed fields; never send the database snapshot.
 export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');
- const out={};for(const k of ['schemaVersion','hostId','status','minigames','modoLivre','numeroRodadas','ready','reactions','tones','adultConfirmed','scores','stats'])if(room[k]!==undefined)out[k]=structuredClone(room[k]);
+ const out={};for(const k of ['schemaVersion','hostId','status','minigames','modoLivre','numeroRodadas','ready','reactions','tones','adultConfirmed','scores','stats','events','endReason'])if(room[k]!==undefined)out[k]=structuredClone(room[k]);
  out.jogadores={};for(const [id,p] of Object.entries(room.jogadores))out.jogadores[id]={nome:p.nome,avatar:p.avatar,conectado:p.conectado,entrouEm:p.entrouEm};
  out.chat=Object.entries(room.chat||{}).sort((a,b)=>a[1].at-b[1].at||a[0].localeCompare(b[0])).slice(-60).map(([id,m])=>({id,uid:m.uid,name:m.name,emoji:m.emoji,text:m.text,at:m.at}));
  const p=room.partida,c=p?.cartaAtual;if(!c)return out;
  const own=c.readerId===uid,participant=c.participants.includes(uid),results=c.phase==='results'&&!c.skipped,visible=results||!c.skipped&&(c.phase==='public'||participant&&own&&['private','voting'].includes(c.phase));
  const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
  card.viewerText=visible?(!participant&&!results&&['o_espiao','o_termometro','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
- if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
+ if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
  if(results){for(const k of ['secret','secretNumber','spyId','lie','awards'])if(c[k]!==undefined)card[k]=c[k];}
  else if(own&&visible&&c.lie!==undefined)card.lie=c.lie;
  const answers=p.answers||{};let shown={};

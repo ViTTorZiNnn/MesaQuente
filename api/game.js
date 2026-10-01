@@ -8,6 +8,9 @@ import {
   applyAction,
   settleVoting,
   connected,
+  canJoin,
+  noteEvent,
+  playerLeft,
   validateConfig
 } from '../server/motor.js';
 
@@ -124,8 +127,14 @@ function profile(payload) {
 
 function presence(room, uid, now) {
   for (const [id, player] of Object.entries(room.jogadores)) {
-    player.conectado =
-      id === uid || now - (player.lastSeen || 0) < 90000;
+    const was = player.conectado !== false;
+    const is = id === uid || now - (player.lastSeen || 0) < 90000;
+
+    // Avisa a mesa e destrava a rodada quando alguém some ou volta.
+    if (was && !is) playerLeft(room, id, now);
+    if (!was && is) noteEvent(room, '👋 ' + player.nome + ' voltou para a mesa.', now);
+
+    player.conectado = is;
   }
 
   room.jogadores[uid].lastSeen = now;
@@ -314,16 +323,15 @@ export default async function handler(req, res) {
       try {
         if (body.op === 'join') {
           const player = profile(body);
+          const previous = room.jogadores[uid];
 
-          if (
-            !room.jogadores[uid] &&
-            Object.keys(room.jogadores).length >= 12
-          ) {
-            throw new Error('A mesa tem 12 participantes.');
-          }
+          // Ninguém novo entra com a partida rolando; quem caiu pode voltar.
+          canJoin(room, uid);
 
-          player.entrouEm =
-            room.jogadores[uid]?.entrouEm || now;
+          player.entrouEm = previous?.entrouEm || now;
+
+          if (!previous) noteEvent(room, '🎉 ' + player.nome + ' entrou na mesa.', now);
+          else if (previous.conectado === false) noteEvent(room, '👋 ' + player.nome + ' voltou para a mesa.', now);
 
           room.jogadores[uid] = player;
         } else if (!room.jogadores[uid]) {
@@ -334,6 +342,7 @@ export default async function handler(req, res) {
         settleVoting(room, now);
 
         if (body.op === 'leave') {
+          playerLeft(room, uid, now);
           delete room.jogadores[uid];
 
           if (!Object.keys(room.jogadores).length) {
@@ -360,7 +369,7 @@ export default async function handler(req, res) {
         } else if (body.op === 'chat') {
           appendChat(room,uid,body.text,body.messageId,now);
         } else if (body.op === 'react') {
-          if (!['🔥', '😂', '👏', '😳'].includes(body.emoji)) {
+          if (!['🔥','😂','👏','😳','😈','💋','🍻','🙈'].includes(body.emoji)) {
             throw new Error('Reação inválida.');
           }
 

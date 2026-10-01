@@ -1,4 +1,5 @@
 import {QUENTE,CASAL} from './cartas-quentes.js';
+import {TERMOMETRO,FAMOSOS} from './cartas-jogos.js';
 // Shared editorial catalogue. Mechanics and tone are independent choices.
 export const TONES={leve:'Leve e divertido',profundo:'Sério e pessoal',adulto:'Picante · 18+',casal:'A dois · 18+'};
 export const ADULT_TONES=['adulto','casal'];
@@ -45,17 +46,19 @@ bank.leve.dare=bank.leve.dare.map(d=>d.startsWith('Faça uma propaganda')?'Faça
 bank.leve.blanks=bank.leve.blanks.map(([t,w])=>t.includes('apocalipse')?['Num reality show, eu seria eliminado na primeira semana por ________.',['roncar alto demais','flertar com todo mundo','chorar na primeira prova','comer a comida dos outros']]:[t,w]);
 bank.leve.votes.push('Quem da mesa já mandou print da conversa para a pessoa errada?','Quem fingiria um sotaque a noite inteira para impressionar um crush?','Quem seria expulso primeiro de um casamento por causa da dança?');
 bank.leve.never.push('Eu nunca stalkeei um ex até as fotos de 2015.','Eu nunca chorei vendo um reality show.','Eu nunca dei em cima de alguém e descobri que a pessoa era comprometida.');
+for(const t of Object.keys(TERMOMETRO)){bank[t].termometro=TERMOMETRO[t];bank[t].famosos=FAMOSOS[t];}
 export const editorialBank=bank;
 export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const simple=(key)=>b[key].map(text=>({text}));
  switch(mode){
  case'quem_e_mais_provavel':return simple('votes');case'eu_nunca':return simple('never');case'niveis_intimidade':return simple('questions');
  case'o_que_voce_prefere':return b.pairs.map(options=>({text:'O que você prefere?\n'+options.join('\nOU\n'),options}));
  case'bandeiras_vermelhas':return b.flags.map(([a,c])=>({text:a+', mas '+c+'. Você daria uma chance?',options:['Daria uma chance','Não daria uma chance']}));
- case'batalha_de_argumentos':return simple('debates');case'o_termometro':return simple('scales');
+ case'batalha_de_argumentos':return simple('debates');case'o_termometro':return b.termometro.map(scale=>({text:scale.tema,scale}));
  case'preencha_a_lacuna':return b.blanks.map(([text,white])=>({text:'Complete a frase escolhendo uma das respostas disponíveis.\n'+text,white}));
  case'verdade_ou_desafio_hot':return b.truth.map((truth,i)=>({text:'Escolha Verdade ou Desafio. Você pode pular sem explicar.',truth,dare:b.dare[i]}));
  case'duas_verdades_uma_mentira':return simple('facts');
- case'o_espiao':case'apenas_uma_dica':return b.words.map(secret=>({secret}));
+ case'o_espiao':return b.words.map(secret=>({secret}));
+ case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat,emoji:f.emoji}));
  case'palavra_proibida':return b.forbidden.map(([secret,...forbidden])=>({secret,forbidden}));
  default:throw Error('Minijogo sem conteúdo revisado.');
  }}

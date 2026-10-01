@@ -41,9 +41,9 @@ export function applyAction(room,uid,action,payload={},modes,decks,rng=Math.rand
  else if(action==='truth'){if(!reader||c.modeId!=='verdade_ou_desafio_hot'||c.phase!=='private'||!['truth','dare'].includes(payload.choice))throw Error('Escolha indisponível.');c.text=(payload.choice==='truth'?'VERDADE · ':'DESAFIO · ')+c[payload.choice];c.choice=payload.choice;}
  else if(action==='statements'){if(!reader||c.modeId!=='duas_verdades_uma_mentira'||c.phase!=='private')throw Error('Aguarde sua vez.');if(!Array.isArray(payload.statements)||payload.statements.length!==3||payload.statements.some(s=>typeof s!=='string'||!s.trim()||s.length>140)||![0,1,2].includes(payload.lie))throw Error('Preencha os três fatos e marque a mentira.');c.statements=payload.statements.map(s=>s.trim());c.lie=payload.lie;c.text=c.statements.map((s,i)=>(i+1)+'. '+s).join('\n');}
  else if(action==='reveal'){if(!reader||c.phase!=='private')throw Error('Somente o leitor pode revelar a carta.');if(c.modeId==='duas_verdades_uma_mentira'&&!c.statements)throw Error('Escreva os três fatos primeiro.');if(c.modeId==='verdade_ou_desafio_hot'&&!c.choice)throw Error('Escolha Verdade ou Desafio primeiro.');c.phase='public';}
- else if(action==='answer'){if(!['public','voting'].includes(c.phase)||!c.participants.includes(uid))throw Error('Aguarde a próxima rodada ou a revelação da carta.');if(c.votingReady===false)throw Error('Conversem antes de abrir a votação.');const value=String(payload.value??'').trim();if(!value||value.length>140)throw Error('Use uma resposta de até 140 caracteres.');const allowed=allowedAnswers(c,uid,room);if(allowed&&!allowed.includes(value))throw Error('Resposta inválida para este jogo.');if(['niveis_intimidade','verdade_ou_desafio_hot'].includes(c.modeId))throw Error('Esta rodada é respondida em voz alta.');if(c.modeId==='apenas_uma_dica'){if(uid===c.readerId||c.hintsRevealed)throw Error('As dicas já foram encerradas.');if(/\s/.test(value))throw Error('A dica deve ter uma só palavra.');if(normalize(value)===normalize(c.secret))throw Error('A dica não pode ser a própria palavra secreta.');}if(c.modeId==='palavra_proibida'&&reader)throw Error('O leitor dá a dica em voz alta.');p.answers??={};p.answers[uid]=value;}
+ else if(action==='answer'){if(!['public','voting'].includes(c.phase)||!c.participants.includes(uid))throw Error('Aguarde a próxima rodada ou a revelação da carta.');if(c.votingReady===false)throw Error('Conversem antes de abrir a votação.');const value=String(payload.value??'').trim();if(!value||value.length>140)throw Error('Use uma resposta de até 140 caracteres.');const allowed=allowedAnswers(c,uid,room);if(allowed&&!allowed.includes(value))throw Error('Resposta inválida para este jogo.');if(['niveis_intimidade','verdade_ou_desafio_hot'].includes(c.modeId))throw Error('Esta rodada é respondida em voz alta.');if(c.modeId==='apenas_uma_dica'){if(uid===c.readerId||c.hintsRevealed)throw Error('As dicas já foram encerradas.');if(/\s/.test(value))throw Error('A dica deve ter uma só palavra.');if(nameTokens(c).includes(normalize(value)))throw Error('A dica não pode ter o nome da pessoa.');}if(c.modeId==='palavra_proibida'&&reader)throw Error('O leitor dá a dica em voz alta.');p.answers??={};p.answers[uid]=value;}
  else if(action==='hints'){if(!reader&&!host)throw Error('Somente o leitor ou anfitrião.');if(c.modeId!=='apenas_uma_dica'||c.phase!=='public')throw Error('Ação indisponível.');if(replyIds(room).some(id=>!Object.hasOwn(p.answers||{},id)))throw Error('Ainda faltam dicas.');c.hintsRevealed=true;}
- else if(action==='guess'){if(!reader||c.modeId!=='apenas_uma_dica'||!c.hintsRevealed||c.phase!=='public')throw Error('Aguarde as dicas.');const g=String(payload.value||'').trim();if(!g||g.length>80)throw Error('Digite seu palpite.');c.guess=g;c.phase='results';}
+ else if(action==='guess'){if(!reader||c.modeId!=='apenas_uma_dica'||!c.hintsRevealed||c.phase!=='public')throw Error('Aguarde as dicas.');const g=String(payload.value||'').trim();if(!g||g.length>80)throw Error('Digite seu palpite.');c.guess=g;c.correct=matchGuess(c,g);c.phase='results';}
  else if(action==='judge'){if(!reader||c.modeId!=='preencha_a_lacuna'||c.phase!=='public'||!p.answers?.[payload.winner])throw Error('Escolha uma resposta recebida.');if(replyIds(room).some(id=>!Object.hasOwn(p.answers||{},id)))throw Error('Aguarde todas as respostas antes de escolher.');c.winner=payload.winner;c.phase='results';}
  else if(action==='results'){if(!reader&&!host)throw Error('Aguarde o leitor.');if(c.phase!=='public')throw Error('Revele a carta primeiro.');if((AUTO_RESULTS.includes(c.modeId)||['apenas_uma_dica','preencha_a_lacuna'].includes(c.modeId)))throw Error('Conclua a atividade da rodada ou pule a carta.');c.phase='results';}
  else if(action==='next'){if(!reader&&!host)throw Error('Aguarde sua vez.');if(c.phase!=='results'&&!host)throw Error('Conclua a rodada primeiro.');room.partida=makeRound(room,modes,decks,rng,now);if(room.partida.status==='finalizada')room.status='finalizada';}
@@ -52,8 +52,8 @@ export function applyAction(room,uid,action,payload={},modes,decks,rng=Math.rand
 }
 export function textForViewer(card,uid){if(card.skipped)return'Carta pulada. Ninguém precisa explicar o motivo.';const own=card.readerId===uid,mode=card.modeId,results=card.phase==='results';if(!own&&['deck','private','voting'].includes(card.phase))return'';
  if(mode==='o_espiao')return results?'Palavra da rodada: '+card.secret:uid===card.spyId?'Você é o ESPIÃO. Descubra a palavra sem levantar suspeitas.':'Palavra secreta: '+card.secret+'. Não diga a palavra em voz alta!';
- if(mode==='o_termometro')return card.text.replace(' Escala:','\nEscala:')+(own||results?'\n\n🔢 Seu número secreto: '+card.secretNumber+'. Fale uma pista desse nível, sem dizer o número.':'\n\n🎯 Ouça a pista e chute o número secreto (1 a 10).');
- if(mode==='apenas_uma_dica')return results?'Palavra: '+card.secret:own?'Você é quem adivinha. Revele a rodada para os outros enviarem dicas; depois tente descobrir a palavra.':'Dê uma única palavra de dica para: '+card.secret;
+ if(mode==='o_termometro'){const sc=card.scale||{pista:'Dê uma pista'};return results?'O número era\n'+card.secretNumber:own?'Seu número\n'+card.secretNumber+'\n\n'+sc.pista+' que valha '+card.secretNumber+' nessa escala. Não diga o número!':'Número secreto\n?\n\nOuça a pista e chute de 1 a 10.';}
+ if(mode==='apenas_uma_dica')return results?(card.emoji||'⭐')+' '+card.secret:own?(card.emoji||'⭐')+' '+(card.cat||'Famoso')+'\n\nVocê é essa pessoa famosa! Leia as dicas da mesa e descubra quem você é.':(card.emoji||'⭐')+' '+card.secret+'\n'+(card.cat||'')+'\n\nMande UMA palavra de dica, sem dizer o nome.';
  if(mode==='palavra_proibida')return own||results?'Explique: '+card.secret+'\nNão pode dizer: '+card.forbidden.join(', '):card.text;
  return card.text;
 }
@@ -91,10 +91,28 @@ export function scoreRound(room){
   case'o_espiao':if(t.top===c.spyId)for(const v of voters(c.spyId))add(v,1);else{add(c.spyId,3);stat(c.spyId,'blefe');}break;
   case'batalha_de_argumentos':if(t.top)add(t.top,2);break;
   case'o_termometro':{let close=false;for(const [id,v] of Object.entries(ans)){const d=Math.abs(Number(v)-c.secretNumber);if(d===0){add(id,2);stat(id,'sintonia');close=true;}else if(d===1){add(id,1);close=true;}}if(close)add(c.readerId,1);break;}
-  case'apenas_uma_dica':if(normalize(c.guess||'')===normalize(c.secret)){add(c.readerId,2);const unique=uniqueHints(ans);for(const [id,v] of Object.entries(ans))if(unique.includes(v))add(id,1);}break;
+  case'apenas_uma_dica':if(c.correct){add(c.readerId,2);const unique=uniqueHints(ans);for(const [id,v] of Object.entries(ans))if(unique.includes(v))add(id,1);}break;
   case'palavra_proibida':if(c.winner){add(c.winner,2);add(c.readerId,2);}break;
   case'niveis_intimidade':add(c.readerId,1);stat(c.readerId,'sincero');break;
   case'verdade_ou_desafio_hot':if(c.choice==='dare'){add(c.readerId,2);stat(c.readerId,'ousadia');}else if(c.choice==='truth'){add(c.readerId,1);stat(c.readerId,'sincero');}break;
  }
  c.awards=awards;room.scores??={};for(const [id,n] of Object.entries(awards))room.scores[id]=(room.scores[id]||0)+n;return room;
 }
+
+// Entradas e saídas durante a partida: avisos para a mesa e regras para a rodada não travar.
+export function noteEvent(room,text,now=Date.now()){room.events=[...(Array.isArray(room.events)?room.events:Object.values(room.events||{})),{id:'e'+now+'_'+Math.floor(Math.random()*1e6),text,at:now}].slice(-8);return room;}
+export function canJoin(room,uid){if(room.jogadores?.[uid])return true;if(!['lobby','tutorial'].includes(room.status))throw Error('Essa partida já começou! Espere o anfitrião terminar e voltar ao lobby para entrar.');if(Object.keys(room.jogadores||{}).length>=12)throw Error('A mesa tem 12 participantes.');return true;}
+export function playerLeft(room,uid,now=Date.now()){
+ const name=room.jogadores?.[uid]?.nome||'Alguém';
+ if(room.status!=='jogando'){noteEvent(room,'🚪 '+name+' saiu da mesa.',now);return room;}
+ const rest=connected(room).filter(id=>id!==uid);
+ if(rest.length<2){room.status='finalizada';if(room.partida)room.partida.status='finalizada';room.endReason=name+' saiu e a mesa ficou com menos de 2 jogadores.';noteEvent(room,'🚪 '+name+' saiu. A partida terminou por falta de jogadores.',now);return room;}
+ const c=room.partida?.cartaAtual;let extra='';
+ if(c&&c.phase!=='results'&&!c.skipped&&(c.readerId===uid||c.spyId===uid||c.debaters?.includes(uid))){c.skipped=true;c.phase='results';room.partida.answers={};extra=c.readerId===uid?' Era a vez dele(a): a carta foi pulada.':' A carta foi pulada.';}
+ noteEvent(room,'🚪 '+name+' saiu da partida.'+extra,now);return room;
+}
+
+// Quem Sou Eu: o palpite aceita apelidos e pequenos erros de digitação.
+function nameTokens(c){return[c.secret,...(c.aliases||[])].flatMap(n=>[normalize(n),...normalize(n).split(/[^a-z0-9]+/).filter(w=>w.length>2&&w!=='dos'&&w!=='das')]);}
+function distance(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+export function matchGuess(c,guess){const g=normalize(guess);if(!g)return false;return[c.secret,...(c.aliases||[])].map(normalize).some(n=>g===n||(n.length>=4&&g.length>=4&&(g.includes(n)||n.includes(g)&&g.length>=n.length*.6))||(n.length>5&&distance(g,n)<=2));}
