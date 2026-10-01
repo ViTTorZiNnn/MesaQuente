@@ -1,5 +1,5 @@
 // Mapa "Noir Glitch": preto e branco, chuva, persiana, granulado de filme e falhas na tela.
-import {visual,reducedMotion} from './visual.js?v=quente13';
+import {visual,reducedMotion} from './visual.js?v=quente14';
 const canvas=document.getElementById('noir-cena'),ctx=canvas.getContext('2d',{willReadFrequently:false}),base=document.createElement('canvas'),b=base.getContext('2d'),grain=document.createElement('canvas');
 let W=0,H=0,dpr=1,seed=3,last=0,dirty=true,L={},font=false,glitchUntil=0,nextGlitch=3;
 const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
@@ -36,7 +36,7 @@ function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!==
  c.save();c.beginPath();c.rect(wn.x,wn.y,wn.w,wn.h);c.clip();c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=1;for(const d of L.rain){const y=wn.y+((d.y+time*d.v)%1)*wn.h,x=wn.x+d.x*wn.w;c.beginPath();c.moveTo(x,y);c.lineTo(x-2,y+d.l);c.stroke();}
  for(const d of L.drops){const y=wn.y+((d.y+time*d.v)%1)*wn.h;c.fillStyle='rgba(255,255,255,.28)';c.beginPath();c.arc(wn.x+d.x*wn.w,y,d.r,0,7);c.fill();}c.restore();
  // Letreiro neon branco piscando
- if(font&&['game','end'].includes(document.body.dataset.screen)){const s=L.sign,on=(Math.sin(time*9)+Math.sin(time*5.3)>1.75)?.35:1;c.save();c.font=`${s.size}px Bungee`;c.textAlign='center';c.textBaseline='middle';c.globalAlpha=on;c.shadowColor='#fff';c.shadowBlur=s.size*.5;c.fillStyle='#f4f4f4';c.fillText('MESA QUENTE',s.x,s.y);c.restore();}
+ if(font&&document.body.dataset.screen==='game'){const s=L.sign,on=(Math.sin(time*9)+Math.sin(time*5.3)>1.75)?.35:1;c.save();c.font=`${s.size}px Bungee`;c.textAlign='center';c.textBaseline='middle';c.globalAlpha=on;c.shadowColor='#fff';c.shadowBlur=s.size*.5;c.fillStyle='#f4f4f4';c.fillText('MESA QUENTE',s.x,s.y);c.restore();}
  // Lâmpada pendurada balançando com cone de luz
  const ang=Math.sin(time*.8)*.08,lx=W/2+Math.sin(ang)*H*.3,ly=H*.04+Math.cos(ang)*H*.06;c.strokeStyle='#000';c.lineWidth=2;c.beginPath();c.moveTo(W/2,0);c.lineTo(lx,ly);c.stroke();
  c.save();c.globalCompositeOperation='lighter';const cone=c.createLinearGradient(lx,ly,lx,L.floorY);cone.addColorStop(0,'rgba(255,255,255,.16)');cone.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=cone;c.beginPath();c.moveTo(lx-8,ly);c.lineTo(lx+8,ly);c.lineTo(lx+W*.28+Math.sin(ang)*80,L.floorY+H*.1);c.lineTo(lx-W*.28+Math.sin(ang)*80,L.floorY+H*.1);c.closePath();c.fill();c.restore();

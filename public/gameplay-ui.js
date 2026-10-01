@@ -13,6 +13,14 @@ export const FLOWS={
  apenas_uma_dica:{steps:['Puxar','Distribuir','Dar dicas','Chutar','Revelar'],read:'Você é uma pessoa famosa! Só a mesa sabe quem. Entregue a carta para eles darem as dicas.',play:'Mande UMA palavra que ajude o leitor a descobrir quem ele é. Sem dizer o nome!',reader:'Espere as dicas. As repetidas são canceladas automaticamente.',reveal:'Entregar carta à mesa'},
  palavra_proibida:{steps:['Comprar','Preparar','Adivinhar','Revelar'],read:'Veja a palavra e os termos proibidos. Prepare sua explicação.',play:'Ouça a explicação e envie um palpite. Você pode tentar novamente.',reader:'Explique em voz alta sem usar os termos proibidos.',reveal:'Começar explicação'}
 };
+Object.assign(FLOWS,{
+ amigo_da_onca:{steps:['Puxar','Revelar','Votar','3, 2, 1!'],read:'Leia a pergunta e revele. Todo mundo vota em segredo.',play:'Vote em quem da mesa merece essa carta.',reveal:'Revelar e abrir votação'},
+ vira_vira:{steps:['Puxar','Revelar','Marcar','Brindar'],read:'Leia a carta em voz alta e abra as respostas.',play:'A carta é sobre você? Marque "Bebo" ou "Tô fora".',reveal:'Abrir respostas'},
+ decisao_dificil:{steps:['Puxar','Revelar','Decidir','Comparar'],read:'Leia a situação e as duas saídas.',play:'Escolha o que você faria.',reveal:'Abrir escolhas'},
+ fato_ou_fake:{steps:['Puxar','Revelar','Votar','Resposta'],read:'Leia a curiosidade e abra a votação.',play:'Isso é verdade ou mito? Vote em Fato ou Fake.',reveal:'Abrir votação'},
+ caos_na_mesa:{steps:['Puxar','Revelar','Fazer','Pontuar'],read:'Leia a regra em voz alta. Ela vale na hora!',play:'Cumpra a regra! O leitor marca quem ganhou ou perdeu.',reader:'Faça todos cumprirem a regra e marque quem ganhou ou perdeu.',reveal:'Valendo!'},
+ mimica:{steps:['Puxar','Preparar','Adivinhar','Revelar'],read:'Veja o que imitar. Sem falar!',play:'Assista à mímica e digite seu palpite.',reader:'Faça a mímica sem falar nada.',reveal:'Começar mímica'}
+});
 export function guidance(c,p,uid,now=Date.now()){
  const f=FLOWS[c.modeId],own=c.readerId===uid,participant=c.participants.includes(uid);let text,index;
  if(c.phase==='results'){text=c.skipped?'Carta pulada sem penalidade. Sigam quando quiserem.':'Resultado na mesa. Conversem antes de seguir.';index=f.steps.length-1;}
@@ -29,7 +37,7 @@ const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
 export function outcome(c,p,players){
  const name=id=>players[id]?.nome||'Jogador que saiu';if(c.skipped)return{title:'Tudo bem passar.',detail:'Carta descartada sem mostrar o conteúdo à mesa.',rows:[]};
  const answers=p.answers||{},values=Object.values(answers),counts={};values.forEach(v=>counts[v]=(counts[v]||0)+1);
- const label=v=>['quem_e_mais_provavel','o_espiao','batalha_de_argumentos'].includes(c.modeId)?name(v):c.modeId==='eu_nunca'?(v==='JA_FIZ'?'Já fiz':'Nunca fiz'):['o_que_voce_prefere','bandeiras_vermelhas'].includes(c.modeId)?c.options[Number(v)]:c.modeId==='duas_verdades_uma_mentira'?`Fato ${Number(v)+1}: ${c.statements?.[Number(v)]||''}`:v;
+ const label=v=>['quem_e_mais_provavel','o_espiao','batalha_de_argumentos','amigo_da_onca'].includes(c.modeId)?name(v):c.modeId==='eu_nunca'?(v==='JA_FIZ'?'Já fiz':'Nunca fiz'):c.modeId==='vira_vira'?(v==='JA_FIZ'?'Bebeu':'Tô fora'):c.modeId==='fato_ou_fake'?(v==='FATO'?'Fato':'Fake'):['o_que_voce_prefere','bandeiras_vermelhas','decisao_dificil'].includes(c.modeId)?c.options[Number(v)]:c.modeId==='duas_verdades_uma_mentira'?`Fato ${Number(v)+1}: ${c.statements?.[Number(v)]||''}`:v;
  const rows=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([value,count])=>({label:label(value),count,total:values.length}));
  let title='Olha o que a mesa escolheu',detail='O que fez vocês escolherem assim?';
  if(rows.length){const max=rows[0].count,leaders=rows.filter(x=>x.count===max);title=leaders.length>1?'A mesa ficou dividida':max===values.length?'Todo mundo concordou':'A escolha da maioria';}
@@ -38,10 +46,15 @@ export function outcome(c,p,players){
  if(c.modeId==='o_termometro'){title='A intensidade era '+c.secretNumber+' de 10';detail=Object.entries(answers).filter(([,v])=>Number(v)===c.secretNumber).map(([id])=>name(id)).join(', ')||'Ninguém acertou exatamente. Comparem as interpretações.';}
  if(c.modeId==='apenas_uma_dica'){title=c.correct?'Acertou! Você é '+c.secret+'!':'Errou! Você era '+c.secret+'.';detail=`Palpite: ${c.guess||'nenhum'}.`;}
  if(c.modeId==='preencha_a_lacuna'){title='A resposta escolhida';detail=(answers[c.winner]||'')+' — '+name(c.winner);}
+ if(c.modeId==='amigo_da_onca'&&rows.length){const max=Math.max(...Object.values(counts)),lead=Object.keys(counts).filter(k=>counts[k]===max);title=lead.map(name).join(' e ')+(lead.length>1?' levaram':' levou')+' a carta!';detail='Defenda-se ou aceite o título.';}
+ if(c.modeId==='vira_vira'){const who=Object.keys(answers).filter(id=>answers[id]==='JA_FIZ');title=who.length?who.map(name).join(', ')+(who.length>1?' bebem ':' bebe ')+(c.goles||1)+(c.goles>1?' goles!':' gole!'):'Ninguém bebe essa!';detail='Sem álcool? Paguem uma prenda no lugar.';}
+ if(c.modeId==='fato_ou_fake'&&c.answerKey){title='É '+(c.answerKey==='FATO'?'FATO!':'FAKE!');detail=c.explain||'';}
+ if(c.modeId==='caos_na_mesa'){title=(c.winners||[]).length?(c.winners||[]).map(name).join(', ')+((c.delta||1)>0?' ganhou '+c.delta:' perdeu '+Math.abs(c.delta))+(Math.abs(c.delta||1)>1?' pontos':' ponto'):'Ninguém pontuou dessa vez.';detail='Caos resolvido. Próxima!';}
+ if(c.modeId==='mimica'){title=c.winner?name(c.winner)+' acertou!':'Ninguém acertou';detail='Era: '+(c.secret||'');}
  if(c.modeId==='palavra_proibida'){title=c.winner?name(c.winner)+' acertou!':'A palavra era '+c.secret;detail='Resposta: '+c.secret;}
  if(c.modeId==='niveis_intimidade'){title='Respondeu sem filtro!';detail=name(c.readerId)+' encarou a pergunta. Próxima vítima?';}
  if(c.modeId==='verdade_ou_desafio_hot'){title=c.choice==='dare'?'Desafio cumprido!':'Verdade revelada!';detail=name(c.readerId)+(c.choice==='dare'?' encarou o desafio.':' abriu o jogo.');}
- return {title,detail,rows:['apenas_uma_dica','preencha_a_lacuna','palavra_proibida'].includes(c.modeId)?[]:rows};
+ return {title,detail,rows:['apenas_uma_dica','preencha_a_lacuna','palavra_proibida','mimica','caos_na_mesa'].includes(c.modeId)?[]:rows};
 }
 
 // Papel de cada pessoa na rodada: deixa claro "o que EU faço agora".
@@ -57,11 +70,14 @@ export function roleFor(c,uid,viewerText=''){
   case'duas_verdades_uma_mentira':return own?{label:'🎭 Mentiroso',text:'Apresente os três fatos com cara de paisagem.'}:{label:'🔎 Detetive',text:'Descubra qual dos três fatos é a mentira.'};
   case'preencha_a_lacuna':return own?{label:'⚖️ Juiz',text:'Espere as respostas e escolha a sua favorita.'}:{label:'🃏 Jogador',text:'Escolha o final que vai conquistar o juiz.'};
   case'batalha_de_argumentos':return c.debaters?.[0]===uid?{label:'🛡️ Defensor',text:'Defenda a frase da carta com unhas e dentes.'}:c.debaters?.[1]===uid?{label:'⚔️ Atacante',text:'Argumente CONTRA a frase da carta.'}:{label:'⚖️ Jurado',text:'Ouça os dois e vote no melhor argumento.'};
+  case'caos_na_mesa':return own?{label:'🌪️ Juiz do caos',text:'Faça todos cumprirem a regra e marque quem ganhou ou perdeu.'}:{label:'🏃 Na disputa',text:'Cumpra a regra da carta agora!'};
+  case'mimica':return own?{label:'🎬 Mímico',text:'Imite sem falar nada.'}:{label:'🎯 Adivinho',text:'Digite seu palpite. O primeiro acerto vence.'};
+  case'vira_vira':return{label:'🍻 No brinde',text:'Se a carta é sobre você, você bebe (ou paga prenda).'};
   case'niveis_intimidade':case'verdade_ou_desafio_hot':return own?{label:'🔥 Na berlinda',text:'É com você: responda ou cumpra em voz alta.'}:{label:'👀 Plateia',text:'Cobre a resposta completa. Depois é a sua vez.'};
   default:return{label:own?'Leitor · vota também':'🗳️ Votante',text:'Escolha sua resposta antes de todo mundo.'};
  }
 }
 // Placar ordenado e títulos do fim da partida.
-export const TITLES={holofote:['🔦','Holofote da Noite','mais votado nas cartas de votação'],ousadia:['😈','Sem Vergonha Oficial','mais "já fiz" e desafios cumpridos'],blefe:['🎭','Mestre do Blefe','enganou a mesa'],sintonia:['🧠','Leitor de Mentes','pensou igual à mesa'],sincero:['💬','Coração Aberto','respondeu sem fugir']};
+export const TITLES={onca:['🐆','Amigo da Onça','levou mais cartas maldosas'],goles:['🍻','Esponja da Noite','bebeu mais goles'],sabido:['🤓','Sabe-Tudo','acertou mais Fato ou Fake'],caos:['🌪️','Rei do Caos','venceu mais regras malucas'],holofote:['🔦','Holofote da Noite','mais votado nas cartas de votação'],ousadia:['😈','Sem Vergonha Oficial','mais "já fiz" e desafios cumpridos'],blefe:['🎭','Mestre do Blefe','enganou a mesa'],sintonia:['🧠','Leitor de Mentes','pensou igual à mesa'],sincero:['💬','Coração Aberto','respondeu sem fugir']};
 export function ranking(room){return Object.keys(room.jogadores||{}).map(id=>({id,nome:room.jogadores[id].nome,avatar:room.jogadores[id].avatar,pontos:room.scores?.[id]||0})).sort((a,b)=>b.pontos-a.pontos||a.nome.localeCompare(b.nome));}
 export function titles(room){const out=[];for(const [key,[icon,name,why]] of Object.entries(TITLES)){let best=null,max=0;for(const [id,s] of Object.entries(room.stats||{}))if(room.jogadores?.[id]&&(s[key]||0)>max){max=s[key];best=id;}if(best)out.push({icon,name,why,id:best,nome:room.jogadores[best].nome,count:max});}return out;}

@@ -1,5 +1,6 @@
 import {QUENTE,CASAL} from './cartas-quentes.js';
 import {TERMOMETRO,FAMOSOS} from './cartas-jogos.js';
+import {ONCA,DECISOES,CAOS,VIRA,FATOS,MIMICA} from './cartas-festa.js';
 // Shared editorial catalogue. Mechanics and tone are independent choices.
 export const TONES={leve:'Leve e divertido',profundo:'Sério e pessoal',adulto:'Picante · 18+',casal:'A dois · 18+'};
 export const ADULT_TONES=['adulto','casal'];
@@ -60,5 +61,11 @@ export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const si
  case'o_espiao':return b.words.map(secret=>({secret}));
  case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat}));
  case'palavra_proibida':return b.forbidden.map(([secret,...forbidden])=>({secret,forbidden}));
+ case'amigo_da_onca':return(ONCA[tone]||ONCA.leve).map(text=>({text}));
+ case'decisao_dificil':return(DECISOES[tone]||DECISOES.leve).map(d=>({text:d.text+'\n'+d.options.join('\nOU\n'),options:d.options}));
+ case'caos_na_mesa':return(CAOS[tone]||CAOS.leve).map(c=>({text:c.text,delta:c.delta}));
+ case'vira_vira':return(VIRA[tone]||VIRA.leve).map(v=>({text:v.text,goles:v.goles}));
+ case'fato_ou_fake':return(FATOS[tone]||FATOS.leve).map(f=>({text:f.text,answerKey:f.answer,explain:f.explain}));
+ case'mimica':return(MIMICA[tone]||MIMICA.leve).map(m=>({secret:m.secret,aliases:m.alias||[],cat:m.cat}));
  default:throw Error('Minijogo sem conteúdo revisado.');
  }}

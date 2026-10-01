@@ -66,3 +66,10 @@ body button:not(:disabled):hover{transform:translateY(-2px)}
 html[data-motion=off] *,html[data-motion=off] *:before,html[data-motion=off] *:after{animation-duration:.01ms!important;animation-iteration-count:1!important}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 @media(max-width:800px){.burst-emoji{font-size:58px}#event-stack{top:70px}.thermo-tick,#interactions .thermo-tick{min-height:36px!important;font-size:13px}}
+
+/* Amigo da Onça: contagem 3, 2, 1 */
+.countdown{position:fixed;inset:0;z-index:160;display:grid;place-items:center;pointer-events:none;font-size:min(34vw,220px);font-weight:900;color:var(--cream);text-shadow:0 0 40px rgba(var(--accent-rgb),.8),0 10px 30px rgba(0,0,0,.6);background:radial-gradient(ellipse at center,rgba(var(--base-rgb),.55),transparent 70%)}
+.countdown.tick{animation:count-pop .4s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes count-pop{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
+/* Caos na Mesa: lista para marcar jogadores */
+.chaos-list{display:grid;gap:6px;margin:6px 0 12px}

@@ -1,4 +1,4 @@
-export const BUILD='MESA QUENTE 13 · MAPAS';
+export const BUILD='MESA QUENTE 14 · FESTA';
 const get=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
 // Mapas: cenário de fundo + estilo da interface. A mesa e o baralho são os mesmos em todos.
 export const MAPAS={boteco:{nome:'Boteco',desc:'Bar brasileiro, luz quente e varal de lâmpadas.'},galaxia:{nome:'Galáxia',desc:'Nebulosas, planetas e estrelas cadentes.'},noir:{nome:'Noir Glitch',desc:'Preto e branco, chuva, granulado e falhas na tela.'}};
