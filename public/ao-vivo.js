@@ -9,7 +9,7 @@ export const DICAS_AO_VIVO={
  o_espiao:'Este minijogo precisa de um aparelho por pessoa.',
  bandeiras_vermelhas:'Leia a situação. No "3, 2, 1": polegar para cima (daria uma chance) ou para baixo.',
  batalha_de_argumentos:'Quem leu defende a frase; a pessoa à esquerda ataca. A galera decide no grito quem ganhou.',
- o_termometro:'Segure o botão para ver seu número sem mostrar. Dê uma pista no tema da carta; a galera fala um número de 1 a 10.',
+ o_termometro:'Leia o tema em voz alta. Segure o botão para ver seu número sem mostrar e responda a pergunta da carta com algo que valha esse número. A galera chuta de 1 a 10.',
  apenas_uma_dica:'Toque em "Mostrar para a galera" e coloque o celular na testa, virado para eles. Cada um dá uma dica de uma palavra até você acertar.',
  palavra_proibida:'Segure o botão para ver a palavra. Explique para a galera sem dizer os termos proibidos!',
  niveis_intimidade:'Leia a pergunta, responda em voz alta e deixe a galera cutucar.',
@@ -19,7 +19,7 @@ const full=c=>c.full||c;
 // Texto da carta na mesa 3D: só o que todos podem ver.
 export function textoAoVivo(c){const f=full(c);if(c.skipped)return'Carta pulada.';
  switch(c.modeId){
-  case'o_termometro':return f.scale?f.scale.tema+'\n\n1 = '+f.scale.min+'\n10 = '+f.scale.max:f.text;
+  case'o_termometro':return f.scale?f.scale.tema+'\n'+f.scale.pista+'\n\n1 = '+f.scale.min+'\n10 = '+f.scale.max+(f.scale.exemplo?'\n\nEx.: '+f.scale.exemplo:''):f.text;
   case'apenas_uma_dica':return'Quem sou eu?\n'+(f.cat||'')+'\n\nCelular na testa!';
   case'palavra_proibida':return'Palavra Proibida\n\nSegure o botão para ver a palavra.';
   case'verdade_ou_desafio_hot':return f.choice?f.text:'Verdade ou Desafio?';

@@ -2,38 +2,197 @@
 // TERMÔMETRO: tema (aparece em cima), pista (o que o leitor deve dizer) e as duas pontas da escala.
 // QUEM SOU EU: pessoas e personagens famosos no mundo todo (música, cinema, games, internet, política). "alias" são outras formas aceitas no palpite.
 
+// Cada carta: tema, a pergunta que o leitor responde, as duas pontas e um exemplo pronto.
 export const TERMOMETRO={
- leve:[
-  {tema: "Vergonha alheia", pista: "Conte uma situação", min: "Nem ligo", max: "Quero sumir"},
-  {tema: "Atraso no rolê", pista: "Diga quanto tempo e a desculpa", min: "Tranquilo", max: "Imperdoável"},
-  {tema: "Comida para um primeiro encontro", pista: "Diga uma comida", min: "Escolha perfeita", max: "Desastre total"},
-  {tema: "Saudade da infância", pista: "Diga algo da sua infância", min: "Nem lembro", max: "Daria tudo para voltar"},
-  {tema: "Coragem", pista: "Diga algo que você faria", min: "Qualquer um faz", max: "Só um louco faz"},
-  {tema: "Paciência na fila", pista: "Diga uma situação de fila", min: "Nem percebo", max: "Perco a cabeça"},
-  {tema: "Fofoca", pista: "Diga um tipo de fofoca, sem nomes", min: "Nada a ver", max: "Bomba"}
+ "leve": [
+  {
+   "tema": "Desculpa para faltar ao rolê",
+   "pista": "Invente uma desculpa para não ir ao rolê.",
+   "min": "Ninguém acredita",
+   "max": "Convence até sua mãe",
+   "exemplo": "2 = \"esqueci que tinha rolê\""
+  },
+  {
+   "tema": "Vergonha em público",
+   "pista": "Conte um mico em poucas palavras.",
+   "min": "Ninguém percebeu",
+   "max": "Quero sumir do planeta",
+   "exemplo": "8 = \"chamar a professora de mãe\""
+  },
+  {
+   "tema": "Filme de ação",
+   "pista": "Diga um filme de ação famoso.",
+   "min": "Dormi no meio",
+   "max": "Veria 10 vezes",
+   "exemplo": "9 = \"Velozes e Furiosos\""
+  },
+  {
+   "tema": "Animal de estimação",
+   "pista": "Diga um animal para ter em casa.",
+   "min": "Péssima ideia",
+   "max": "Pet perfeito",
+   "exemplo": "1 = \"jacaré\""
+  },
+  {
+   "tema": "Superpoder",
+   "pista": "Diga um superpoder.",
+   "min": "Inútil",
+   "max": "Muito apelão",
+   "exemplo": "3 = \"falar com pombos\""
+  },
+  {
+   "tema": "Música de festa",
+   "pista": "Diga uma música ou cantor.",
+   "min": "Esvazia a pista",
+   "max": "Todo mundo canta junto",
+   "exemplo": "10 = \"Evidências\""
+  },
+  {
+   "tema": "Fama",
+   "pista": "Diga uma pessoa famosa.",
+   "min": "Ninguém conhece",
+   "max": "Até a avó conhece",
+   "exemplo": "10 = \"Neymar\""
+  },
+  {
+   "tema": "Comida de boteco",
+   "pista": "Diga uma comida de boteco.",
+   "min": "Nem de graça",
+   "max": "Pediria toda semana",
+   "exemplo": "9 = \"pastel de queijo\""
+  }
  ],
- profundo:[
-  {tema: "Mágoa", pista: "Diga uma atitude de alguém", min: "Esqueço no dia seguinte", max: "Nunca perdoaria"},
-  {tema: "Confiança", pista: "Diga um tipo de segredo", min: "Conto para qualquer um", max: "Só para uma pessoa no mundo"},
-  {tema: "Medo", pista: "Diga uma situação", min: "Nada", max: "Pânico total"},
-  {tema: "Orgulho", pista: "Diga uma conquista", min: "Pequena vitória", max: "Maior orgulho da vida"},
-  {tema: "Ciúme entre amigos", pista: "Diga uma situação", min: "Normal", max: "Me afastaria"}
+ "profundo": [
+  {
+   "tema": "Mágoa",
+   "pista": "Diga uma atitude que alguém poderia ter com você.",
+   "min": "Esqueço no dia seguinte",
+   "max": "Nunca perdoaria",
+   "exemplo": "9 = \"contar meu segredo para todo mundo\""
+  },
+  {
+   "tema": "Medo",
+   "pista": "Diga uma situação que dá medo.",
+   "min": "Nem ligo",
+   "max": "Pânico total",
+   "exemplo": "7 = \"falar em público\""
+  },
+  {
+   "tema": "Saudade",
+   "pista": "Diga algo de que você sente falta.",
+   "min": "Nem lembro",
+   "max": "Dói no peito",
+   "exemplo": "8 = \"a comida da minha avó\""
+  },
+  {
+   "tema": "Coragem",
+   "pista": "Diga uma atitude corajosa.",
+   "min": "Qualquer um faz",
+   "max": "Coisa de herói",
+   "exemplo": "6 = \"pedir demissão\""
+  },
+  {
+   "tema": "Orgulho",
+   "pista": "Diga uma conquista.",
+   "min": "Pequena vitória",
+   "max": "Maior orgulho da vida",
+   "exemplo": "3 = \"acordar cedo na segunda\""
+  }
  ],
- adulto:[
-  {tema: "Ousadia num primeiro encontro", pista: "Diga uma atitude", min: "Bem comportado", max: "Sem vergonha nenhuma"},
-  {tema: "Ciúme do crush", pista: "Diga uma situação", min: "De boa", max: "Surto total"},
-  {tema: "Atração", pista: "Diga uma característica de alguém", min: "Me broxa", max: "Me derrete"},
-  {tema: "Lugar para transar", pista: "Diga um lugar", min: "Seguro e confortável", max: "Risco total de ser pego"},
-  {tema: "Mensagem de flerte", pista: "Diga uma frase que você mandaria", min: "Inocente", max: "Muito safada"},
-  {tema: "Red flag num date", pista: "Diga uma atitude", min: "Deixo passar", max: "Vou embora na hora"},
-  {tema: "Fantasia", pista: "Diga uma fantasia, pode ser vaga", min: "Bem tradicional", max: "Bem ousada"}
+ "adulto": [
+  {
+   "tema": "Lugar para transar",
+   "pista": "Diga um lugar.",
+   "min": "Seguro e confortável",
+   "max": "Risco total de ser pego",
+   "exemplo": "9 = \"no elevador do trabalho\""
+  },
+  {
+   "tema": "Red flag num date",
+   "pista": "Diga uma atitude do date.",
+   "min": "Deixo passar",
+   "max": "Vou embora na hora",
+   "exemplo": "7 = \"falar do ex o tempo todo\""
+  },
+  {
+   "tema": "Mensagem de flerte",
+   "pista": "Diga uma frase que você mandaria.",
+   "min": "Inocente",
+   "max": "Muito safada",
+   "exemplo": "2 = \"bom dia, flor do dia\""
+  },
+  {
+   "tema": "Ciúme do crush",
+   "pista": "Diga uma situação.",
+   "min": "De boa",
+   "max": "Surto total",
+   "exemplo": "8 = \"curtiu a foto do ex\""
+  },
+  {
+   "tema": "Ousadia no primeiro encontro",
+   "pista": "Diga uma atitude.",
+   "min": "Bem comportado",
+   "max": "Sem vergonha nenhuma",
+   "exemplo": "6 = \"pegar na mão no cinema\""
+  },
+  {
+   "tema": "Atração",
+   "pista": "Diga uma característica de alguém.",
+   "min": "Me broxa",
+   "max": "Me derrete",
+   "exemplo": "9 = \"voz grave no ouvido\""
+  },
+  {
+   "tema": "Fantasia",
+   "pista": "Diga uma fantasia, pode ser vaga.",
+   "min": "Bem tradicional",
+   "max": "Bem ousada",
+   "exemplo": "4 = \"fazer na sala\""
+  },
+  {
+   "tema": "Vergonha na hora H",
+   "pista": "Conte uma situação.",
+   "min": "Dá para rir junto",
+   "max": "Mudaria de país",
+   "exemplo": "10 = \"a mãe entrou no quarto\""
+  }
  ],
- casal:[
-  {tema: "Saudade de mim", pista: "Diga uma situação longe de mim", min: "Nem senti", max: "Morri de saudade"},
-  {tema: "Ciúme de mim", pista: "Diga uma situação", min: "De boa", max: "Fico louco"},
-  {tema: "Romance", pista: "Diga um programa a dois", min: "Bem normal", max: "Romântico de filme"},
-  {tema: "Vontade de mim agora", pista: "Diga o que você faria", min: "Um abraço", max: "Ninguém sai do quarto"},
-  {tema: "Briga de casal", pista: "Diga um motivo de briga", min: "Besteira", max: "DR de horas"}
+ "casal": [
+  {
+   "tema": "Ciúme de mim",
+   "pista": "Diga uma situação comigo.",
+   "min": "De boa",
+   "max": "Fico louco",
+   "exemplo": "7 = \"eu rir da piada de outra pessoa\""
+  },
+  {
+   "tema": "Romance",
+   "pista": "Diga um programa a dois.",
+   "min": "Bem normal",
+   "max": "Romântico de filme",
+   "exemplo": "9 = \"jantar à luz de velas\""
+  },
+  {
+   "tema": "Saudade de mim",
+   "pista": "Diga uma situação longe de mim.",
+   "min": "Nem senti",
+   "max": "Morri de saudade",
+   "exemplo": "6 = \"uma semana de viagem\""
+  },
+  {
+   "tema": "Vontade de mim agora",
+   "pista": "Diga o que você faria comigo.",
+   "min": "Um abraço",
+   "max": "Ninguém sai do quarto",
+   "exemplo": "3 = \"um beijo na testa\""
+  },
+  {
+   "tema": "Briga de casal",
+   "pista": "Diga um motivo de briga.",
+   "min": "Besteira",
+   "max": "DR de horas",
+   "exemplo": "2 = \"esquecer de responder uma mensagem\""
+  }
  ]
 };
 

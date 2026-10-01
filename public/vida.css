@@ -77,3 +77,5 @@ body[data-local="1"] #player-dock,body[data-local="1"] #role-chip,body[data-loca
 .hold-secret{width:100%;min-height:64px!important;font-size:16px!important;font-weight:900;user-select:none;-webkit-user-select:none;touch-action:none}
 .secret-view{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:24px;text-align:center;white-space:pre-line;font-size:clamp(28px,8vw,64px);font-weight:900;line-height:1.2;color:var(--cream);background:rgba(var(--base-rgb),.96)}
 .secret-view[hidden]{display:none}
+.thermo-pista{margin:0!important;font-size:15px!important;font-weight:800;color:var(--cream)}
+.thermo-ex{margin:2px 0 0!important;font-size:13px!important;font-style:italic;color:var(--muted-ink)}
