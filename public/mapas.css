@@ -1,0 +1,60 @@
+/* Mesa Quente 13 · estilos de interface por mapa. Boteco é o padrão (boteco.css). */
+
+/* ---------- Galáxia ---------- */
+html[data-scene=galaxia]{--warm:#8b6bff;--warm2:#7fe3ff;--cream:#f2efff;--ink:#f4f2ff;--muted-ink:#b9b2e0;--tint-rgb:200,190,255;--edge-rgb:170,150,255;--accent-rgb:140,110,255;--hot-rgb:255,79,216;--base-rgb:12,9,36;--cream-rgb:242,239,255;--on-accent:#0b0420;--hot:#ff4fd8;--accent-hi:#b39bff;--bg:#05030f;--tone-glow:#8b6bff}
+html[data-scene=galaxia] body[data-tone=profundo]{--tone-glow:#4f8bff;--warm:#5a8bff}
+html[data-scene=galaxia] body[data-tone=adulto]{--tone-glow:#ff2d6f;--warm:#ff3d7f}
+html[data-scene=galaxia] body[data-tone=casal]{--tone-glow:#ff4fd8;--warm:#ff5fd0}
+html[data-scene=galaxia] body button.primary{background:linear-gradient(135deg,var(--accent-hi),var(--warm) 55%,#5a3dff)!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.35)!important}
+html[data-scene=galaxia] .panel,html[data-scene=galaxia] .game-footer,html[data-scene=galaxia] #interactions,html[data-scene=galaxia] dialog,html[data-scene=galaxia] .game-header{box-shadow:0 0 0 1px rgba(127,227,255,.08),0 0 40px rgba(139,107,255,.18),0 18px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.12)!important}
+html[data-scene=galaxia] h1,html[data-scene=galaxia] .turn-summary h1{text-shadow:0 0 18px rgba(127,227,255,.45),0 2px 12px rgba(0,0,0,.5)!important}
+html[data-scene=galaxia] .eyebrow{color:var(--warm2)!important}
+html[data-scene=galaxia] .home-logo{filter:drop-shadow(0 0 24px rgba(139,107,255,.55)) drop-shadow(0 14px 22px rgba(0,0,0,.55))!important}
+
+/* ---------- Noir Glitch ---------- */
+html[data-scene=noir]{--warm:#f2f2f2;--warm2:#ffffff;--cream:#f5f5f5;--ink:#f5f5f5;--muted-ink:#a8a8a8;--tint-rgb:255,255,255;--edge-rgb:255,255,255;--accent-rgb:255,255,255;--hot-rgb:255,255,255;--base-rgb:8,8,8;--cream-rgb:255,255,255;--on-accent:#000;--hot:#fff;--accent-hi:#fff;--bg:#000;--tone-glow:#ffffff}
+html[data-scene=noir] body{filter:none}
+html[data-scene=noir] .panel,html[data-scene=noir] .game-footer,html[data-scene=noir] #interactions,html[data-scene=noir] dialog,html[data-scene=noir] .game-header,html[data-scene=noir] #local-controls,html[data-scene=noir] .intro-card,html[data-scene=noir] .player-chip,html[data-scene=noir] .preset,html[data-scene=noir] .how-to,html[data-scene=noir] .title-card,html[data-scene=noir] .category-block{border-radius:4px!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:6px 6px 0 rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.8)!important}
+html[data-scene=noir] body button{border-radius:3px!important}
+html[data-scene=noir] body button.primary{background:#f5f5f5!important;color:#000!important;box-shadow:4px 4px 0 rgba(255,255,255,.25)!important;letter-spacing:.06em!important;text-transform:uppercase!important}
+html[data-scene=noir] body button.primary:hover:not(:disabled){background:#000!important;color:#fff!important;outline:2px solid #fff}
+html[data-scene=noir] h1,html[data-scene=noir] .turn-summary h1,html[data-scene=noir] #intro-name,html[data-scene=noir] .result-title{font-family:'Bungee',Impact,sans-serif!important;font-weight:400!important;text-transform:uppercase!important;letter-spacing:.02em!important;text-shadow:2px 0 rgba(255,255,255,.35),-2px 0 rgba(120,120,120,.6)!important}
+html[data-scene=noir] .eyebrow,html[data-scene=noir] .role-chip,html[data-scene=noir] .tone-badge,html[data-scene=noir] small{font-family:'Courier New',monospace!important;letter-spacing:.12em!important}
+html[data-scene=noir] .role-chip,html[data-scene=noir] .chip-score,html[data-scene=noir] .tone-badge{border-radius:2px!important;background:#f5f5f5!important;color:#000!important}
+html[data-scene=noir] .home-logo{filter:grayscale(1) contrast(1.25) drop-shadow(0 12px 18px rgba(0,0,0,.8))!important}
+html[data-scene=noir] img.mini-logo{filter:grayscale(1) contrast(1.2)}
+html[data-scene=noir] .hud-icon,html[data-scene=noir] .btn-pix{filter:grayscale(1) brightness(1.6)}
+html[data-scene=noir] .thermo-tick{background:hsl(0 0% calc(25% + var(--i) * 6%))!important;color:#000!important}
+html[data-scene=noir] .thermo-tick:nth-child(-n+4){color:#fff!important}
+html[data-scene=noir] body:after{content:'';position:fixed;inset:0;pointer-events:none;z-index:200;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
+/* Quando o fundo "falha", a interface treme junto */
+@keyframes ui-glitch{0%{transform:translate(0)}20%{transform:translate(-3px,1px)}40%{transform:translate(3px,-1px);clip-path:inset(10% 0 60% 0)}60%{transform:translate(-2px,0);clip-path:inset(50% 0 20% 0)}80%{transform:translate(2px,1px)}100%{transform:none;clip-path:none}}
+html[data-scene=noir].glitching h1,html[data-scene=noir].glitching .home-logo,html[data-scene=noir].glitching .turn-summary h1{animation:ui-glitch .26s steps(2) both!important}
+html[data-scene=noir].glitching .game-footer,html[data-scene=noir].glitching .panel{transform:translateX(2px)}
+html[data-scene=noir][data-motion=off].glitching *{animation:none!important;transform:none!important}
+
+/* ---------- Escolha de mapa na criação da partida ---------- */
+.map-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.map-card{position:relative;display:grid;gap:6px;padding:8px;text-align:left;border-radius:14px;cursor:pointer;background:rgba(var(--tint-rgb),.06);border:1px solid var(--edge)}
+html[data-scene=noir] .map-card{border-radius:4px}
+.map-card input{position:absolute;opacity:0;pointer-events:none}
+.map-thumb{display:block;height:74px;border-radius:10px;position:relative;overflow:hidden}
+.map-thumb.boteco{background:radial-gradient(circle at 20% 15%,#fff3dc 0 2px,transparent 3px),radial-gradient(circle at 45% 10%,#fff3dc 0 2px,transparent 3px),radial-gradient(circle at 75% 16%,#fff3dc 0 2px,transparent 3px),radial-gradient(ellipse at 50% 20%,rgba(255,177,92,.6),transparent 60%),linear-gradient(#4a1f0c 0 62%,#6b2d16 62% 100%)}
+.map-thumb.galaxia{background:radial-gradient(circle at 30% 35%,rgba(255,240,220,.9) 0 3px,rgba(139,107,255,.6) 6px,transparent 30px),radial-gradient(ellipse at 75% 60%,rgba(47,211,255,.5),transparent 55%),radial-gradient(ellipse at 20% 80%,rgba(255,122,217,.45),transparent 50%),radial-gradient(circle at 82% 25%,#ffb36b 0 9px,transparent 10px),#090620}
+.map-thumb.noir{background:repeating-linear-gradient(170deg,rgba(255,255,255,.08) 0 4px,transparent 4px 12px),linear-gradient(#2a2a2a 0 60%,#111 60%);filter:grayscale(1)}
+.map-thumb.noir:after{content:'';position:absolute;left:0;right:0;top:40%;height:6px;background:rgba(255,255,255,.5);transform:translateX(8px);mix-blend-mode:difference}
+.map-card strong{font-size:14px;font-weight:900}
+.map-card small{font-size:11px;line-height:1.35;color:var(--muted-ink);font-weight:600}
+.map-card:has(input:checked){outline:3px solid var(--warm2);outline-offset:1px}
+.map-card:has(input:focus-visible){outline:3px dashed var(--warm2)}
+@media(max-width:520px){.map-picker{grid-template-columns:1fr 1fr 1fr;gap:6px}.map-thumb{height:56px}.map-card small{display:none}}
+
+/* Acabamentos comuns aos mapas */
+#settings section,#settings .settings-sections>section{background:rgba(var(--tint-rgb),.04)!important;border:1px solid var(--edge)!important}
+#settings section h2,#settings header h2{border-color:var(--edge)!important}
+#graphics-status,#audio-state{color:var(--warm2)!important}
+#local-players button.selected,#local-players button[aria-pressed=true]{border-color:var(--warm2)!important;box-shadow:0 0 0 2px rgba(var(--accent-rgb),.35)!important;background:rgba(var(--accent-rgb),.16)!important}
+html[data-scene=noir] body[data-tone]{--tone-glow:#ffffff}
+html[data-scene=noir] #game #tone-badge,html[data-scene=noir] .tone-badge[data-tone]{background:#f5f5f5!important;color:#000!important}
+html[data-scene=noir] .btn-note{font-family:var(--font-game)!important;letter-spacing:0!important}
+html[data-scene=noir] #game[data-tone] .game-footer,html[data-scene=noir] #game[data-tone] #interactions{box-shadow:6px 6px 0 rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.8)!important}

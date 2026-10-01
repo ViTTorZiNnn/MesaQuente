@@ -1,8 +1,8 @@
-import {textForViewer,replyIds} from './motor.js?v=quente12';
+import {textForViewer,replyIds} from './motor.js?v=quente13';
 // Build a new response from allowed fields; never send the database snapshot.
 export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');
- const out={};for(const k of ['schemaVersion','hostId','status','minigames','modoLivre','numeroRodadas','ready','reactions','tones','adultConfirmed','scores','stats','events','endReason'])if(room[k]!==undefined)out[k]=structuredClone(room[k]);
+ const out={};for(const k of ['schemaVersion','hostId','status','minigames','modoLivre','numeroRodadas','ready','reactions','tones','adultConfirmed','scores','stats','events','endReason','mapa'])if(room[k]!==undefined)out[k]=structuredClone(room[k]);
  out.jogadores={};for(const [id,p] of Object.entries(room.jogadores))out.jogadores[id]={nome:p.nome,avatar:p.avatar,conectado:p.conectado,entrouEm:p.entrouEm};
  out.chat=Object.entries(room.chat||{}).sort((a,b)=>a[1].at-b[1].at||a[0].localeCompare(b[0])).slice(-60).map(([id,m])=>({id,uid:m.uid,name:m.name,emoji:m.emoji,text:m.text,at:m.at}));
  const p=room.partida,c=p?.cartaAtual;if(!c)return out;
