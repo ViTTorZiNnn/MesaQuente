@@ -38,7 +38,7 @@ dialog{font-family:Arial,sans-serif;border:1px solid #bd876966;background:linear
  dialog{width:calc(100vw - 24px);max-width:550px;box-sizing:border-box}.dialog-scroll{padding:16px}#settings .settings-sections{padding:14px}#settings section{padding:12px}#settings .dialog-scroll .dialog-scroll{padding:0}.mode-option{padding:12px}.home .hud-label{display:inline}
 }
 @media(max-width:380px){.game-header nav{gap:0}.game-header button{min-width:32px;padding:5px}.game-header .hud-icon{width:21px;height:21px}.tone-badge{display:inline-block;margin:5px 0}.round-actions .ghost{padding:8px}}
-@media(prefers-reduced-motion:reduce){.room-sheet i{animation:none!important}}
+html[data-motion=off] .room-sheet i{animation:none!important}
 @media(min-width:801px) and (max-height:600px){body[data-screen=game]{overflow:auto}#game{height:600px;min-height:600px}}
 
 /* Keep scenery secondary to the cards; HUD columns always reserve equal space. */

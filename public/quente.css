@@ -50,10 +50,10 @@ html[data-scene=quente][data-motion=off] .home-logo{animation:none}
 @keyframes corte-a{to{transform:translate(-62%,-6%) rotate(-4deg)}}
 @keyframes corte-b{to{transform:translate(62%,6%) rotate(4deg)}}
 .corte-raio{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.corte-raio polyline{fill:none;stroke-linejoin:miter;stroke-dasharray:400;stroke-dashoffset:400;animation:raio-desenha .16s linear forwards,raio-some .3s ease-in .3s forwards}
+.corte-raio{animation:raio-desenha .14s linear both,raio-some .3s ease-in .34s forwards}.corte-raio polyline{fill:none;stroke-linejoin:miter}
 .corte-raio .brilho{stroke:#ff1f2d;stroke-width:16;filter:blur(6px)}
 .corte-raio .nucleo{stroke:#fff;stroke-width:4}
-@keyframes raio-desenha{to{stroke-dashoffset:0}}
+@keyframes raio-desenha{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
 @keyframes raio-some{to{opacity:0}}
 .corte:after{content:'';position:absolute;inset:0;background:#fff;opacity:0;animation:clarao .3s ease-out .12s}
 @keyframes clarao{0%{opacity:.35}100%{opacity:0}}

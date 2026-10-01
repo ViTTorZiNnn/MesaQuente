@@ -64,7 +64,7 @@ body button:not(:disabled):hover{transform:translateY(-2px)}
 
 /* Movimento reduzido */
 html[data-motion=off] *,html[data-motion=off] *:before,html[data-motion=off] *:after{animation-duration:.01ms!important;animation-iteration-count:1!important}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+html[data-motion=off] *,html[data-motion=off] *:before,html[data-motion=off] *:after{animation-duration:.01ms!important;animation-iteration-count:1!important}
 @media(max-width:800px){.burst-emoji{font-size:58px}#event-stack{top:70px}.thermo-tick,#interactions .thermo-tick{min-height:36px!important;font-size:13px}}
 
 /* Exemplos das regras no tom da partida */

@@ -145,5 +145,5 @@ body[data-screen=game][data-tone=adulto] .room-backdrop:after,body[data-screen=g
 }
 @media(max-width:380px){.preset-picker{grid-template-columns:1fr}}
 html[data-motion=off] .round-intro.show .intro-card,html[data-motion=off] .score-pop,html[data-motion=off] .role-chip,html[data-motion=off] .room-backdrop:after{animation:none!important}
-@media(prefers-reduced-motion:reduce){.round-intro.show .intro-card,.round-intro.show .intro-icon,.score-pop,.role-chip,.podium-place,.title-card,.room-backdrop:after{animation:none!important}}
+html[data-motion=off] .round-intro.show .intro-card,html[data-motion=off] .round-intro.show .intro-icon,html[data-motion=off] .score-pop,html[data-motion=off] .role-chip,html[data-motion=off] .podium-place,html[data-motion=off] .title-card,html[data-motion=off] .room-backdrop:after{animation:none!important}
 #interactions .answer-text,#card-reader-text{white-space:pre-line}
