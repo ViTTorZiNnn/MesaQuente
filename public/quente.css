@@ -36,8 +36,8 @@ html[data-scene=quente] .map-card:has(input:checked){outline-color:#ff1f2d}
 html[data-scene=quente][data-motion=off] .home-logo{animation:none}
 
 /* Miniatura do mapa na criação da partida */
-.map-thumb.quente{background:linear-gradient(transparent 62%,#ff1f2d 62% 64%,transparent 64%),repeating-linear-gradient(90deg,#141217 0 22px,#0a090c 22px 24px);}
-.map-thumb.quente:after{content:'';position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(0deg,#fff3d6 0 8%,#ffb030 8% 20%,#ff1f2d 20% 48%,transparent 48%);clip-path:polygon(0 30%,8% 0,16% 40%,26% 60%,36% 55%,50% 70%,64% 55%,74% 60%,84% 40%,92% 0,100% 30%,100% 100%,0 100%);image-rendering:pixelated}
+.map-thumb.quente{background:radial-gradient(circle at 30% 40%,#ffd23f 0 3px,#ff1f2d 6px,transparent 14px),radial-gradient(circle at 70% 38%,#ff1f2d 0 4px,rgba(150,0,20,.8) 9px,transparent 15px),radial-gradient(circle at 50% 72%,#ff6e28 0 4px,#b0000f 9px,transparent 16px),radial-gradient(ellipse at 50% 55%,rgba(120,0,20,.6),transparent 60%),#060406}
+.map-thumb.quente:after{content:'';position:absolute;inset:6px;border:1px solid rgba(255,255,255,.45);clip-path:polygon(0 0,22% 0,22% 2px,2px 2px,2px 22%,0 22%,0 78%,2px 78%,2px calc(100% - 2px),22% calc(100% - 2px),22% 100%,78% 100%,78% calc(100% - 2px),calc(100% - 2px) calc(100% - 2px),calc(100% - 2px) 78%,100% 78%,100% 22%,calc(100% - 2px) 22%,calc(100% - 2px) 2px,78% 2px,78% 0,100% 0,100% 100%,0 100%)}
 .map-picker{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:520px){.map-picker{grid-template-columns:1fr 1fr}}
 

@@ -1,7 +1,7 @@
-export const BUILD='MESA QUENTE 21 · TRETA';
+export const BUILD='MESA QUENTE 22 · TÉRMICA';
 const get=(key,fallback)=>{try{return localStorage.getItem(key)||fallback;}catch{return fallback;}};
 // Mapas: cenário de fundo + estilo da interface. A mesa e o baralho são os mesmos em todos.
-export const MAPAS={quente:{nome:'Mesa Quente',desc:'Aço, luz vermelha, cartas caindo e chamas em pixel.'},boteco:{nome:'Boteco',desc:'Bar brasileiro, luz quente e varal de lâmpadas.'},galaxia:{nome:'Galáxia',desc:'Nebulosas, planetas e estrelas cadentes.'},noir:{nome:'Noir Glitch',desc:'Preto e branco, chuva, granulado e falhas na tela.'}};
+export const MAPAS={quente:{nome:'Mesa Quente',desc:'Câmera térmica: a roda esquenta de verdade.'},boteco:{nome:'Boteco',desc:'Bar brasileiro, luz quente e varal de lâmpadas.'},galaxia:{nome:'Galáxia',desc:'Nebulosas, planetas e estrelas cadentes.'},noir:{nome:'Noir Glitch',desc:'Preto e branco, chuva, granulado e falhas na tela.'}};
 // O mapa vem da sala (escolhido pelo anfitrião). Cada pessoa pode trocar só no próprio aparelho.
 let roomMap=null,pref=get('mq_scene_pref','sala');if(pref!=='sala'&&!MAPAS[pref])pref='sala';
 export const visual={scene:'quente',motion:get('mq_motion2','on'),get pref(){return pref;},get roomMap(){return roomMap;}};

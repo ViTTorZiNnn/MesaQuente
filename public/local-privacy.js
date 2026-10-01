@@ -1,4 +1,4 @@
-import {textForViewer,replyIds} from './motor.js?v=quente21';
+import {textForViewer,replyIds} from './motor.js?v=quente22';
 // Build a new response from allowed fields; never send the database snapshot.
 export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');

@@ -1,5 +1,5 @@
 // Mapa "Noir Glitch": preto e branco, chuva, persiana, granulado de filme e falhas na tela.
-import {visual,reducedMotion} from './visual.js?v=quente21';
+import {visual,reducedMotion} from './visual.js?v=quente22';
 const canvas=document.getElementById('noir-cena'),ctx=canvas.getContext('2d',{willReadFrequently:false}),base=document.createElement('canvas'),b=base.getContext('2d'),grain=document.createElement('canvas');
 let W=0,H=0,dpr=1,seed=3,last=0,dirty=true,L={},font=false,glitchUntil=0,nextGlitch=3;
 const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
