@@ -1,7 +1,7 @@
 // Mapa "Mesa Quente" (padrão): as cores da logo — vermelho vivo, branco e preto profundo.
 // Parede e piso de aço, fita de LED vermelha, cartas caindo e espalhadas no chão,
 // e chamas em pixel art subindo pelas bordas e cantos da tela.
-import {visual,reducedMotion} from './visual.js?v=quente20';
+import {visual,reducedMotion} from './visual.js?v=quente21';
 const canvas=document.getElementById('quente-cena'),ctx=canvas.getContext('2d'),base=document.createElement('canvas'),b=base.getContext('2d');
 const fireCanvas=document.createElement('canvas'),fc=fireCanvas.getContext('2d'),topCanvas=document.createElement('canvas'),tc=topCanvas.getContext('2d');
 let W=0,H=0,dpr=1,seed=11,last=0,lastFire=0,dirty=true,L={},fire=null,cols=0,rows=0,px=6,img=null,heat=1,decay=1,tick=0;
@@ -12,7 +12,7 @@ const PAL=Array.from({length:37},(_,i)=>{let k=0;while(STOPS[k+1][0]<i)k++;const
 // Altura das chamas: mais altas no menu, discretas durante o jogo (mais fortes no tom picante).
 // O lobby é calmo: pouca chama, sem cartas caindo, fundo mais escuro (os painéis precisam ser lidos).
 const calmo=()=>({home:0,end:.2,lobby:1,game:.75}[document.body.dataset.screen]??0);let calma=0;
-function heatTarget(){const s=document.body.dataset.screen;if(s==='lobby')return .42;if(s!=='game')return s==='end'?1.05:1;return{adulto:.85,casal:.75,profundo:.5}[document.body.dataset.tone]||.62;}
+function heatTarget(){const s=document.body.dataset.screen;if(s==='lobby')return .42;if(s!=='game')return s==='end'?1.05:1;return{adulto:.85,acido:.95,casal:.75,profundo:.5}[document.body.dataset.tone]||.62;}
 // Cantos altos, meio baixo; as "línguas" de fogo vêm de colunas que acendem e apagam.
 function profile(x){const e=Math.min(x,cols-1-x)/cols;return e<.05?1:e<.22?1-(e-.05)/.17*.62:.38;}
 function seedFire(){tick++;const row=(rows-1)*cols;for(let x=0;x<cols;x++){const wave=.78+.22*Math.sin(x*.55+tick*.21)*Math.sin(x*.13-tick*.07),gap=Math.random()<.08?.4:1;fire[row+x]=Math.round(36*Math.min(1,profile(x)*heat*wave*gap));}}

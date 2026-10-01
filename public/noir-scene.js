@@ -1,10 +1,10 @@
 // Mapa "Noir Glitch": preto e branco, chuva, persiana, granulado de filme e falhas na tela.
-import {visual,reducedMotion} from './visual.js?v=quente20';
+import {visual,reducedMotion} from './visual.js?v=quente21';
 const canvas=document.getElementById('noir-cena'),ctx=canvas.getContext('2d',{willReadFrequently:false}),base=document.createElement('canvas'),b=base.getContext('2d'),grain=document.createElement('canvas');
 let W=0,H=0,dpr=1,seed=3,last=0,dirty=true,L={},font=false,glitchUntil=0,nextGlitch=3;
 const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
 // Mais falhas no tom picante; quase nenhuma no sério.
-const intensity=()=>({adulto:1.6,casal:1.1,profundo:.6}[document.body.dataset.screen==='game'?document.body.dataset.tone:'']||1);
+const intensity=()=>({adulto:1.6,acido:1.8,casal:1.1,profundo:.6}[document.body.dataset.screen==='game'?document.body.dataset.tone:'']||1);
 function makeGrain(){grain.width=grain.height=192;const g=grain.getContext('2d'),img=g.createImageData(192,192);for(let i=0;i<img.data.length;i+=4){const v=Math.random()*255;img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=Math.random()*60;}g.putImageData(img,0,0);}
 function build(){seed=3;base.width=W*dpr;base.height=H*dpr;const c=b;c.setTransform(dpr,0,0,dpr,0,0);const narrow=W<700,floorY=H*(narrow?.74:.72);
  let g=c.createLinearGradient(0,0,0,floorY);g.addColorStop(0,'#070707');g.addColorStop(1,'#1c1c1c');c.fillStyle=g;c.fillRect(0,0,W,floorY);

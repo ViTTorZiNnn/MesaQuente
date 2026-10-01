@@ -1,5 +1,5 @@
 // Trilhas geradas ao vivo com WebAudio, uma para cada clima da mesa.
-// leve: bossa nova · profundo: lo-fi calmo · adulto: R&B lento e sensual · casal: balada romântica.
+// leve: bossa nova · profundo: lo-fi calmo · adulto: R&B lento e sensual · ácido: trap sombrio · casal: balada romântica.
 const N=n=>440*Math.pow(2,(n-69)/12);
 const SONGS={
  leve:{bpm:132,swing:.08,chords:[[50,57,60,64,65],[43,53,57,59,64],[48,55,59,64,67],[45,55,58,61,64]],bass:[38,31,36,33],
@@ -8,6 +8,9 @@ const SONGS={
   bassPat:[[0,2],[2.5,1]],comp:[0,2],keys:'rhodes',drums:{kick:[0,2.5],rim:[1,3],crackle:true},pad:true},
  adulto:{bpm:66,swing:.1,chords:[[57,60,64,67,71],[53,57,60,64],[50,53,57,60,64],[52,56,59,62,65]],bass:[33,29,26,28],
   bassPat:[[0,1.5],[1.75,.25],[2,1.5],[3.5,.5]],comp:[0,1.5,2.75],keys:'rhodes',drums:{kick:[0,1.75,2.5],snap:[1,3],hat:true},pad:true,trem:true},
+ // ácido: trap lento e sombrio, grave pesado e chimbal picotado
+ acido:{bpm:72,swing:0,chords:[[45,48,52,55],[41,45,48,52],[43,46,50,53],[40,44,47,50]],bass:[33,29,31,28],
+  bassPat:[[0,.75],[.75,.25],[1.5,1],[3,.5],[3.5,.5]],comp:[0,2.5],keys:'rhodes',drums:{kick:[0,.75,2.5,3.25],snap:[1,3],hat:true},pad:true},
  casal:{bpm:70,swing:.06,chords:[[51,55,58,62],[48,51,55,58,62],[44,48,51,55],[46,50,53,56,60]],bass:[39,36,32,34],
   bassPat:[[0,2],[2,2]],comp:[0,1,2,3],keys:'piano',drums:{brush:true,kick:[0,2]},pad:true}
 };

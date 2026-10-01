@@ -8,9 +8,9 @@ export function viewFor(room,uid){
  const p=room.partida,c=p?.cartaAtual;if(!c)return out;
  const own=c.readerId===uid,participant=c.participants.includes(uid),results=c.phase==='results'&&!c.skipped,visible=results||!c.skipped&&(c.phase==='public'||participant&&own&&['private','voting'].includes(c.phase));
  const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
- card.viewerText=visible?(!participant&&!results&&['o_espiao','o_termometro','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
+ card.viewerText=visible?(!participant&&!results&&['o_espiao','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
  if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
- if(results){for(const k of ['secret','secretNumber','spyId','lie','awards'])if(c[k]!==undefined)card[k]=c[k];}
+ if(results){for(const k of ['secret','spyId','lie','awards','extremes','verdict','verdictWinner'])if(c[k]!==undefined)card[k]=c[k];}
  else if(own&&visible&&c.lie!==undefined)card.lie=c.lie;
  const answers=p.answers||{};let shown={};
  if(!c.skipped&&(results||c.phase==='public'&&(c.modeId==='preencha_a_lacuna'||c.modeId==='apenas_uma_dica'&&c.hintsRevealed)))shown=structuredClone(answers);

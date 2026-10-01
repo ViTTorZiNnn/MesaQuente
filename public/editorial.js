@@ -1,8 +1,9 @@
 import {QUENTE,CASAL} from './cartas-quentes.js';
+import {ACIDO} from './cartas-acidas.js';
 import {TERMOMETRO,FAMOSOS} from './cartas-jogos.js';
 // Shared editorial catalogue. Mechanics and tone are independent choices.
-export const TONES={leve:'Leve e divertido',profundo:'Sério e pessoal',adulto:'Picante · 18+',casal:'A dois · 18+'};
-export const ADULT_TONES=['adulto','casal'];
+export const TONES={leve:'Leve e divertido',profundo:'Sério e pessoal',adulto:'Picante · 18+',acido:'Ácido · 18+',casal:'A dois · 18+'};
+export const ADULT_TONES=['adulto','acido','casal'];
 export function toneFor(tones,round){const selected=Object.keys(TONES).filter(t=>tones?.includes(t));if(!selected.length)return'leve';return selected[(round-1)%selected.length];}
 const bank={
  leve:{
@@ -39,7 +40,7 @@ bank.leve.blanks=[["Você está numa entrevista de emprego e resolve ser sincero
 bank.profundo.scales=["Tema: decisões da vida adulta. Cite uma decisão como pista. Escala: 1 = simples e reversível; 10 = muda completamente sua vida.", "Tema: confiança entre amigos. Descreva uma atitude como pista. Escala: 1 = pequeno sinal de confiança; 10 = confiar algo muito importante.", "Tema: pedido de desculpas. Invente o que alguém diria ou faria. Escala: 1 = desculpa vazia; 10 = assume o erro e repara o dano.", "Tema: limites pessoais. Descreva um pedido que alguém faria a você. Escala: 1 = fácil aceitar; 10 = ultrapassa totalmente seu limite."];
 bank.profundo.blanks=[["Uma amizade passou por uma briga e vocês querem reconstruí-la. Para isso, precisa haver ________.", ["espaço para discordar", "ajuda sem cobrança", "tempo de qualidade", "coragem para pedir desculpas"]], ["Depois de uma semana difícil, você decide mudar sua rotina. Hoje, precisa de mais ________.", ["tempo sem pressa", "coragem para mudar", "conversas sinceras", "descanso sem culpa"]], ["Na conversa sobre vitórias pessoais, você lembra que também merece reconhecimento quem consegue ________.", ["aprender a dizer não", "pedir ajuda", "recomeçar depois de um erro", "reconhecer que precisa mudar"]]];
 // Cartas 18+ ficam em cartas-quentes.js para facilitar a edição.
-bank.adulto=QUENTE;bank.casal=CASAL;
+bank.adulto=QUENTE;bank.casal=CASAL;bank.acido=ACIDO;
 // Leve: sem cartas sobre objetos ou compras; mais situações e histórias.
 bank.leve.questions=bank.leve.questions.map(q=>q==='Qual foi a compra mais inútil que você já fez?'?'Qual foi o maior mico que você já pagou tentando impressionar alguém?':q);
 bank.leve.dare=bank.leve.dare.map(d=>d.startsWith('Faça uma propaganda')?'Faça uma propaganda de dez segundos vendendo a pessoa à sua direita como o melhor partido da cidade.':d);
@@ -60,6 +61,10 @@ bank.leve.votes.push(...["Na nossa roda tem alguém que sempre pede dinheiro emp
 bank.leve.questions.push(...["Se você pudesse voltar no tempo, qual é a primeira coisa que você faria?", "Me conta o momento mais incrível que você já viveu.", "Se a sua vida virasse filme, qual seria o título e quem faria você?", "Qual foi a coisa mais corajosa que você já fez?", "Se você ganhasse um dia inteiro sem compromisso nenhum, como seria?"]);
 bank.profundo.votes.push(...["Tem alguém aqui que segura a barra de todo mundo e nunca pede ajuda. Quem seria?", "Tem uma pessoa na roda que sempre lembra do seu aniversário, mesmo quando ninguém lembra. Quem seria?", "Existe alguém aqui que fala pouco, mas quando fala todo mundo escuta. Quem seria?", "Tem alguém que diz que já superou, mas ainda olha os stories do ex. Quem seria?"]);
 bank.profundo.questions.push(...["Se você pudesse conversar cinco minutos com você de dez anos atrás, o que diria?", "Qual foi o momento mais incrível da sua vida até hoje, e por quê?", "O que você faria diferente se ninguém fosse te julgar?", "Se você encontrasse alguém que te magoou e essa pessoa viesse pedir desculpas, como você reagiria?"]);
+// Sem perguntas de entrevista: troca as genéricas por situações com história.
+const GENERICAS=['Qual comida faz você lembrar da infância?','Qual passeio você gostaria de repetir?','Que habilidade você gostaria de aprender só por diversão?','Que pequeno acontecimento melhorou seu dia recentemente?','Qual mania sua rende brincadeiras entre os amigos?'];
+bank.leve.questions=bank.leve.questions.filter(q=>!GENERICAS.includes(q)).concat(['Qual foi a desculpa mais esfarrapada que você já inventou pra fugir de um encontro?','Qual foi o maior mico que você pagou na frente de um crush?','Qual mensagem você mandou de madrugada e se arrependeu no dia seguinte?','Qual foi a fofoca mais absurda que você já ouviu sobre você mesmo?','Qual foi a vez que você riu tanto que precisou sair do lugar?']);
+bank.leve.debates=bank.leve.debates.concat(['Quem chega atrasado no rolê deveria pagar a primeira rodada.','Mandar "kkk" sem achar graça é mentira.','Ex não pode ficar no grupo dos amigos.']);
 export const editorialBank=bank;
 // Cartas que só funcionam com todo mundo junto (contato físico) ou só online (chat da sala).
 const PRESENCIAL=/me d[aêe]\w* um beijo|beije|ouvido|massagem|à sua (direita|esquerda)|abraç|no colo|de alguém da mesa que topar/i,SO_ONLINE=/no chat|na câmera/i;
@@ -71,7 +76,7 @@ export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const si
  case'quem_e_mais_provavel':return simple('votes');case'eu_nunca':return simple('never');case'niveis_intimidade':return simple('questions');
  case'o_que_voce_prefere':return b.pairs.map(x=>Array.isArray(x)?{text:'O que você prefere?\n'+x.join('\nOU\n'),options:x}:{text:x.text+'\n'+x.options.join('\nOU\n'),options:x.options});
  case'bandeiras_vermelhas':return b.flags.map(([a,c])=>({text:a+', mas '+c+'. Você daria uma chance?',options:['Daria uma chance','Não daria uma chance']}));
- case'batalha_de_argumentos':return b.debates.map(d=>({text:'"'+d+'"\n\nQuem leu defende essa frase. O próximo jogador ataca. A mesa decide quem convenceu.'}));case'o_termometro':return b.termometro.map(scale=>({text:scale.tema,scale}));
+ case'batalha_de_argumentos':return b.debates.map(d=>({text:'"'+d+'"\n\nQuem leu defende essa frase. O próximo jogador ataca. A mesa decide quem convenceu.'}));case'o_termometro':return b.termometro.map(t=>({text:t.text,scale:{min:t.min,max:t.max}}));
  case'preencha_a_lacuna':return b.blanks.map(([text,white])=>({text:'Complete a frase escolhendo uma das respostas disponíveis.\n'+text,white}));
  case'verdade_ou_desafio_hot':return b.truth.map((truth,i)=>({text:'Escolha Verdade ou Desafio. Você pode pular sem explicar.',truth,dare:b.dare[i]}));
  case'duas_verdades_uma_mentira':return simple('facts');
