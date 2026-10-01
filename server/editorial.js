@@ -58,7 +58,7 @@ export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const si
  case'verdade_ou_desafio_hot':return b.truth.map((truth,i)=>({text:'Escolha Verdade ou Desafio. Você pode pular sem explicar.',truth,dare:b.dare[i]}));
  case'duas_verdades_uma_mentira':return simple('facts');
  case'o_espiao':return b.words.map(secret=>({secret}));
- case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat,emoji:f.emoji}));
+ case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat}));
  case'palavra_proibida':return b.forbidden.map(([secret,...forbidden])=>({secret,forbidden}));
  default:throw Error('Minijogo sem conteúdo revisado.');
  }}
