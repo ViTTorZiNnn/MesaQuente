@@ -19,7 +19,7 @@ const full=c=>c.full||c;
 // Texto da carta na mesa 3D: só o que todos podem ver.
 export function textoAoVivo(c){const f=full(c);if(c.skipped)return'Carta pulada.';
  switch(c.modeId){
-  case'o_termometro':return f.text+(f.scale?'\n\n0 = '+f.scale.min+'\n10 = '+f.scale.max:'');
+  case'o_termometro':return f.text;
   case'apenas_uma_dica':return'Quem sou eu?\n'+(f.cat||'')+'\n\nCelular na testa!';
   case'palavra_proibida':return'Palavra Proibida\n\nSegure o botão para ver a palavra.';
   case'verdade_ou_desafio_hot':return f.choice?f.text:'Verdade ou Desafio?';

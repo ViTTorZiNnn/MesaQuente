@@ -1,202 +1,268 @@
 // Conteúdo estruturado de dois minijogos. Edite à vontade (copie também para public/cartas-jogos.js).
-// TERMÔMETRO DA TRETA: frase polêmica (text) e o que significa 0 (min) e 10 (max).
+// TERMÔMETRO DA TRETA: pretexto (a polêmica), ancora_0 e ancora_10 (o que significa cada ponta da escala).
 // QUEM SOU EU: pessoas e personagens famosos no mundo todo (música, cinema, games, internet, política). "alias" são outras formas aceitas no palpite.
 
-// Termômetro da Treta: uma frase polêmica e a escala de 0 a 10. Todos votam escondido.
+// Termômetro da Treta: cada carta é só a polêmica (pretexto). As âncoras dizem o que vale 0 e o que vale 10;
+// o jogo desenha as âncoras fora do texto (0 em cima, azul; 10 embaixo, vermelho).
 export const TERMOMETRO={
  "leve": [
   {
-   "text": "De 0 a 10: quão grave é usar calça de alfaiataria com chinelo slide pra passear no shopping no domingo?",
-   "min": "Estilo puro",
-   "max": "Crime de moda"
+   "pretexto": "Calça de alfaiataria com chinelo slide pra passear no shopping no domingo.",
+   "ancora_0": "Estilo puro",
+   "ancora_10": "Crime de moda"
   },
   {
-   "text": "De 0 a 10: pular o treino e pedir iFood só porque choveu.",
-   "min": "Autocuidado",
-   "max": "Fracasso total"
+   "pretexto": "Pular o treino e pedir delivery só porque choveu.",
+   "ancora_0": "Autocuidado",
+   "ancora_10": "Fracasso total"
   },
   {
-   "text": "De 0 a 10: o amigo que manda áudio de 4 minutos pra dizer \"beleza\".",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Mandar áudio de 4 minutos pra responder \"beleza\".",
+   "ancora_0": "Normal",
+   "ancora_10": "Inadmissível"
   },
   {
-   "text": "De 0 a 10: dar spoiler da série \"sem querer\".",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Dar spoiler da série e dizer que foi sem querer.",
+   "ancora_0": "Acontece",
+   "ancora_10": "Imperdoável"
   },
   {
-   "text": "De 0 a 10: comer a última fatia da pizza sem perguntar pra ninguém.",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Comer a última fatia da pizza sem perguntar pra ninguém.",
+   "ancora_0": "Quem pegou, pegou",
+   "ancora_10": "Falta de caráter"
   },
   {
-   "text": "De 0 a 10: deixar o amigo pagar e dizer \"depois te faço o Pix\" (e nunca fazer).",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Dizer \"depois te faço o Pix\" e nunca fazer.",
+   "ancora_0": "Esquecimento",
+   "ancora_10": "Golpe"
   },
   {
-   "text": "De 0 a 10: ouvir música alta no ônibus sem fone.",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Ouvir música no ônibus sem fone.",
+   "ancora_0": "Deixa o povo curtir",
+   "ancora_10": "Crime contra a paz"
   },
   {
-   "text": "De 0 a 10: o amigo que some no meio do show e só manda mensagem no dia seguinte.",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Sumir no meio do show e só mandar mensagem no dia seguinte.",
+   "ancora_0": "Espírito livre",
+   "ancora_10": "Abandono"
   },
   {
-   "text": "De 0 a 10: comentar \"lindaaa\" na foto de todo mundo sem nem olhar a foto.",
-   "min": "Fofura",
-   "max": "Falsidade"
+   "pretexto": "Responder o grupo da família só com figurinha.",
+   "ancora_0": "Comunicação moderna",
+   "ancora_10": "Falta de respeito"
   },
   {
-   "text": "De 0 a 10: responder o grupo da família só com figurinha.",
-   "min": "Comunicação moderna",
-   "max": "Falta de respeito"
+   "pretexto": "Chegar uma hora atrasado no rolê e ainda pedir pra esperar.",
+   "ancora_0": "Tranquilo",
+   "ancora_10": "Inaceitável"
+  },
+  {
+   "pretexto": "Visualizar e não responder por três dias.",
+   "ancora_0": "Tava ocupado",
+   "ancora_10": "Desprezo"
+  },
+  {
+   "pretexto": "Colocar o despertador pra tocar de 5 em 5 minutos por uma hora.",
+   "ancora_0": "Estratégia",
+   "ancora_10": "Tortura"
   }
  ],
  "profundo": [
   {
-   "text": "De 0 a 10: usar \"saúde mental\" de desculpa pra sumir quando um amigo precisa, mas postar foto em festa no fim de semana.",
-   "min": "Compreensível",
-   "max": "Mau-caratismo puro"
+   "pretexto": "Usar \"saúde mental\" de desculpa pra sumir quando um amigo precisa, mas postar foto em festa no fim de semana.",
+   "ancora_0": "Compreensível",
+   "ancora_10": "Mau-caratismo"
   },
   {
-   "text": "De 0 a 10: esconder do melhor amigo que você sabe que ele está sendo traído.",
-   "min": "Não é problema meu",
-   "max": "Traição também"
+   "pretexto": "Esconder do melhor amigo que ele está sendo traído.",
+   "ancora_0": "Não é problema meu",
+   "ancora_10": "Traição também"
   },
   {
-   "text": "De 0 a 10: cortar contato com alguém da família pra ter paz.",
-   "min": "Totalmente certo",
-   "max": "Errado demais"
+   "pretexto": "Cortar contato com alguém da família pra ter paz.",
+   "ancora_0": "Totalmente certo",
+   "ancora_10": "Errado demais"
   },
   {
-   "text": "De 0 a 10: largar um sonho pra ter estabilidade.",
-   "min": "Maturidade",
-   "max": "Covardia"
+   "pretexto": "Largar um sonho pra ter estabilidade.",
+   "ancora_0": "Maturidade",
+   "ancora_10": "Covardia"
   },
   {
-   "text": "De 0 a 10: perdoar uma traição.",
-   "min": "Perdoo fácil",
-   "max": "Jamais"
+   "pretexto": "Perdoar uma traição.",
+   "ancora_0": "Perdoo fácil",
+   "ancora_10": "Jamais"
   },
   {
-   "text": "De 0 a 10: mentir pra um amigo só pra não magoar.",
-   "min": "Gentileza",
-   "max": "Falsidade"
+   "pretexto": "Mentir pra um amigo só pra não magoar.",
+   "ancora_0": "Gentileza",
+   "ancora_10": "Falsidade"
+  },
+  {
+   "pretexto": "Mudar de cidade sozinho, sem conhecer ninguém, por um emprego melhor.",
+   "ancora_0": "Faria amanhã",
+   "ancora_10": "Nunca na vida"
+  },
+  {
+   "pretexto": "Contar pros pais algo que eles não querem ouvir.",
+   "ancora_0": "Necessário",
+   "ancora_10": "Desnecessário"
+  },
+  {
+   "pretexto": "Continuar amigo de alguém que maltratou outro amigo seu.",
+   "ancora_0": "Cada um com seus problemas",
+   "ancora_10": "Cumplicidade"
   }
  ],
  "adulto": [
   {
-   "text": "De 0 a 10: transar no primeiro encontro.",
-   "min": "Normalíssimo",
-   "max": "Nem pensar"
+   "pretexto": "Transar no primeiro encontro.",
+   "ancora_0": "Normalíssimo",
+   "ancora_10": "Nem pensar"
   },
   {
-   "text": "De 0 a 10: mandar nudes pra quem você conheceu ontem.",
-   "min": "Sem problema",
-   "max": "Loucura"
+   "pretexto": "Mandar nudes pra quem você conheceu ontem.",
+   "ancora_0": "Sem problema",
+   "ancora_10": "Loucura"
   },
   {
-   "text": "De 0 a 10: fingir orgasmo pra acabar logo.",
-   "min": "Acontece",
-   "max": "Imperdoável"
+   "pretexto": "Fingir orgasmo pra acabar logo.",
+   "ancora_0": "Acontece",
+   "ancora_10": "Imperdoável"
   },
   {
-   "text": "De 0 a 10: ficar com o ex de um amigo, anos depois.",
-   "min": "Já prescreveu",
-   "max": "Traição eterna"
+   "pretexto": "Ficar com o ex de um amigo, anos depois.",
+   "ancora_0": "Já prescreveu",
+   "ancora_10": "Traição eterna"
   },
   {
-   "text": "De 0 a 10: olhar o celular do parceiro escondido.",
-   "min": "Prevenção",
-   "max": "Invasão"
+   "pretexto": "Olhar o celular do parceiro escondido.",
+   "ancora_0": "Prevenção",
+   "ancora_10": "Invasão"
   },
   {
-   "text": "De 0 a 10: transar com o ex \"só pra encerrar o ciclo\".",
-   "min": "Terapêutico",
-   "max": "Recaída clássica"
+   "pretexto": "Transar com o ex \"só pra encerrar o ciclo\".",
+   "ancora_0": "Terapêutico",
+   "ancora_10": "Recaída clássica"
   },
   {
-   "text": "De 0 a 10: curtir foto do crush estando namorando.",
-   "min": "Só um like",
-   "max": "Traição digital"
+   "pretexto": "Curtir foto do crush estando namorando.",
+   "ancora_0": "Só um like",
+   "ancora_10": "Traição digital"
   },
   {
-   "text": "De 0 a 10: relacionamento aberto.",
-   "min": "Topo fácil",
-   "max": "Nunca na vida"
-  }
- ],
- "casal": [
-  {
-   "text": "De 0 a 10: ter senha no celular que o parceiro não sabe.",
-   "min": "Privacidade",
-   "max": "Esconde algo"
+   "pretexto": "Ter um relacionamento aberto.",
+   "ancora_0": "Topo fácil",
+   "ancora_10": "Nunca na vida"
   },
   {
-   "text": "De 0 a 10: seguir o ex no Instagram estando namorando.",
-   "min": "Nada demais",
-   "max": "Inaceitável"
+   "pretexto": "Transar no banheiro de uma festa.",
+   "ancora_0": "Faria hoje",
+   "ancora_10": "Jamais"
   },
   {
-   "text": "De 0 a 10: dormir brigado.",
-   "min": "Normal",
-   "max": "Nunca"
+   "pretexto": "Ficar com duas pessoas da mesma roda de amigos.",
+   "ancora_0": "Tá solteiro, pode",
+   "ancora_10": "Caos garantido"
   },
   {
-   "text": "De 0 a 10: contar pros amigos detalhes da vida sexual do casal.",
-   "min": "Resenha",
-   "max": "Traição de confiança"
-  },
-  {
-   "text": "De 0 a 10: ir pra festa sozinho(a) sem o parceiro.",
-   "min": "Saudável",
-   "max": "Suspeito"
+   "pretexto": "Mandar mensagem pro ex depois da terceira cerveja.",
+   "ancora_0": "Faz parte",
+   "ancora_10": "Vergonha eterna"
   }
  ],
  "acido": [
   {
-   "text": "De 0 a 10: dar ghosting no amigo que precisa de ajuda e postar foto sorrindo no festival.",
-   "min": "Passa pano",
-   "max": "Mau-caratismo puro"
+   "pretexto": "Dar ghosting no amigo que precisa de ajuda e postar foto sorrindo no festival.",
+   "ancora_0": "Passa pano",
+   "ancora_10": "Mau-caratismo"
   },
   {
-   "text": "De 0 a 10: ir no casamento do ex só pra ver se a pessoa nova é mais bonita.",
-   "min": "Curiosidade",
-   "max": "Psicopatia"
+   "pretexto": "Ir no casamento do ex só pra ver se a pessoa nova é mais bonita.",
+   "ancora_0": "Curiosidade",
+   "ancora_10": "Psicopatia"
   },
   {
-   "text": "De 0 a 10: printar a conversa do amigo e mandar no grupo \"sem querer\".",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Printar a conversa do amigo e mandar no grupo \"sem querer\".",
+   "ancora_0": "Acidente",
+   "ancora_10": "Traição"
   },
   {
-   "text": "De 0 a 10: fingir que está doente pra faltar no aniversário de um amigo.",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Fingir que está doente pra faltar no aniversário de um amigo.",
+   "ancora_0": "Mentira branca",
+   "ancora_10": "Falsidade"
   },
   {
-   "text": "De 0 a 10: contar o segredo de alguém \"só pra uma pessoa\".",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Contar o segredo de alguém \"só pra uma pessoa\".",
+   "ancora_0": "Desabafo",
+   "ancora_10": "Fofoqueiro"
   },
   {
-   "text": "De 0 a 10: ficar com o crush do amigo porque \"ele nem tinha chance mesmo\".",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Ficar com o crush do amigo porque \"ele nem tinha chance\".",
+   "ancora_0": "Jogo é jogo",
+   "ancora_10": "Facada nas costas"
   },
   {
-   "text": "De 0 a 10: postar indireta pro ex enquanto namora outra pessoa.",
-   "min": "De boa",
-   "max": "Imperdoável"
+   "pretexto": "Postar indireta pro ex enquanto namora outra pessoa.",
+   "ancora_0": "Desabafo",
+   "ancora_10": "Ridículo"
   },
   {
-   "text": "De 0 a 10: elogiar a roupa na frente e zoar no grupo depois.",
-   "min": "Educação",
-   "max": "Falsidade nível máximo"
+   "pretexto": "Elogiar a roupa na frente e zoar no grupo depois.",
+   "ancora_0": "Educação",
+   "ancora_10": "Falsidade máxima"
+  },
+  {
+   "pretexto": "Pedir dinheiro emprestado e postar foto de viagem na semana seguinte.",
+   "ancora_0": "Vida que segue",
+   "ancora_10": "Cara de pau"
+  },
+  {
+   "pretexto": "Terminar o namoro por mensagem.",
+   "ancora_0": "Prático",
+   "ancora_10": "Covardia"
+  }
+ ],
+ "casal": [
+  {
+   "pretexto": "Ter senha no celular que o parceiro não sabe.",
+   "ancora_0": "Privacidade",
+   "ancora_10": "Esconde algo"
+  },
+  {
+   "pretexto": "Seguir o ex no Instagram estando namorando.",
+   "ancora_0": "Nada demais",
+   "ancora_10": "Inaceitável"
+  },
+  {
+   "pretexto": "Dormir brigado.",
+   "ancora_0": "Normal",
+   "ancora_10": "Nunca"
+  },
+  {
+   "pretexto": "Contar pros amigos detalhes da vida sexual do casal.",
+   "ancora_0": "Resenha",
+   "ancora_10": "Quebra de confiança"
+  },
+  {
+   "pretexto": "Ir pra festa sozinho, sem o parceiro.",
+   "ancora_0": "Saudável",
+   "ancora_10": "Suspeito"
+  },
+  {
+   "pretexto": "Ter melhor amigo do gênero que te atrai.",
+   "ancora_0": "Normal",
+   "ancora_10": "Problema"
+  },
+  {
+   "pretexto": "Ler as conversas do parceiro enquanto ele dorme.",
+   "ancora_0": "Cuidado",
+   "ancora_10": "Invasão"
+  },
+  {
+   "pretexto": "Esquecer a data de aniversário de namoro.",
+   "ancora_0": "Acontece",
+   "ancora_10": "Imperdoável"
   }
  ]
 };

@@ -1,17 +1,17 @@
-import {mountChat} from './chat-ui.js?v=quente22';
-import {LocalRoomService} from './local-room.js?v=quente22';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente22';
-import {TONES} from './editorial.js?v=quente22';
-import {mountSettings} from './settings.js?v=quente22';
-import {MAPAS,setRoomMap} from './visual.js?v=quente22';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente22';
-import {GameAudio} from './som.js?v=quente22';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente22';
-import {ligarSonsDaInterface} from './sfx.js?v=quente22';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente22';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente22';
+import {mountChat} from './chat-ui.js?v=quente23';
+import {LocalRoomService} from './local-room.js?v=quente23';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente23';
+import {TONES} from './editorial.js?v=quente23';
+import {mountSettings} from './settings.js?v=quente23';
+import {MAPAS,setRoomMap} from './visual.js?v=quente23';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente23';
+import {GameAudio} from './som.js?v=quente23';
+import {contagem,transicao,depois,setSom} from './abertura.js?v=quente23';
+import {ligarSonsDaInterface} from './sfx.js?v=quente23';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente23';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente23';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente22';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente23';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -57,7 +57,7 @@ function renderEvents(){const key=service?.code||roomCode,list=Array.isArray(roo
 let thermoDraft={id:'',v:5};const tretaSeen={};
 function thermo(c,p,reader,isParticipant){const w=el('div',undefined,'thermo treta'),answers=p.answers||{},mine=answers[service.uid],results=c.phase==='results',sc=c.scale||{min:'De boa',max:'Imperdoável'},nome=id=>room.jogadores[id]?.nome||'Jogador',av=id=>room.jogadores[id]?.avatar?.emoji||'🙂';
  w.append(el('span','🌡️ TERMÔMETRO DA TRETA','thermo-label'));
- const ends=()=>{const e=el('div',undefined,'thermo-ends');e.append(el('span','0 = '+sc.min),el('span','10 = '+sc.max));return e;};
+ const ends=()=>{const e=el('div',undefined,'thermo-ends');e.append(el('span','0 = '+sc.min,'ancora a0'),el('span','10 = '+sc.max,'ancora a10'));return e;};
  if(!results){
   if(isParticipant&&['public','voting'].includes(c.phase)&&mine===undefined){if(thermoDraft.id!==c.id)thermoDraft={id:c.id,v:5};
    const big=el('strong','','treta-valor'),r=document.createElement('input');r.type='range';r.min='0';r.max='10';r.step='1';r.value=String(thermoDraft.v);r.className='treta-slider';r.setAttribute('aria-label','Sua nota de 0 a 10');
@@ -87,10 +87,10 @@ $('tutorial').addEventListener('cancel',e=>e.preventDefault());$('ready').onclic
 function renderGame(host,ids){const p=room.partida,c=p.cartaAtual,reader=c.readerId===service.uid,name=room.jogadores[c.readerId]?.nome||'Jogador',isParticipant=c.participants.includes(service.uid),cardText=room.local?textoAoVivo(c):textForViewer(c,service.uid);$('game-room').textContent='SALA '+roomCode;$('game-round').textContent='Rodada '+p.rodadaAtual+' / '+p.totalRodadas;$('game-mode').textContent=modes[c.modeId].nome+(c.level?' · Nível '+c.level:'');$('turn-title').textContent=c.phase==='results'?'Rodada concluída':reader?'Sua vez de ler!':'Vez de '+name;$('turn-hint').textContent=c.phase==='deck'?(reader?'Toque no baralho para puxar sua carta.':'Aguarde o leitor puxar a carta.'):c.phase==='private'?(reader?'Leia a carta. Quando estiver pronto, revele.':'Você vê o verso até o leitor revelar.'):c.phase==='public'?'Conversem e participem da rodada.':'Prontos para a próxima conversa?';$('game-banner').textContent=!isParticipant?'Você entrou durante a rodada e participa da próxima.':room.jogadores[c.readerId]?.conectado===false?'O leitor desconectou. O anfitrião pode passar a vez.':'';
  if(c.modeId==='quem_e_mais_provavel'&&c.phase==='public')$('turn-title').textContent='Pergunta revelada · hora de votar';
  if(!mesa){mesa=new Mesa3D($('stage'),{onDraw:()=>{if(room?.partida?.cartaAtual?.readerId===service.uid&&room.partida.cartaAtual.phase==='deck'){if(room.local)localDraw();else action('draw');}else if(room?.partida?.cartaAtual?.phase!=='deck')openCardViewer();},onError:e=>{$('scene-loading').hidden=true;toast(e);}});sceneLoadTimer=setInterval(()=>{if(mesa.ready){$('scene-loading').hidden=true;clearInterval(sceneLoadTimer);}},150);}
- const showFront=reader||['public','results'].includes(c.phase);mesa.setCard({id:c.id,deckIndex:c.deckIndex,text:cardText,phase:c.phase,showFront,canDraw:reader&&c.phase==='deck'});mesa.setPlayers(ids.map(id=>({id,...room.jogadores[id]})),c.readerId,service.uid);mesa.setMood?.(c.tone||'leve');
+ const showFront=reader||['public','results'].includes(c.phase);mesa.setCard({id:c.id,deckIndex:c.deckIndex,text:cardText,anchors:ancoras(c,cardText),phase:c.phase,showFront,canDraw:reader&&c.phase==='deck'});mesa.setPlayers(ids.map(id=>({id,...room.jogadores[id]})),c.readerId,service.uid);mesa.setMood?.(c.tone||'leve');
  const phaseKey=c.id+'|'+c.phase;if(lastPhase!==phaseKey){if(c.phase==='deck'&&reader)tone('turn');else if(lastPhase)tone(c.phase==='results'?'reveal':'draw');}lastPhase=phaseKey;
  $('round-actions').replaceChildren();if(reader&&c.phase==='deck')$('round-actions').append(btn('🃏 Puxar carta',()=>action('draw'),'primary'));if(reader&&c.phase==='private'&&(c.modeId!=='verdade_ou_desafio_hot'||c.choice)&&(c.modeId!=='duas_verdades_uma_mentira'||c.statements))$('round-actions').append(btn(FLOWS[c.modeId].reveal,()=>action('reveal'),'primary'));if((reader||host)&&c.phase==='public'&&(room.local&&ids.length===1||['niveis_intimidade','verdade_ou_desafio_hot','palavra_proibida'].includes(c.modeId)))$('round-actions').append(btn(room.local&&ids.length===1?'Encerrar rodada':c.modeId==='niveis_intimidade'?'Respondi! (+1)':c.modeId==='verdade_ou_desafio_hot'?(c.choice==='dare'?'Desafio cumprido! (+2)':'Verdade contada! (+1)'):'Ninguém acertou · encerrar',()=>action('results'),'primary'));if((reader||host)&&c.phase==='public'&&c.votingReady===false)$('round-actions').append(btn(c.modeId==='o_espiao'?'Abrir acusações':'Abrir votação',()=>action('openVoting'),'primary'));if((reader||host)&&c.phase==='results')$('round-actions').append(btn(p.rodadaAtual>=p.totalRodadas?'Encerrar partida':'Próxima rodada →',()=>action('next'),'primary'));if((reader||host)&&!['deck','results'].includes(c.phase))$('round-actions').append(btn('Pular esta carta',()=>$('skip-dialog').showModal(),'ghost'));
- if(room.local)localActions(c,p);$('card-zoom').hidden=c.phase==='deck'||!cardText;if($('card-reader').open){if(c.phase==='deck'||c.skipped||!cardText)$('card-reader').close();else $('card-reader-text').textContent=cardText;}renderLocalPlayers(c);renderInteractions(c,p,host,reader,isParticipant);renderGuide();renderPlayerDock(Object.entries(room.jogadores).map(([id,player])=>({id,...player})),c.readerId,service.uid,p.answeredIds||[],room.scores||{});renderRole(c);renderIntro(c,p,reader,name);renderPops(c);
+ if(room.local)localActions(c,p);$('card-zoom').hidden=c.phase==='deck'||!cardText;if($('card-reader').open){if(c.phase==='deck'||c.skipped||!cardText)$('card-reader').close();else{$('card-reader-text').textContent=cardText;showAnchors(c,cardText);}}renderLocalPlayers(c);renderInteractions(c,p,host,reader,isParticipant);renderGuide();renderPlayerDock(Object.entries(room.jogadores).map(([id,player])=>({id,...player})),c.readerId,service.uid,p.answeredIds||[],room.scores||{});renderRole(c);renderIntro(c,p,reader,name);renderPops(c);
 }
 function localActions(c,p){const box=$('round-actions');box.replaceChildren();const last=p.rodadaAtual>=p.totalRodadas;
  if(c.phase==='deck')box.append(btn('🃏 Puxar carta',localDraw,'primary'));
@@ -145,7 +145,10 @@ if(document.modelContext?.registerTool){try{document.modelContext.registerTool({
 
 
 
-function openCardViewer(){const c=room?.partida?.cartaAtual;if(!c||c.phase==='deck'||c.skipped)return;const text=textForViewer(c,service.uid);if(!text)return;$('card-reader-text').textContent=text;$('card-reader').showModal();}
+// Termômetro: as âncoras da escala ficam fora do texto da carta (0 em cima, 10 embaixo).
+function ancoras(c,text){const f=c.full||c;return c.modeId==='o_termometro'&&f.scale&&text&&!c.skipped?{min:f.scale.min,max:f.scale.max}:null;}
+function showAnchors(c,text){const a=ancoras(c,text);$('card-reader-a0').hidden=$('card-reader-a10').hidden=!a;if(a){$('card-reader-a0').textContent='0 = '+a.min;$('card-reader-a10').textContent='10 = '+a.max;}}
+function openCardViewer(){const c=room?.partida?.cartaAtual;if(!c||c.phase==='deck'||c.skipped)return;const text=room.local?textoAoVivo(c):textForViewer(c,service.uid);if(!text)return;$('card-reader-text').textContent=text;showAnchors(c,text);$('card-reader').showModal();}
 $('card-zoom').onclick=openCardViewer;
 
 let handoffTarget=null;

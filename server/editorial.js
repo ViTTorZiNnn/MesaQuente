@@ -76,7 +76,7 @@ export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const si
  case'quem_e_mais_provavel':return simple('votes');case'eu_nunca':return simple('never');case'niveis_intimidade':return simple('questions');
  case'o_que_voce_prefere':return b.pairs.map(x=>Array.isArray(x)?{text:'O que você prefere?\n'+x.join('\nOU\n'),options:x}:{text:x.text+'\n'+x.options.join('\nOU\n'),options:x.options});
  case'bandeiras_vermelhas':return b.flags.map(([a,c])=>({text:a+', mas '+c+'. Você daria uma chance?',options:['Daria uma chance','Não daria uma chance']}));
- case'batalha_de_argumentos':return b.debates.map(d=>({text:'"'+d+'"\n\nQuem leu defende essa frase. O próximo jogador ataca. A mesa decide quem convenceu.'}));case'o_termometro':return b.termometro.map(t=>({text:t.text,scale:{min:t.min,max:t.max}}));
+ case'batalha_de_argumentos':return b.debates.map(d=>({text:'"'+d+'"\n\nQuem leu defende essa frase. O próximo jogador ataca. A mesa decide quem convenceu.'}));case'o_termometro':return b.termometro.map(t=>({text:t.pretexto,scale:{min:t.ancora_0,max:t.ancora_10}}));
  case'preencha_a_lacuna':return b.blanks.map(([text,white])=>({text:'Complete a frase escolhendo uma das respostas disponíveis.\n'+text,white}));
  case'verdade_ou_desafio_hot':return b.truth.map((truth,i)=>({text:'Escolha Verdade ou Desafio. Você pode pular sem explicar.',truth,dare:b.dare[i]}));
  case'duas_verdades_uma_mentira':return simple('facts');

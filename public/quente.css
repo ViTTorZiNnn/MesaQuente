@@ -191,3 +191,10 @@ html[data-scene=quente] #start-tutorial:not(:disabled){font-size:20px!important;
 html[data-scene=quente] .lobby-foot{color:#d9cccc!important}
 html[data-scene=quente] .lobby .quick-reactions button{background:#000!important}
 @media(max-width:800px){html[data-scene=quente] .lobby-grid{grid-template-columns:1fr!important}html[data-scene=quente] .lobby .players-grid{grid-template-columns:repeat(3,1fr)!important;gap:12px!important}html[data-scene=quente] .lobby .player>span{width:48px!important;height:48px!important;font-size:28px!important}}
+
+/* Âncoras do Termômetro: 0 azul, 10 vermelho, fora do texto da carta */
+.ancora{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.02em;color:#fff;border:2px solid rgba(255,255,255,.75);box-shadow:0 3px 0 rgba(0,0,0,.5)}
+.ancora.a0{background:#1f6fe0}.ancora.a10{background:#e3101f}
+.thermo-ends{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#card-reader .ancora{display:block;width:max-content;max-width:90%;margin:14px auto;font-size:15px}
+#card-reader .ancora[hidden]{display:none}

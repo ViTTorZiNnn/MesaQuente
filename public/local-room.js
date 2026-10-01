@@ -1,5 +1,5 @@
-import {applyAction,validateConfig,connected,replyIds} from './motor.js?v=quente22';
-import {viewFor} from './local-privacy.js?v=quente22';
+import {applyAction,validateConfig,connected,replyIds} from './motor.js?v=quente23';
+import {viewFor} from './local-privacy.js?v=quente23';
 
 // This service stays in this tab. No Firebase identities, invitations or network writes.
 export class LocalRoomService {
