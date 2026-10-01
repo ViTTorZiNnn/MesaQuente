@@ -55,6 +55,11 @@ bank.profundo.dare=["Te desafio a mandar mensagem para alguém com quem você n�
 bank.leve.votes.push(...["Quem daqui contaria o seu segredo em menos de 24 horas?", "Quem fingiria estar doente para fugir do seu aniversário?", "Quem seria eliminado primeiro de um reality show?", "Quem manda áudio de 5 minutos para dizer \"ok\"?", "Quem sumiria do grupo assim que a conta do bar chegasse?", "Quem daria spoiler da série que você está vendo?"]);
 bank.leve.pairs.push(...[{"text": "Você é padrinho no casamento do seu melhor amigo e o microfone é seu.", "options": ["Conto o maior mico dele", "Choro do começo ao fim"]}, {"text": "Seu chefe te adiciona no grupo dos amigos por engano.", "options": ["Saio do grupo na hora", "Fico quieto e leio tudo"]}, {"text": "O seu crush curte uma foto sua de 2014.", "options": ["Curto uma dele de 2013", "Finjo que não vi e surto em silêncio"]}, {"text": "Você cai na frente de todo mundo na festa.", "options": ["Levanto e faço uma dancinha", "Fico deitado até todos irem embora"]}]);
 bank.profundo.votes.push(...["Quem daqui some quando o grupo mais precisa?", "Quem dá o melhor conselho e nunca segue nenhum?", "Quem guarda mágoa por mais tempo?", "Quem fala que \"está tudo bem\" sem estar?"]);
+// Cartas com contexto: uma mini-história antes da pergunta.
+bank.leve.votes.push(...["Na nossa roda tem alguém que sempre pede dinheiro emprestado, mas na hora de devolver inventa mil desculpas. Quem seria?", "Tem alguém aqui que vive reclamando de tudo: do calor, do frio, da comida, da fila. Quem seria?", "Tem uma pessoa no grupo que some por semanas e volta como se nada tivesse acontecido. Quem seria?", "Tem alguém aqui que manda \"tô chegando\" e ainda nem saiu do banho. Quem seria?", "Tem alguém que conta a mesma história em todo rolê como se fosse a primeira vez. Quem seria?", "Existe alguém aqui que marca o rolê e é o primeiro a desmarcar. Quem seria?", "Tem uma pessoa que, depois de duas cervejas, vira melhor amiga de todo mundo no banheiro. Quem seria?"]);
+bank.leve.questions.push(...["Se você pudesse voltar no tempo, qual é a primeira coisa que você faria?", "Me conta o momento mais incrível que você já viveu.", "Se a sua vida virasse filme, qual seria o título e quem faria você?", "Qual foi a coisa mais corajosa que você já fez?", "Se você ganhasse um dia inteiro sem compromisso nenhum, como seria?"]);
+bank.profundo.votes.push(...["Tem alguém aqui que segura a barra de todo mundo e nunca pede ajuda. Quem seria?", "Tem uma pessoa na roda que sempre lembra do seu aniversário, mesmo quando ninguém lembra. Quem seria?", "Existe alguém aqui que fala pouco, mas quando fala todo mundo escuta. Quem seria?", "Tem alguém que diz que já superou, mas ainda olha os stories do ex. Quem seria?"]);
+bank.profundo.questions.push(...["Se você pudesse conversar cinco minutos com você de dez anos atrás, o que diria?", "Qual foi o momento mais incrível da sua vida até hoje, e por quê?", "O que você faria diferente se ninguém fosse te julgar?", "Se você encontrasse alguém que te magoou e essa pessoa viesse pedir desculpas, como você reagiria?"]);
 export const editorialBank=bank;
 export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const simple=(key)=>b[key].map(text=>({text}));
  switch(mode){
@@ -66,7 +71,7 @@ export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const si
  case'verdade_ou_desafio_hot':return b.truth.map((truth,i)=>({text:'Escolha Verdade ou Desafio. Você pode pular sem explicar.',truth,dare:b.dare[i]}));
  case'duas_verdades_uma_mentira':return simple('facts');
  case'o_espiao':return b.words.map(secret=>({secret}));
- case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat}));
+ case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat,dica:f.dica||''}));
  case'palavra_proibida':return b.forbidden.map(([secret,...forbidden])=>({secret,forbidden}));
  default:throw Error('Minijogo sem conteúdo revisado.');
  }}

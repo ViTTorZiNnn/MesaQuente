@@ -56,7 +56,7 @@ export function applyAction(room,uid,action,payload={},modes,decks,rng=Math.rand
 export function textForViewer(card,uid){if(card.skipped)return'Carta pulada. Ninguém precisa explicar o motivo.';const own=card.readerId===uid,mode=card.modeId,results=card.phase==='results';if(!own&&['deck','private','voting'].includes(card.phase))return'';
  if(mode==='o_espiao')return results?'Palavra da rodada: '+card.secret:uid===card.spyId?'Você é o ESPIÃO. Descubra a palavra sem levantar suspeitas.':'Palavra secreta: '+card.secret+'. Não diga a palavra em voz alta!';
  if(mode==='o_termometro'){const sc=card.scale||{pista:'Dê uma pista'};return results?'O número era\n'+card.secretNumber:own?'Seu número\n'+card.secretNumber+'\n\n'+sc.pista+' que valha '+card.secretNumber+' nessa escala. Não diga o número!':'Número secreto\n?\n\nOuça a pista e chute de 1 a 10.';}
- if(mode==='apenas_uma_dica')return results?'Era: '+card.secret:own?'Quem sou eu?\n'+(card.cat||'Famoso')+'\n\nLeia as dicas da mesa e descubra quem você é.':card.secret+'\n'+(card.cat||'')+'\n\nMande UMA palavra de dica, sem dizer o nome.';
+ if(mode==='apenas_uma_dica')return results?'Era: '+card.secret:own?'Quem sou eu?\n'+(card.cat||'Famoso')+(card.dica?'\nCharada: '+card.dica:'')+'\n\nLeia as dicas da mesa e descubra quem você é.':card.secret+'\n'+(card.cat||'')+'\n\nMande UMA palavra de dica, sem dizer o nome.';
  if(mode==='palavra_proibida')return own||results?'Explique: '+card.secret+'\nNão pode dizer: '+card.forbidden.join(', '):card.text;
  return card.text;
 }
