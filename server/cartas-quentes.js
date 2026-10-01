@@ -161,42 +161,8 @@ export const QUENTE={
   ['Meu crush descobriu que eu estava a fim quando ________.',['mandei um áudio às 3h da manhã','curti uma foto de 2016','falei o nome dele dormindo','errei o grupo e mandei a mensagem para todo mundo']],
   ['O melhor aquecimento antes de uma noite quente é ________.',['um banho a dois','dançar coladinho na sala','uma massagem com óleo','um jogo de perguntas como este']]
  ],
- truth:[
-  'Qual foi a sua transa mais rápida, e valeu a pena?',
-  'Já transou pensando em outra pessoa? Quem era (sem dizer o nome)?',
-  'Qual é a coisa mais ousada que você já fez na cama?',
-  'Qual foi o lugar mais arriscado onde você já transou?',
-  'Você já fingiu um orgasmo? Por quê?',
-  'Qual foi a sua pior transa e o que deu errado?',
-  'Qual fantasia você teria vergonha de pedir?',
-  'Alguém desta mesa já apareceu em um sonho seu mais quente?',
-  'Qual foi o nude mais ousado que você já mandou?',
-  'Com quantas pessoas você já ficou na mesma noite?',
-  'Você prefere dar prazer ou receber? Seja sincero.',
-  'O que você faz que nunca falha para deixar alguém com vontade?',
-  'Que toque te deixa arrepiado na hora?',
-  'Qual foi a desculpa mais esfarrapada que você já deu para sair cedo e ir transar?',
-  'Já pensou em alguém que você conhece pessoalmente num momento a sós? Conte sem dizer o nome.',
-  'Qual é o seu maior arrependimento na cama?'
- ],
- dare:[
-  'Sussurre no ouvido de quem está à sua esquerda (ou no microfone) o que você faria numa noite sem limites.',
-  'Faça sua melhor cara e voz de "hora H" por cinco segundos.',
-  'Dê um beijo no pescoço de alguém da mesa que topar. Online: descreva como seria, em detalhes.',
-  'Tire uma peça de roupa com charme (meia vale!), cantando sua própria trilha sonora.',
-  'Diga em voz alta a mensagem de bom dia mais safada que você mandaria para quem você deseja.',
-  'Imite um gemido de filme por três segundos sem rir.',
-  'Deixe alguém da mesa te dar uma ordem picante e cumpra agora, dentro dos seus limites.',
-  'Faça uma massagem de 30 segundos nos ombros de quem a mesa escolher. Online: ensine o passo a passo com voz sedutora.',
-  'Mostre na sua própria mão como é o seu beijo favorito.',
-  'Descreva, com voz sedutora, a roupa íntima que você mais gosta de usar.',
-  'Dance de forma sensual por 15 segundos.',
-  'Leia em voz alta a última mensagem de flerte que você mandou (pode esconder o nome).',
-  'Deixe a mesa escolher um apelido safado para você até o fim da partida.',
-  'Morda o lábio e olhe nos olhos de alguém por dez segundos sem rir.',
-  'Conte uma fantasia sua usando só três palavras.',
-  'Simule uma ligação quente por 15 segundos.'
- ],
+ truth:["Qual foi a sua transa mais rápida, e valeu a pena?", "Já transou pensando em outra pessoa? Quem era (sem dizer o nome)?", "Qual é a coisa mais ousada que você já fez na cama?", "Qual foi o lugar mais arriscado onde você já transou?", "Você já fingiu um orgasmo? Por quê?", "Qual foi a sua pior transa e o que deu errado?", "Qual fantasia você teria vergonha de pedir?", "Alguém desta mesa já apareceu num sonho seu mais quente?", "Qual foi o nude mais ousado que você já mandou?", "Com quantas pessoas você já ficou na mesma noite?", "Você prefere dar prazer ou receber? Seja sincero.", "O que você faz que nunca falha para deixar alguém com vontade?", "Quem foi a pessoa mais inesperada com quem você já ficou?", "Qual foi a desculpa mais esfarrapada que você já deu para sair cedo e ir transar?", "Você já ficou com alguém só para fazer ciúme em outra pessoa?", "Qual é o seu maior arrependimento na cama?"],
+ dare:["Te desafio a contar um segredo sobre alguém com quem você já se relacionou (sem dizer o nome).", "Te desafio a imitar um cara gemendo por 5 segundos.", "Te desafio a imitar uma mulher gemendo por 5 segundos.", "Te desafio a mandar \"tô pensando em você 😏\" para o seu último contatinho.", "Te desafio a mostrar a sua última conversa de flerte (pode esconder o nome).", "Te desafio a curtir a foto mais antiga do Instagram do seu crush.", "Te desafio a comentar 🔥 no primeiro post de quem aparecer agora nos seus stories de melhores amigos.", "Te desafio a seguir 5 pessoas aleatórias no Instagram e mandar \"oi, sumido\" para uma delas.", "Te desafio a contar a sua transa mais desastrosa em 3 frases.", "Te desafio a sussurrar algo safado no ouvido de quem está à sua direita.", "Te desafio a tirar uma peça de roupa (meia vale).", "Te desafio a fazer sua melhor cara de orgasmo por 3 segundos.", "Te desafio a descrever como você é na cama em 3 palavras.", "Te desafio a deixar a mesa escolher um emoji para você mandar para o seu crush agora.", "Te desafio a contar onde foi o lugar mais ousado em que você já ficou com alguém.", "Te desafio a ler em voz alta a última mensagem que você mandou para um ex."],
  words:['Motel','Lingerie','Algema','Chuveiro','Massagem','Rapidinha','Chupão','Nudes','Ménage','Vibrador','Preliminares','Hidromassagem','Gemido','Venda'],
  forbidden:[
   ['Motel','quarto','cama','hora'],
@@ -221,6 +187,10 @@ export const QUENTE={
   'Três coisas que te deixam com vontade na hora: uma é mentira.'
  ]
 };
+
+// Perguntas "maldosas" e situações sem saída, no estilo dos jogos de humor de festa.
+QUENTE.votes.push("Quem daqui tem o histórico de busca mais pesado?", "Quem ficaria com o ex de alguém desta mesa?", "Quem tem o pior gosto para escolher crush?", "Quem seria expulso do motel por fazer barulho demais?", "Quem mandaria nude no grupo da família por engano?", "Quem dá mais trabalho na cama?", "Quem já mentiu para a mesa sobre com quem ficou?", "Quem voltaria com o ex depois de duas cervejas?", "Quem contaria detalhes da sua noite para todo mundo no dia seguinte?");
+QUENTE.pairs.push({"text": "No meio do sexo, seu celular toca com o nome da sua mãe.", "options": ["Atendo e finjo normalidade", "Ignoro e perco o clima mesmo assim"]}, {"text": "Você chama a pessoa pelo nome do ex na hora H.", "options": ["Finjo que foi outra palavra", "Assumo e peço desculpas"]}, {"text": "O seu crush manda: \"Tô sozinho em casa\".", "options": ["Vou agora, de pijama mesmo", "Faço charme e respondo amanhã"]}, {"text": "Seu date chega e é muito diferente das fotos.", "options": ["Fico e dou uma chance", "Invento uma emergência"]}, {"text": "O ex manda \"saudade\" às 2 da manhã.", "options": ["Respondo \"eu também\"", "Bloqueio e vou dormir em paz"]}, {"text": "Você pode ter a melhor transa da vida, mas nunca poderá contar a ninguém.", "options": ["Topo e guardo o segredo", "Sem história para contar não vale"]});
 
 export const CASAL={
  votes:[
@@ -331,18 +301,7 @@ export const CASAL={
   'O que eu faço que te deixa com ciúme e com vontade ao mesmo tempo?',
   'Qual noite nossa você mais repetiria?'
  ],
- dare:[
-  'Me dê um beijo de dez segundos. Online: descreva onde me beijaria.',
-  'Sussurre no meu ouvido o que você quer fazer mais tarde.',
-  'Faça uma massagem de 30 segundos onde eu escolher.',
-  'Tire uma peça de roupa com charme.',
-  'Escreva no chat a primeira frase da mensagem mais safada que você me mandaria.',
-  'Me olhe nos olhos por 15 segundos sem rir.',
-  'Beije meu pescoço devagar. Online: mande um áudio de cinco segundos sussurrando.',
-  'Faça um elogio bem específico ao meu corpo.',
-  'Mostre como gosta de ser beijado, beijando a sua própria mão.',
-  'Escolha uma ordem picante para eu cumprir até o fim da partida.'
- ],
+ dare:["Te desafio a me dar um beijo de 10 segundos.", "Te desafio a sussurrar no meu ouvido o que você quer fazer comigo hoje.", "Te desafio a imitar como eu fico quando estou com ciúme.", "Te desafio a contar um segredo sobre um ex que eu ainda não sei.", "Te desafio a postar uma foto nossa com a legenda que eu escolher.", "Te desafio a imitar o meu gemido.", "Te desafio a tirar uma peça de roupa bem devagar.", "Te desafio a me fazer uma massagem de 1 minuto onde eu escolher.", "Te desafio a dizer 3 coisas que você ama no meu corpo.", "Te desafio a me mandar agora a mensagem mais safada que você tiver coragem."],
  words:QUENTE.words,
  forbidden:QUENTE.forbidden,
  facts:[
@@ -352,3 +311,6 @@ export const CASAL={
   'Três coisas que eu faço que te deixam com vontade: uma é mentira.'
  ]
 };
+
+CASAL.votes.push("Quem de nós esqueceria a data do nosso aniversário de namoro?", "Quem de nós ganharia uma briga na base do drama?", "Quem de nós fuçaria o celular do outro?", "Quem de nós rouba o cobertor a noite toda?");
+CASAL.pairs.push({"text": "Vocês ganham uma noite num hotel, no mesmo dia do aniversário da sua mãe.", "options": ["Vamos para o hotel", "Vamos para o aniversário"]}, {"text": "Vocês brigam por besteira bem antes de sair.", "options": ["Resolvemos na hora", "Resolvemos na cama depois"]});

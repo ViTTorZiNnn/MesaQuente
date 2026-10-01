@@ -4,37 +4,36 @@
 
 export const TERMOMETRO={
  leve:[
-  {tema:'Comida de boteco',pista:'Diga uma comida',min:'Nem de graça',max:'Pediria toda semana'},
-  {tema:'Programa de sábado',pista:'Diga um programa',min:'Tédio total',max:'Rolê perfeito'},
-  {tema:'Mico em público',pista:'Conte uma situação curta',min:'Ninguém notou',max:'Mudaria de cidade'},
-  {tema:'Música para o karaokê',pista:'Diga uma música ou cantor',min:'Esvazia a sala',max:'Todo mundo canta junto'},
-  {tema:'Desculpa para faltar ao rolê',pista:'Invente uma desculpa',min:'Ninguém acredita',max:'Convence até a sua mãe'},
-  {tema:'Fama',pista:'Diga uma pessoa famosa',min:'Ninguém conhece',max:'Até a avó conhece'},
-  {tema:'Novela das nove',pista:'Diga um acontecimento de novela',min:'Bem comum',max:'Absurdo total'}
+  {tema: "Vergonha alheia", pista: "Conte uma situação", min: "Nem ligo", max: "Quero sumir"},
+  {tema: "Atraso no rolê", pista: "Diga quanto tempo e a desculpa", min: "Tranquilo", max: "Imperdoável"},
+  {tema: "Comida para um primeiro encontro", pista: "Diga uma comida", min: "Escolha perfeita", max: "Desastre total"},
+  {tema: "Saudade da infância", pista: "Diga algo da sua infância", min: "Nem lembro", max: "Daria tudo para voltar"},
+  {tema: "Coragem", pista: "Diga algo que você faria", min: "Qualquer um faz", max: "Só um louco faz"},
+  {tema: "Paciência na fila", pista: "Diga uma situação de fila", min: "Nem percebo", max: "Perco a cabeça"},
+  {tema: "Fofoca", pista: "Diga um tipo de fofoca, sem nomes", min: "Nada a ver", max: "Bomba"}
  ],
  profundo:[
-  {tema:'Decisão de vida',pista:'Diga uma decisão',min:'Fácil de desfazer',max:'Muda tudo'},
-  {tema:'Prova de confiança',pista:'Diga uma atitude',min:'Gesto pequeno',max:'Confiaria a vida'},
-  {tema:'Pedido de desculpas',pista:'Diga uma frase ou atitude',min:'Desculpa vazia',max:'Reparou de verdade'},
-  {tema:'Saudade',pista:'Diga algo de que se sente falta',min:'Nem lembro',max:'Dói no peito'},
-  {tema:'Coragem',pista:'Diga uma atitude',min:'Qualquer um faria',max:'Coisa de herói'}
+  {tema: "Mágoa", pista: "Diga uma atitude de alguém", min: "Esqueço no dia seguinte", max: "Nunca perdoaria"},
+  {tema: "Confiança", pista: "Diga um tipo de segredo", min: "Conto para qualquer um", max: "Só para uma pessoa no mundo"},
+  {tema: "Medo", pista: "Diga uma situação", min: "Nada", max: "Pânico total"},
+  {tema: "Orgulho", pista: "Diga uma conquista", min: "Pequena vitória", max: "Maior orgulho da vida"},
+  {tema: "Ciúme entre amigos", pista: "Diga uma situação", min: "Normal", max: "Me afastaria"}
  ],
  adulto:[
-  {tema:'Lugar para transar',pista:'Diga um lugar',min:'Seguro e confortável',max:'Risco total de ser pego'},
-  {tema:'Fantasia',pista:'Descreva uma fantasia em poucas palavras',min:'Bem tradicional',max:'Só acontece em filme'},
-  {tema:'Mensagem safada',pista:'Diga a primeira frase da mensagem',min:'Quase inocente',max:'Só dá para ler sozinho'},
-  {tema:'Preliminar',pista:'Descreva um toque ou atitude',min:'Esquenta devagar',max:'Perde o controle'},
-  {tema:'Look para um encontro quente',pista:'Descreva o visual',min:'Discreto',max:'Nem precisava de roupa'},
-  {tema:'Barulho na cama',pista:'Descreva uma cena',min:'Silêncio de biblioteca',max:'O vizinho aplaude'},
-  {tema:'Ousadia em público',pista:'Descreva uma atitude',min:'Mão dada',max:'Quase preso'},
-  {tema:'Famoso mais desejável',pista:'Diga uma pessoa famosa',min:'Passo a vez',max:'Largaria tudo'}
+  {tema: "Ousadia num primeiro encontro", pista: "Diga uma atitude", min: "Bem comportado", max: "Sem vergonha nenhuma"},
+  {tema: "Ciúme do crush", pista: "Diga uma situação", min: "De boa", max: "Surto total"},
+  {tema: "Atração", pista: "Diga uma característica de alguém", min: "Me broxa", max: "Me derrete"},
+  {tema: "Lugar para transar", pista: "Diga um lugar", min: "Seguro e confortável", max: "Risco total de ser pego"},
+  {tema: "Mensagem de flerte", pista: "Diga uma frase que você mandaria", min: "Inocente", max: "Muito safada"},
+  {tema: "Red flag num date", pista: "Diga uma atitude", min: "Deixo passar", max: "Vou embora na hora"},
+  {tema: "Fantasia", pista: "Diga uma fantasia, pode ser vaga", min: "Bem tradicional", max: "Bem ousada"}
  ],
  casal:[
-  {tema:'Provocação em público',pista:'Diga algo que eu poderia fazer',min:'Ninguém percebe',max:'A gente vai embora na hora'},
-  {tema:'Nossa noite ideal',pista:'Diga um detalhe da noite',min:'Romântica e calma',max:'Selvagem'},
-  {tema:'Mensagem minha no meio do dia',pista:'Diga a frase',min:'Fofinha',max:'Você sai da reunião'},
-  {tema:'Lugar para a gente estrear',pista:'Diga um lugar',min:'Nossa cama',max:'Adrenalina pura'},
-  {tema:'Desejo por mim agora',pista:'Diga o que você faria',min:'Um abraço',max:'Ninguém sai do quarto'}
+  {tema: "Saudade de mim", pista: "Diga uma situação longe de mim", min: "Nem senti", max: "Morri de saudade"},
+  {tema: "Ciúme de mim", pista: "Diga uma situação", min: "De boa", max: "Fico louco"},
+  {tema: "Romance", pista: "Diga um programa a dois", min: "Bem normal", max: "Romântico de filme"},
+  {tema: "Vontade de mim agora", pista: "Diga o que você faria", min: "Um abraço", max: "Ninguém sai do quarto"},
+  {tema: "Briga de casal", pista: "Diga um motivo de briga", min: "Besteira", max: "DR de horas"}
  ]
 };
 

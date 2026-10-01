@@ -66,3 +66,7 @@ body button:not(:disabled):hover{transform:translateY(-2px)}
 html[data-motion=off] *,html[data-motion=off] *:before,html[data-motion=off] *:after{animation-duration:.01ms!important;animation-iteration-count:1!important}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 @media(max-width:800px){.burst-emoji{font-size:58px}#event-stack{top:70px}.thermo-tick,#interactions .thermo-tick{min-height:36px!important;font-size:13px}}
+
+/* Exemplos das regras no tom da partida */
+.how-example,.intro-example{font-size:13px!important;line-height:1.45;font-style:italic;color:var(--muted-ink);background:rgba(var(--tint-rgb),.06);border-left:3px solid var(--warm);border-radius:8px;padding:8px 10px;margin:6px 0!important}
+.intro-example:empty{display:none}
