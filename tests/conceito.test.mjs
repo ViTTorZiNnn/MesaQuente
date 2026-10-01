@@ -8,7 +8,7 @@ function act(r,uid,action,data={},now=1000){return applyAction(r,uid,action,{car
 function open(r){act(r,'a','draw');const c=r.partida.cartaAtual;if(c.modeId==='duas_verdades_uma_mentira')act(r,'a','statements',{statements:['fato um','fato dois','fato três'],lie:1});if(c.modeId==='verdade_ou_desafio_hot')act(r,'a','truth',{choice:'truth'});act(r,'a','reveal');}
 for(const mode of Object.keys(modes))test('complete server flow: '+mode,()=>{const r=setup(mode);open(r);const c=r.partida.cartaAtual;
  if(c.votingReady===false){assert.throws(()=>act(r,'b','answer',{value:'a'}));act(r,'a','openVoting');}
- const values={amigo_da_onca:'b',vira_vira:'JA_FIZ',decisao_dificil:'0',fato_ou_fake:'FATO',quem_e_mais_provavel:'b',eu_nunca:'JA_FIZ',o_que_voce_prefere:'0',bandeiras_vermelhas:'0',duas_verdades_uma_mentira:'1',o_termometro:'1',o_espiao:'a',batalha_de_argumentos:'a'};
+ const values={quem_e_mais_provavel:'b',eu_nunca:'JA_FIZ',o_que_voce_prefere:'0',bandeiras_vermelhas:'0',duas_verdades_uma_mentira:'1',o_termometro:'1',o_espiao:'a',batalha_de_argumentos:'a'};
  if(values[mode])for(const uid of replyIds(r))act(r,uid,'answer',{value:values[mode]},7000);
  else if(mode==='preencha_a_lacuna'){act(r,'b','answer',{value:c.white[0]});assert.throws(()=>act(r,'a','judge',{winner:'b'}));act(r,'c','answer',{value:c.white[1]});act(r,'a','judge',{winner:'b'});}
  else if(mode==='apenas_uma_dica'){assert.throws(()=>act(r,'b','answer',{value:c.secret}));act(r,'b','answer',{value:'dica'});assert.equal(c.hintsRevealed,undefined);act(r,'c','answer',{value:'outra'});assert.equal(c.hintsRevealed,true);act(r,'a','guess',{value:c.secret});}

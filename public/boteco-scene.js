@@ -1,7 +1,7 @@
 // Cenário "Boteco": bar brasileiro moderno e minimalista, tons alaranjados e profundidade.
 // Camada fixa (parede, azulejo, janela para o morro, prateleira, piso, balcão) + camada animada
 // (varal de lâmpadas, letreiro neon, luzes desfocadas em primeiro plano, chuva no tom sério).
-import {visual,reducedMotion} from './visual.js?v=quente14';
+import {visual,reducedMotion} from './visual.js?v=quente13';
 
 const MOODS={
  leve:{wall:['#2b1209','#4a1f0c'],tile:'#5a2a14',tileLine:'#7a3a1c',sky:['#120a1e','#2a1430','#5a2232'],light:'#ffb15c',neon:'#ff8a2b',bokeh:'#ff9a3c',floorA:'#6b2d16',floorB:'#3a1a0e'},
@@ -60,7 +60,7 @@ function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!==
  // Chuva na janela (tom sério)
  if(m.rain){const wn=L.win;c.save();c.beginPath();c.rect(wn.x,wn.y,wn.w,wn.h);c.clip();c.strokeStyle='rgba(180,200,255,.35)';c.lineWidth=1;for(const d of L.rain){const y=wn.y+((d.y+time*d.v*.6)%1)*wn.h,x=wn.x+d.x*wn.w;c.beginPath();c.moveTo(x,y);c.lineTo(x-2,y+9);c.stroke();}c.restore();}
  // Letreiro neon (fora da tela inicial)
- if(document.body.dataset.screen==='game'&&font&&!L.narrow){const s=L.sign,flick=((Math.sin(time*11)+Math.sin(time*6.7)>1.8)?.4:1)*(.88+.12*Math.sin(time*2.1));c.save();c.font=`${s.size}px Pacifico`;c.textAlign='center';c.textBaseline='middle';c.globalAlpha=flick;c.shadowColor=m.neon;c.shadowBlur=s.size*(.5+.25*Math.sin(time*2.1));c.fillStyle=m.neon;c.fillText('Mesa Quente',s.x,s.y);c.shadowBlur=s.size*.25;c.fillStyle='#ffe7cc';c.fillText('Mesa Quente',s.x,s.y);c.restore();}
+ if(['game','end'].includes(document.body.dataset.screen)&&font&&!L.narrow){const s=L.sign,flick=((Math.sin(time*11)+Math.sin(time*6.7)>1.8)?.4:1)*(.88+.12*Math.sin(time*2.1));c.save();c.font=`${s.size}px Pacifico`;c.textAlign='center';c.textBaseline='middle';c.globalAlpha=flick;c.shadowColor=m.neon;c.shadowBlur=s.size*(.5+.25*Math.sin(time*2.1));c.fillStyle=m.neon;c.fillText('Mesa Quente',s.x,s.y);c.shadowBlur=s.size*.25;c.fillStyle='#ffe7cc';c.fillText('Mesa Quente',s.x,s.y);c.restore();}
  // Vida na janela: luzes do morro piscando, faróis passando e estrela cadente
  {const wn=L.win;c.save();c.beginPath();c.rect(wn.x,wn.y,wn.w,wn.h);c.clip();for(const k of L.twinkle){c.fillStyle=alpha('#ffd08a',.35+.65*Math.max(0,Math.sin(time*1.7+k.p*3)));c.fillRect(wn.x+k.x*wn.w,wn.y+k.y*wn.h,2,2);}
   const car=(time%9)/9;if(car<.6){const x=wn.x-20+car/.6*(wn.w+40),y=wn.y+wn.h*.93;const g=c.createRadialGradient(x,y,0,x,y,18);g.addColorStop(0,'rgba(255,240,200,.9)');g.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=g;c.fillRect(x-18,y-18,36,36);c.fillStyle='rgba(255,60,40,.8)';c.fillRect(x-28,y-1,3,2);}

@@ -77,7 +77,7 @@ img.mini-logo{width:54px!important;height:auto!important;flex:0 0 auto;filter:dr
 .mode-option{background:rgba(var(--tint-rgb),.05)!important;border:1px solid transparent!important;border-radius:10px!important;box-shadow:none!important}
 .mode-option:has(input:checked){background:rgba(var(--accent-rgb),.14)!important;border-color:rgba(var(--accent-rgb),.4)!important}
 #adult-choice{border-radius:12px!important;background:rgba(var(--hot-rgb),.12)!important;border:1px solid rgba(var(--accent-rgb),.45)!important}
-.preset-casal,.preset-quente,.preset-treta{background:linear-gradient(160deg,rgba(var(--hot-rgb),.18),rgba(var(--hot-rgb),.04)),rgba(var(--base-rgb),.58)!important}
+.preset-casal,.preset-quente{background:linear-gradient(160deg,rgba(var(--hot-rgb),.18),rgba(var(--hot-rgb),.04)),rgba(var(--base-rgb),.58)!important}
 .preset-adult{border-radius:6px!important;background:var(--warm)!important;color:var(--on-accent)!important}
 .avatars button[aria-pressed=true]{box-shadow:0 0 0 3px var(--warm2)!important}
 
