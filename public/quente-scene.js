@@ -1,7 +1,7 @@
 // Mapa "Mesa Quente" (padrão): as cores da logo — vermelho vivo, branco e preto profundo.
 // Parede e piso de aço, fita de LED vermelha, cartas caindo e espalhadas no chão,
 // e chamas em pixel art subindo pelas bordas e cantos da tela.
-import {visual,reducedMotion} from './visual.js?v=quente17';
+import {visual,reducedMotion} from './visual.js?v=quente18';
 const canvas=document.getElementById('quente-cena'),ctx=canvas.getContext('2d'),base=document.createElement('canvas'),b=base.getContext('2d');
 const fireCanvas=document.createElement('canvas'),fc=fireCanvas.getContext('2d'),topCanvas=document.createElement('canvas'),tc=topCanvas.getContext('2d');
 let W=0,H=0,dpr=1,seed=11,last=0,lastFire=0,dirty=true,L={},fire=null,cols=0,rows=0,px=6,img=null,heat=1,decay=1,tick=0;
@@ -10,7 +10,9 @@ const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
 const STOPS=[[0,[0,0,0,0]],[3,[40,0,4,140]],[8,[120,0,10,220]],[14,[214,0,24,255]],[20,[255,32,40,255]],[26,[255,98,26,255]],[31,[255,176,48,255]],[36,[255,246,214,255]]];
 const PAL=Array.from({length:37},(_,i)=>{let k=0;while(STOPS[k+1][0]<i)k++;const [i0,c0]=STOPS[k],[i1,c1]=STOPS[k+1],t=(i-i0)/(i1-i0||1);return c0.map((v,j)=>Math.round(v+(c1[j]-v)*t));});
 // Altura das chamas: mais altas no menu, discretas durante o jogo (mais fortes no tom picante).
-function heatTarget(){const s=document.body.dataset.screen;if(s!=='game')return s==='end'?1.05:1;return{adulto:.85,casal:.75,profundo:.5}[document.body.dataset.tone]||.62;}
+// O lobby é calmo: pouca chama, sem cartas caindo, fundo mais escuro (os painéis precisam ser lidos).
+const calmo=()=>({home:0,end:.2,lobby:1,game:.75}[document.body.dataset.screen]??0);let calma=0;
+function heatTarget(){const s=document.body.dataset.screen;if(s==='lobby')return .42;if(s!=='game')return s==='end'?1.05:1;return{adulto:.85,casal:.75,profundo:.5}[document.body.dataset.tone]||.62;}
 // Cantos altos, meio baixo; as "línguas" de fogo vêm de colunas que acendem e apagam.
 function profile(x){const e=Math.min(x,cols-1-x)/cols;return e<.05?1:e<.22?1-(e-.05)/.17*.62:.38;}
 function seedFire(){tick++;const row=(rows-1)*cols;for(let x=0;x<cols;x++){const wave=.78+.22*Math.sin(x*.55+tick*.21)*Math.sin(x*.13-tick*.07),gap=Math.random()<.08?.4:1;fire[row+x]=Math.round(36*Math.min(1,profile(x)*heat*wave*gap));}}
@@ -58,12 +60,12 @@ function build(){seed=11;base.width=W*dpr;base.height=H*dpr;const c=b;c.setTrans
  seedFire();for(let k=0;k<rows*1.5;k++)stepFire();
 }
 function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='quente')return;const still=reducedMotion();if(still&&!dirty)return;if(t-last<33&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000,c=ctx;
- heat+=(heatTarget()-heat)*.05;
+ heat+=(heatTarget()-heat)*.05;calma+=(calmo()-calma)*.08;if(still){heat=heatTarget();calma=calmo();}
  c.setTransform(1,0,0,1,0,0);c.drawImage(base,0,0);c.setTransform(dpr,0,0,dpr,0,0);
  // LED pulsando
  const pulse=.55+Math.sin(time*2.2)*.2;c.save();c.globalCompositeOperation='lighter';const g=c.createLinearGradient(0,L.floorY-60,0,L.floorY+30);g.addColorStop(0,'rgba(255,20,40,0)');g.addColorStop(.7,'rgba(255,20,40,'+(.12*pulse)+')');g.addColorStop(1,'rgba(255,20,40,0)');c.fillStyle=g;c.fillRect(0,L.floorY-60,W,90);c.restore();
  // Cartas caindo, girando e virando
- const cw=L.cw;for(const f of L.falling){const y=-cw*2+((f.y+time*f.v)%1)*(H+cw*4),x=f.x*W+Math.sin(time*.6+f.sway)*30;c.save();c.translate(x,y);c.rotate(f.rot+time*f.spin*.4);c.scale(Math.cos(f.flip+time*f.fs)*f.s,f.s);c.globalAlpha=.5+f.s*.35;cardShape(c,cw,cw*1.4,Math.cos(f.flip+time*f.fs)<0?1:f.kind);c.restore();}
+ const cw=L.cw,cardsA=1-calma;if(cardsA>.03)for(const f of L.falling){const y=-cw*2+((f.y+time*f.v)%1)*(H+cw*4),x=f.x*W+Math.sin(time*.6+f.sway)*30;c.save();c.translate(x,y);c.rotate(f.rot+time*f.spin*.4);c.scale(Math.cos(f.flip+time*f.fs)*f.s,f.s);c.globalAlpha=(.5+f.s*.35)*cardsA;cardShape(c,cw,cw*1.4,Math.cos(f.flip+time*f.fs)<0?1:f.kind);c.restore();}
  // Chamas em pixel: base em toda a borda inferior e cantos de cima
  if(!still&&t-lastFire>55){lastFire=t;seedFire();stepFire();paintFire();}else if(still)paintFire();
  c.imageSmoothingEnabled=false;const fh=rows*px;c.drawImage(fireCanvas,0,0,cols,rows,0,H-fh,cols*px,fh);
@@ -71,7 +73,8 @@ function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!==
  tc.globalCompositeOperation='source-over';tc.clearRect(0,0,cols,rows);tc.drawImage(fireCanvas,0,0);tc.globalCompositeOperation='destination-in';const m=tc.createLinearGradient(0,0,cols,0);m.addColorStop(0,'#000');m.addColorStop(.12,'rgba(0,0,0,.5)');m.addColorStop(.22,'rgba(0,0,0,0)');m.addColorStop(.78,'rgba(0,0,0,0)');m.addColorStop(.88,'rgba(0,0,0,.5)');m.addColorStop(1,'#000');tc.fillStyle=m;tc.fillRect(0,0,cols,rows);
  c.save();c.globalAlpha=.55;c.translate(0,fh*.45);c.scale(1,-.45);c.drawImage(topCanvas,0,0,cols,rows,0,0,cols*px,fh);c.restore();c.imageSmoothingEnabled=true;
  // Brasas subindo em pixel
- if(!still)for(const e of L.embers){const y=H-((e.y+time*e.v)%1)*H*.9,x=e.x*W+Math.sin(time*1.5+e.p)*14,a=Math.max(0,(y/H)-.1);c.fillStyle=e.s>2?'rgba(255,230,190,'+a+')':'rgba(255,60,40,'+a+')';c.fillRect(Math.round(x/2)*2,Math.round(y/2)*2,e.s,e.s);}
+ if(!still)for(const e of L.embers){const y=H-((e.y+time*e.v)%1)*H*.9,x=e.x*W+Math.sin(time*1.5+e.p)*14,a=Math.max(0,(y/H)-.1)*(1-calma*.6);c.fillStyle=e.s>2?'rgba(255,230,190,'+a+')':'rgba(255,60,40,'+a+')';c.fillRect(Math.round(x/2)*2,Math.round(y/2)*2,e.s,e.s);}
+ if(calma>.01){c.fillStyle='rgba(0,0,0,'+(.45*calma)+')';c.fillRect(0,0,W,H);}
  // Vinheta
  const v=c.createRadialGradient(W/2,H*.45,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.7)');c.fillStyle=v;c.fillRect(0,0,W,H);
 }

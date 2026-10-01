@@ -93,3 +93,8 @@ html[data-scene=noir] .abertura-numero{text-shadow:0 8px 0 #555,0 16px 0 #000}
 @media(max-width:520px){.placa{padding:6px 12px 6px 6px}.placa-avatar{width:30px;height:30px;font-size:18px}}
 /* Garante a fonte grossa mesmo com as regras antigas de tipografia */
 .abertura-titulo small,.abertura-titulo strong,.placa b,.abertura-numero,html[data-scene=quente] body button.primary *{font-family:'Bungee',Impact,sans-serif!important;font-weight:400!important}
+/* Lista do <select>: fundo escuro e texto claro (o navegador abre a lista com o tema dele) */
+select option,select optgroup{background:#141014!important;color:#fff!important}
+select option:checked{background:#ff1f2d!important;color:#fff!important}
+html[data-scene=quente] select{color-scheme:dark}
+html[data-scene=quente] .lobby .panel{background:rgba(8,6,8,.92)!important}

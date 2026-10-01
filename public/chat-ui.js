@@ -10,7 +10,7 @@ export function mountChat({send,getIdentity}){
  input.oninput=()=>{dialog.querySelector('#chat-counter').textContent=input.value.length+' / 300';};
  form.onsubmit=async e=>{e.preventDefault();const text=input.value.trim();if(!ready||busy||!text)return;busy=true;error.textContent='';const key=roomKey;
   if(!pending||pending.text!==text)pending={text,id:crypto.randomUUID()};form.querySelector('button').disabled=true;
-  try{await send(text,pending.id);if(key===roomKey){input.value='';input.oninput();pending=null;}}
+  try{await send(text,pending.id);if(key===roomKey){dispatchEvent(new CustomEvent('mq-sfx',{detail:'send'}));input.value='';input.oninput();pending=null;}}
   catch(e){if(key===roomKey)error.textContent=e.message||'Não foi possível enviar. Tente novamente.';}
   finally{busy=false;form.querySelector('button').disabled=!ready;}
  };
@@ -23,7 +23,7 @@ export function mountChat({send,getIdentity}){
   if(roomKey!==session){roomKey=session;seen.clear();unread=0;pending=null;input.value='';input.oninput();list.replaceChildren();lastKey='';initialized=false;error.textContent='';}
   const messages=room.chat||[],snapshot=JSON.stringify(messages),initial=!initialized;
   if(snapshot!==lastKey){const atBottom=list.scrollHeight-list.scrollTop-list.clientHeight<70;const fresh=messages.filter(m=>!seen.has(m.id));
-   for(const m of fresh){seen.add(m.id);const li=document.createElement('li');li.dataset.id=m.id;li.className=m.uid===getIdentity()?'mine':'';const author=document.createElement('strong'),body=document.createElement('p'),time=document.createElement('time');author.textContent=(m.emoji||'🙂')+' '+m.name;body.textContent=m.text;time.textContent=new Date(m.at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});li.append(author,body,time);list.append(li);if(!dialog.open&&!initial&&m.uid!==getIdentity())unread++;}
+   for(const m of fresh){seen.add(m.id);const li=document.createElement('li');li.dataset.id=m.id;li.className=m.uid===getIdentity()?'mine':'';const author=document.createElement('strong'),body=document.createElement('p'),time=document.createElement('time');author.textContent=(m.emoji||'🙂')+' '+m.name;body.textContent=m.text;time.textContent=new Date(m.at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});li.append(author,body,time);list.append(li);if(!dialog.open&&!initial&&m.uid!==getIdentity())unread++;if(!initial&&m.uid!==getIdentity())dispatchEvent(new CustomEvent('mq-sfx',{detail:'msg'}));}
    const current=new Set(messages.map(m=>m.id));for(const li of [...list.children])if(!current.has(li.dataset.id))li.remove();seen=new Set(messages.map(m=>m.id));if(atBottom)list.scrollTop=list.scrollHeight;lastKey=snapshot;
   }
   initialized=true;dialog.querySelector('#chat-empty').hidden=messages.length>0;form.querySelector('button').disabled=busy;badge();

@@ -1,10 +1,12 @@
-import {Trilha} from './trilhas.js?v=quente17';
+import {Trilha} from './trilhas.js?v=quente18';
+import {tocar} from './sfx.js?v=quente18';
 const clamp=v=>Math.max(0,Math.min(100,Number.isFinite(Number(v))?Number(v):16));
 export class GameAudio extends EventTarget {
  constructor(onError=()=>{}){
   super();this.onError=onError;let saved={};try{saved=JSON.parse(localStorage.getItem('mq_audio')||'{}')||{};}catch{}
   this.volume=clamp(saved.volume??16);this.lastVolume=clamp(saved.lastVolume||16)||16;this.enabled=saved.enabled!==false;this.playing=false;this.unlocked=false;this.generation=0;
   this.music=new Audio(new URL('./assets/musica-fundo.mp3',import.meta.url).href);this.music.loop=true;this.music.preload='none';this.applyVolume();
+  const unlock=()=>{if(this.enabled&&this.volume){this.ensureContext();this.ctx?.resume()?.catch(()=>{});}};document.addEventListener('pointerdown',unlock,{capture:true});document.addEventListener('keydown',unlock,{capture:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)this.pause();else if(this.unlocked&&this.enabled&&this.volume>0)this.start(false);});
   this.music.addEventListener('error',()=>{this.playing=false;this.notify();if(this.unlocked)this.onError('A música não carregou. Confira sua conexão e o arquivo musica-fundo.mp3.');});
  }
@@ -23,7 +25,7 @@ export class GameAudio extends EventTarget {
  setVolume(value){this.volume=clamp(value);if(this.volume>0)this.lastVolume=this.volume;this.applyVolume();if(!this.volume)this.pause();this.save();}
  async toggle(){if(this.enabled&&this.volume>0&&this.playing){this.enabled=false;this.pause();}else{this.enabled=true;if(!this.volume)this.volume=this.lastVolume||16;this.applyVolume();await this.start();}this.applyVolume();this.save();return this.playing;}
  mute(){this.enabled=false;this.applyVolume();this.pause();this.save();}
- effect(kind){if(!this.enabled||!this.volume||document.hidden||!this.ctx||!this.unlocked)return;const ctx=this.ctx;ctx.resume()?.catch(()=>{});const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime;const [a,b,d]=kind==='tick'?[740,700,.1]:kind==='go'?[260,1300,.55]:kind==='zap'?[2200,90,.28]:kind==='pop'?[700,1200,.12]:kind==='turn'?[520,780,.3]:kind==='reveal'?[330,660,.45]:[180,650,.18];o.type=kind==='draw'||kind==='tick'?'triangle':kind==='zap'||kind==='go'?'sawtooth':'sine';o.frequency.setValueAtTime(a,t);o.frequency.exponentialRampToValueAtTime(b,t+d);g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.12*this.volume/100,t+.025);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.01);o.onended=()=>{o.disconnect();g.disconnect();};}
+ effect(kind){if(!this.enabled||!this.volume||document.hidden)return;this.ensureContext();const ctx=this.ctx;if(!ctx)return;if(ctx.state!=='running')ctx.resume()?.catch(()=>{});if(!this.sfxGain){this.sfxGain=ctx.createGain();this.sfxGain.connect(ctx.destination);}this.sfxGain.gain.value=Math.min(1,.25+this.volume/60);try{tocar(ctx,this.sfxGain,kind);}catch{}}
 }
 export function mountAudioControls(audio,container){
  const dialog=container||document.createElement('dialog');dialog.id='audio-settings';dialog.innerHTML='<header><h2>Som da mesa</h2><button type="button" class="close" aria-label="Fechar som">×</button></header><div class="dialog-scroll"><p>Música e efeitos no volume que combina com a conversa.</p><label for="master-volume">Volume <output id="volume-value" for="master-volume"></output></label><input id="master-volume" type="range" min="0" max="100" step="1"><div class="audio-presets"><button type="button" data-volume="5">5%</button><button type="button" data-volume="25">25%</button><button type="button" data-volume="50">50%</button><button type="button" data-volume="100">100%</button></div><p id="audio-state" role="status"></p><button id="audio-toggle" type="button" class="primary wide">Ativar som</button><button id="audio-mute" type="button" class="wide">Silenciar</button><p class="subtle">Sua preferência fica salva neste aparelho. O som pausa quando você troca de aba.</p></div>';
