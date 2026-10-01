@@ -13,7 +13,7 @@ for(const mode of Object.keys(modes))test(mode+': private payload and action aut
  for(const uid of ['b','c']){const v=viewFor(r,uid);assert.equal(v.partida.cartaAtual.viewerText,'');for(const key of ['text','secret','secretNumber','spyId','lie','truth','dare','forbidden'])assert.equal(v.partida.cartaAtual[key],undefined);assert.equal(v.partida.used,undefined);}
  c.phase='public';const v=viewFor(r,'b').partida.cartaAtual;
  for(const key of ['secret','secretNumber','spyId','lie','truth','dare','forbidden'])assert.equal(v[key],undefined);
- r.jogadores.spectator={nome:'D'};assert.equal(viewFor(r,'spectator').partida.cartaAtual.viewerText,'');
+ r.jogadores.spectator={nome:'D'};const sv=viewFor(r,'spectator').partida.cartaAtual;if(c.secret)assert.ok(!sv.viewerText.includes(c.secret));for(const key of ['secret','secretNumber','spyId','lie'])assert.equal(sv[key],undefined);
  c.phase='results';assert.ok(viewFor(r,'b').partida.cartaAtual.viewerText);
 });
 test('spy gets no word; clue reader gets no answer; forbidden and number stay private',()=>{

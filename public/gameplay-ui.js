@@ -39,6 +39,29 @@ export function outcome(c,p,players){
  if(c.modeId==='apenas_uma_dica'){title=normalize(c.guess)===normalize(c.secret)?'A mesa conseguiu!':'Quase! Vamos descobrir.';detail=`Palavra: ${c.secret}. Palpite: ${c.guess||'Nenhum'}.`;}
  if(c.modeId==='preencha_a_lacuna'){title='A resposta escolhida';detail=(answers[c.winner]||'')+' — '+name(c.winner);}
  if(c.modeId==='palavra_proibida'){title=c.winner?name(c.winner)+' acertou!':'A palavra era '+c.secret;detail='Resposta: '+c.secret;}
- if(['niveis_intimidade','verdade_ou_desafio_hot'].includes(c.modeId)){title='Essa rodada rendeu conversa.';detail='Sem pontos e sem resposta certa. Sigam quando estiverem prontos.';}
+ if(c.modeId==='niveis_intimidade'){title='Respondeu sem filtro!';detail=name(c.readerId)+' encarou a pergunta. Próxima vítima?';}
+ if(c.modeId==='verdade_ou_desafio_hot'){title=c.choice==='dare'?'Desafio cumprido!':'Verdade revelada!';detail=name(c.readerId)+(c.choice==='dare'?' encarou o desafio.':' abriu o jogo.');}
  return {title,detail,rows:['apenas_uma_dica','preencha_a_lacuna','palavra_proibida'].includes(c.modeId)?[]:rows};
 }
+
+// Papel de cada pessoa na rodada: deixa claro "o que EU faço agora".
+export function roleFor(c,uid,viewerText=''){
+ const own=c.readerId===uid,id=c.modeId;
+ if(!c.participants.includes(uid))return{label:'Espectador',text:'Você entra na próxima rodada.'};
+ if(c.phase==='deck'||c.phase==='private')return own?{label:'Leitor',text:'Você está com o baralho. Puxe e revele a carta.'}:{label:'Aguardando',text:'O leitor está preparando a carta.'};
+ switch(id){
+  case'o_espiao':return /ESPIÃO/.test(viewerText)?{label:'🕵️ Espião',text:'Você NÃO sabe a palavra. Finja que sabe e descubra qual é.'}:{label:'🔎 Detetive',text:'Dê dicas sutis da palavra e desmascare o espião.'};
+  case'apenas_uma_dica':return own?{label:'🎯 Adivinho',text:'Só você não vê a palavra. Leia as dicas e chute.'}:{label:'💡 Dica',text:'Mande UMA palavra que ajude o leitor a adivinhar.'};
+  case'palavra_proibida':return own?{label:'🗣️ Explicador',text:'Explique a palavra em voz alta sem usar os termos proibidos.'}:{label:'🎯 Adivinho',text:'Ouça e digite seu palpite. O primeiro acerto vence.'};
+  case'o_termometro':return own?{label:'🌡️ Dá a pista',text:'Fale uma pista que combine com o seu número secreto.'}:{label:'🎯 Adivinho',text:'Ouça a pista e chute o número de 1 a 10.'};
+  case'duas_verdades_uma_mentira':return own?{label:'🎭 Mentiroso',text:'Apresente os três fatos com cara de paisagem.'}:{label:'🔎 Detetive',text:'Descubra qual dos três fatos é a mentira.'};
+  case'preencha_a_lacuna':return own?{label:'⚖️ Juiz',text:'Espere as respostas e escolha a sua favorita.'}:{label:'🃏 Jogador',text:'Escolha o final que vai conquistar o juiz.'};
+  case'batalha_de_argumentos':return c.debaters?.[0]===uid?{label:'🛡️ Defensor',text:'Defenda a frase da carta com unhas e dentes.'}:c.debaters?.[1]===uid?{label:'⚔️ Atacante',text:'Argumente CONTRA a frase da carta.'}:{label:'⚖️ Jurado',text:'Ouça os dois e vote no melhor argumento.'};
+  case'niveis_intimidade':case'verdade_ou_desafio_hot':return own?{label:'🔥 Na berlinda',text:'É com você: responda ou cumpra em voz alta.'}:{label:'👀 Plateia',text:'Cobre a resposta completa. Depois é a sua vez.'};
+  default:return{label:own?'Leitor · vota também':'🗳️ Votante',text:'Escolha sua resposta antes de todo mundo.'};
+ }
+}
+// Placar ordenado e títulos do fim da partida.
+export const TITLES={holofote:['🔦','Holofote da Noite','mais votado nas cartas de votação'],ousadia:['😈','Sem Vergonha Oficial','mais "já fiz" e desafios cumpridos'],blefe:['🎭','Mestre do Blefe','enganou a mesa'],sintonia:['🧠','Leitor de Mentes','pensou igual à mesa'],sincero:['💬','Coração Aberto','respondeu sem fugir']};
+export function ranking(room){return Object.keys(room.jogadores||{}).map(id=>({id,nome:room.jogadores[id].nome,avatar:room.jogadores[id].avatar,pontos:room.scores?.[id]||0})).sort((a,b)=>b.pontos-a.pontos||a.nome.localeCompare(b.nome));}
+export function titles(room){const out=[];for(const [key,[icon,name,why]] of Object.entries(TITLES)){let best=null,max=0;for(const [id,s] of Object.entries(room.stats||{}))if(room.jogadores?.[id]&&(s[key]||0)>max){max=s[key];best=id;}if(best)out.push({icon,name,why,id:best,nome:room.jogadores[best].nome,count:max});}return out;}
