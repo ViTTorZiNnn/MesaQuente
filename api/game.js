@@ -128,7 +128,7 @@ function profile(payload) {
 function presence(room, uid, now) {
   for (const [id, player] of Object.entries(room.jogadores)) {
     const was = player.conectado !== false;
-    const is = id === uid || now - (player.lastSeen || 0) < 90000;
+    const is = id === uid || now - (player.lastSeen || 0) < 30000;
 
     // Avisa a mesa e destrava a rodada quando alguém some ou volta.
     if (was && !is) playerLeft(room, id, now);

@@ -7,14 +7,14 @@ export function viewFor(room,uid){
  out.chat=Object.entries(room.chat||{}).sort((a,b)=>a[1].at-b[1].at||a[0].localeCompare(b[0])).slice(-60).map(([id,m])=>({id,uid:m.uid,name:m.name,emoji:m.emoji,text:m.text,at:m.at}));
  const p=room.partida,c=p?.cartaAtual;if(!c)return out;
  const own=c.readerId===uid,participant=c.participants.includes(uid),results=c.phase==='results'&&!c.skipped,visible=results||!c.skipped&&(c.phase==='public'||participant&&own&&['private','voting'].includes(c.phase));
- const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
+ const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion','revealStartedAt','revealOrder'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
  card.viewerText=visible?(!participant&&!results&&['o_espiao','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
  if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji','pick'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
  if(visible&&c.hands?.[uid]&&!results)card.hand=structuredClone(c.hands[uid]);
  if(results){for(const k of ['secret','spyId','lie','awards','extremes','verdict','verdictWinner'])if(c[k]!==undefined)card[k]=c[k];}
  else if(own&&visible&&c.lie!==undefined)card.lie=c.lie;
  const answers=p.answers||{};let shown={};
- if(!c.skipped&&(results||c.phase==='public'&&(c.modeId==='preencha_a_lacuna'||c.modeId==='apenas_uma_dica'&&c.hintsRevealed)))shown=structuredClone(answers);
+ if(!c.skipped&&(results||c.phase==='public'&&(c.modeId==='carta_branca'&&c.revealStartedAt||c.modeId==='preencha_a_lacuna'||c.modeId==='apenas_uma_dica'&&c.hintsRevealed)))shown=structuredClone(answers);
  else if(answers[uid]!==undefined)shown[uid]=answers[uid];
  const todos=replyIds(room).every(id=>Object.hasOwn(answers,id));
  out.partida={respostas:c.modeId==='carta_branca'&&c.phase==='public'&&!c.skipped&&todos?respostasAnonimas(c,answers):[],status:p.status,rodadaAtual:p.rodadaAtual,totalRodadas:p.totalRodadas,cartaAtual:card,answers:shown,answerCount:replyIds(room).filter(id=>Object.hasOwn(answers,id)).length,expectedCount:replyIds(room).length,answeredIds:replyIds(room).filter(id=>Object.hasOwn(answers,id))};return out;
