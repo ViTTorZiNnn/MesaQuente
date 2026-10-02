@@ -1,15 +1,15 @@
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente29';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
 // Show de revelação do Sem Noção (estilo videogame):
 // 1) cada carta aparece sozinha, já com a frase completa e o jogador que montou, por alguns segundos;
 // 2) depois todas aparecem juntas e o juiz escolhe a melhor;
 // 3) a vencedora ganha destaque com coroa e o show fecha sozinho.
-const POR_CARTA=8000;
+const POR_CARTA=6000;
 let estado={id:''},box=null,ctx=null,timer=null;
 const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 // «trechos» das cartas brancas viram destaque dentro da frase.
 function frase(texto){const p=make('p','sn-frase');for(const [i,parte] of texto.split(/[«»]/).entries()){if(!parte)continue;p.append(i%2?make('mark',undefined,parte):document.createTextNode(parte));}return p;}
 function jogador(id){const j=ctx.jogadores[id]||{},d=make('div','sn-jogador'),a=pintarAvatar(make('span','sn-avatar'),j.avatar);d.append(a,make('b',undefined,j.nome||'Jogador'));return d;}
-function carta(id,grande){const c=ctx.c,d=make('div','sn-carta'+(grande?' grande':''));d.append(make('span','sn-marca','MESA QUENTE · SEM NOÇÃO'),frase(ctx.encaixa(c.text||'',ctx.answers[id]||'')));return d;}
+function carta(id,grande){const c=ctx.c,d=make('div','sn-carta'+(grande?' grande':''));d.append(make('span','sn-marca','MESA QUENTE · SEM NOÇÃO'),frase(ctx.encaixa(c.viewerText||c.text||'',ctx.answers[id]||'')));return d;}
 export function showSemNocao(dados){ctx=dados;const c=dados?.c;
  if(!c||c.modeId!=='carta_branca'||!c.revealStartedAt||c.skipped||!['public','results'].includes(c.phase)){fechar();return;}
  if(estado.id!==c.id)estado={id:c.id,t0:Date.now(),key:''};
@@ -17,7 +17,7 @@ export function showSemNocao(dados){ctx=dados;const c=dados?.c;
  if(c.phase==='results'&&!estado.fimEm)estado.fimEm=Date.now();
  if(!box){box=make('div','sn-show');box.setAttribute('role','dialog');box.setAttribute('aria-label','Revelação das cartas');document.body.append(box);}
  if(!timer)timer=setInterval(()=>tick(false),200);
- tick(true);}
+ tick(false);}
 export function fechar(manual=false){box?.remove();box=null;clearInterval(timer);timer=null;if(manual)estado.fechado=true;}
 function tick(force){if(!ctx||!box)return;const c=ctx.c,ordem=(c.revealOrder||[]).filter(id=>ctx.answers[id]!==undefined),n=ordem.length,passou=Date.now()-estado.t0,idx=Math.min(n,Math.floor(passou/POR_CARTA));
  const fase=c.phase==='results'?'vencedor':idx<n?'carta':'mesa';

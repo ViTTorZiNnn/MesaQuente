@@ -1,6 +1,6 @@
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente29';
-import {tableLayout} from './table-layout.js?v=quente29';
-import {visual,reducedMotion} from './visual.js?v=quente29';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
+import {tableLayout} from './table-layout.js?v=quente30';
+import {visual,reducedMotion} from './visual.js?v=quente30';
 import * as THREE from './assets/three.module.js';
 export const DECK_ART=[
  {name:'Votação',color:'#ff3038',front:'front-card-votação(1).png',back:'cartas-votação.png'},

@@ -1,19 +1,19 @@
-import {mountChat} from './chat-ui.js?v=quente29';
-import {LocalRoomService} from './local-room.js?v=quente29';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente29';
-import {TONES} from './editorial.js?v=quente29';
-import {mountSettings} from './settings.js?v=quente29';
-import {MAPAS,setRoomMap} from './visual.js?v=quente29';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente29';
-import {GameAudio} from './som.js?v=quente29';
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente29';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente29';
-import {ligarSonsDaInterface} from './sfx.js?v=quente29';
-import {showSemNocao,fechar as fecharShow} from './sem-nocao-show.js?v=quente29';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente29';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente29';
+import {mountChat} from './chat-ui.js?v=quente30';
+import {LocalRoomService} from './local-room.js?v=quente30';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente30';
+import {TONES} from './editorial.js?v=quente30';
+import {mountSettings} from './settings.js?v=quente30';
+import {MAPAS,setRoomMap} from './visual.js?v=quente30';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente30';
+import {GameAudio} from './som.js?v=quente30';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
+import {contagem,transicao,depois,setSom} from './abertura.js?v=quente30';
+import {ligarSonsDaInterface} from './sfx.js?v=quente30';
+import {showSemNocao,fechar as fecharShow} from './sem-nocao-show.js?v=quente30';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente30';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente30';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints,SEP_BRANCAS} from './motor.js?v=quente29';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints,SEP_BRANCAS} from './motor.js?v=quente30';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,tutorialKey='',lobbyKey='',modesKey='',room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -70,7 +70,7 @@ const REVELA_MS=3000,semNocaoVisto={},semNocaoTocadas=new Set();
 let escolhaBrancas={id:'',sel:[]};
 function encaixa(preta,branca){const partes=branca.split(SEP_BRANCAS).map(b=>b.replace(/[.!]$/,''));let t=preta,resto=[];for(const b of partes){if(t.includes('____'))t=t.replace('____','«'+b+'»');else resto.push('«'+b+'»');}return resto.length?t+' → '+resto.join(' + '):t;}
 function revelarUmaPorUma(c,lista,escolher){const t0=semNocaoVisto[c.id]??=Date.now(),fim=t0+(lista.length-1)*REVELA_MS,box=el('div',undefined,'revelacao');
- lista.forEach((w,i)=>{const at=t0+i*REVELA_MS,txt=encaixa(c.text||'',w),item=escolher?btn(txt,()=>escolher(w),'carta-branca revela'):el('div',txt,'carta-branca revela');item.dataset.at=String(at);item.dataset.key=c.id+'|'+i;if(escolher){item.dataset.fim=String(fim);item.disabled=Date.now()<fim||busy||!service.online;}if(Date.now()>=at){item.classList.add('show','ja');semNocaoTocadas.add(item.dataset.key);}box.append(item);});
+ lista.forEach((w,i)=>{const at=t0+i*REVELA_MS,txt=encaixa(c.viewerText||c.text||'',w),item=escolher?btn(txt,()=>escolher(w),'carta-branca revela'):el('div',txt,'carta-branca revela');item.dataset.at=String(at);item.dataset.key=c.id+'|'+i;if(escolher){item.dataset.fim=String(fim);item.disabled=Date.now()<fim||busy||!service.online;}if(Date.now()>=at){item.classList.add('show','ja');semNocaoTocadas.add(item.dataset.key);}box.append(item);});
  const st=el('p','','revela-status');st.dataset.fim=String(fim);st.dataset.total=String(lista.length);box.append(st);atualizaRevelacao();return box;}
 function atualizaRevelacao(){const now=Date.now();for(const it of document.querySelectorAll('.carta-branca.revela[data-at]')){if(now>=Number(it.dataset.at)&&!it.classList.contains('show')){it.classList.add('show');if(!semNocaoTocadas.has(it.dataset.key)){semNocaoTocadas.add(it.dataset.key);tone('pop');}}if(it.dataset.fim)it.disabled=now<Number(it.dataset.fim)||busy||!service?.online;}
  for(const st of document.querySelectorAll('.revela-status')){const falta=Math.max(0,Math.ceil((Number(st.dataset.fim)-now)/REVELA_MS));st.textContent=falta?'Revelando… faltam '+falta:'Todas na mesa!';}}
@@ -130,7 +130,7 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
  if(c.phase==='private'){
  if(reader&&c.modeId==='verdade_ou_desafio_hot'){box.append(btn('Verdade',()=>action('truth',{choice:'truth'}),c.choice==='truth'?'selected':''),btn('Desafio',()=>action('truth',{choice:'dare'}),c.choice==='dare'?'selected':''));}
  if(reader&&c.modeId==='duas_verdades_uma_mentira'){for(let i=0;i<3;i++){field('fact-'+i,'Fato '+(i+1));const l=el('label','Esta é a mentira '),r=document.createElement('input');r.type='radio';r.name='lie';r.id='lie-'+i;r.value=String(i);l.prepend(r);box.append(l);}box.append(btn(c.statements?'Atualizar fatos':'Salvar os três fatos',()=>{const lie=box.querySelector('input[name=lie]:checked');action('statements',{statements:[0,1,2].map(i=>$('fact-'+i).value),lie:lie?Number(lie.value):-1});}));}
- }else if(c.phase==='results'){if(c.modeId==='carta_branca'&&!c.skipped){const nomeDe=id=>room.jogadores[id]?.nome||'Jogador';box.append(el('h3','O que cada um jogou'));for(const [id,w] of Object.entries(answers)){const d=el('div',undefined,'carta-branca mini'+(id===c.winner?' vencedora':''));d.append(el('span',encaixa(c.text||'',w)),el('small',(id===c.winner?'👑 ':'')+nomeDe(id)));box.append(d);}}renderResults(box,c,p);}
+ }else if(c.phase==='results'){if(c.modeId==='carta_branca'&&!c.skipped){const nomeDe=id=>room.jogadores[id]?.nome||'Jogador';box.append(el('h3','O que cada um jogou'));for(const [id,w] of Object.entries(answers)){const d=el('div',undefined,'carta-branca mini'+(id===c.winner?' vencedora':''));d.append(el('span',encaixa(c.viewerText||c.text||'',w)),el('small',(id===c.winner?'👑 ':'')+nomeDe(id)));box.append(d);}}renderResults(box,c,p);}
  else if(c.votingReady===false){box.append(el('p',FLOWS[c.modeId].discussion));if(c.debaters)box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Leitor')+' defende · '+(room.jogadores[c.debaters[1]]?.nome||'Outro jogador')+' discorda'));}
  else{
  if(!isParticipant)box.append(el('p','Você poderá responder na próxima rodada.'));
@@ -144,8 +144,8 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
   if(reader){if(c.revealStartedAt)box.append(el('p','🎬 A revelação está na tela. Leia cada carta em voz alta!','thermo-pista'));else if(prontas.length){box.append(el('p','Todo mundo jogou! Quando a galera estiver olhando, revele as cartas uma por uma.','thermo-pista'));const rv=btn('🎬 REVELAR AS CARTAS',()=>action('revelarBrancas'),'primary sn-revelar');rv.disabled=busy||!service.online;box.append(rv);}else box.append(el('p','Você é o juiz. '+(p.answerCount||0)+'/'+(p.expectedCount||0)+' já jogaram a carta branca.','thermo-pista'));}
   else if(isParticipant){if(myAnswer===undefined){const n=c.pick||1;if(escolhaBrancas.id!==c.id)escolhaBrancas={id:c.id,sel:[]};const sel=escolhaBrancas.sel;box.append(el('h3',n>1?'Sua mão: escolha '+n+' cartas, na ordem das lacunas':'Sua mão: jogue UMA carta branca'));const g=el('div',undefined,'mao-brancas');
    (c.hand||[]).forEach(w=>{const ordem=sel.indexOf(w),b=btn(w,()=>{if(n===1)return action('answer',{value:w});const i=sel.indexOf(w);if(i>=0)sel.splice(i,1);else if(sel.length<n)sel.push(w);renderGame(room.hostId===service.uid,connected(room));},'carta-branca'+(ordem>=0?' marcada':''));if(ordem>=0)b.dataset.ordem=String(ordem+1);b.disabled=busy||!service.online;g.append(b);});box.append(g);
-   if(n>1){if(sel.length)box.append(el('p',encaixa(c.text||'',sel.join(SEP_BRANCAS)),'carta-branca previa'));const ok=btn('Jogar '+sel.length+'/'+n,()=>action('answer',{value:sel.join(SEP_BRANCAS)}),'primary');ok.disabled=sel.length!==n||busy||!service.online;box.append(ok);}}
-   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',encaixa(c.text||'',myAnswer),'carta-branca jogada'));if(c.revealStartedAt)box.append(el('p','🎬 A revelação está na tela!','thermo-pista'));else if(prontas.length)box.append(el('p','Todo mundo jogou! Esperando '+(room.jogadores[c.readerId]?.nome||'o juiz')+' revelar as cartas…','thermo-pista'));else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
+   if(n>1){if(sel.length)box.append(el('p',encaixa(c.viewerText||c.text||'',sel.join(SEP_BRANCAS)),'carta-branca previa'));const ok=btn('Jogar '+sel.length+'/'+n,()=>action('answer',{value:sel.join(SEP_BRANCAS)}),'primary');ok.disabled=sel.length!==n||busy||!service.online;box.append(ok);}}
+   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',encaixa(c.viewerText||c.text||'',myAnswer),'carta-branca jogada'));if(c.revealStartedAt)box.append(el('p','🎬 A revelação está na tela!','thermo-pista'));else if(prontas.length)box.append(el('p','Todo mundo jogou! Esperando '+(room.jogadores[c.readerId]?.nome||'o juiz')+' revelar as cartas…','thermo-pista'));else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
  else if(c.modeId==='apenas_uma_dica'){if(reader){if(!c.hintsRevealed){box.append(el('p','Aguarde todas as dicas. Elas aparecerão automaticamente, sem as repetidas.'));}else{const hints=uniqueHints(answers);hints.forEach(h=>box.append(el('span',h,'hint-chip')));if(!hints.length)box.append(el('p','Nenhuma dica única recebida.'));submitText('Quem você é?','guess',80);}}else if(c.hintsRevealed){box.append(el('p','As dicas foram entregues ao leitor.'));}else submitText('Sua dica (uma palavra, sem o nome)');}
  else if(c.modeId==='palavra_proibida'){if(reader)box.append(el('p','Explique em voz alta, sem usar os termos da carta.'));else submitText('Seu palpite');}
  else box.append(el('p','Respondam em voz alta. Ao terminar a conversa, concluam a rodada.'));

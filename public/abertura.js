@@ -1,6 +1,6 @@
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente29';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
 // Entrada da partida (jogadores + contagem 5→1) e corte em relâmpago entre as telas.
-import {reducedMotion} from './visual.js?v=quente29';
+import {reducedMotion} from './visual.js?v=quente30';
 let sound=()=>{},counting=false,queue=[];
 export function setSom(fn){sound=fn;}
 export const contando=()=>counting;
