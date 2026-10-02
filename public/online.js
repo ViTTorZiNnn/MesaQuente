@@ -1,17 +1,17 @@
-import {mountChat} from './chat-ui.js?v=quente26';
-import {LocalRoomService} from './local-room.js?v=quente26';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente26';
-import {TONES} from './editorial.js?v=quente26';
-import {mountSettings} from './settings.js?v=quente26';
-import {MAPAS,setRoomMap} from './visual.js?v=quente26';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente26';
-import {GameAudio} from './som.js?v=quente26';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente26';
-import {ligarSonsDaInterface} from './sfx.js?v=quente26';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente26';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente26';
+import {mountChat} from './chat-ui.js?v=quente27';
+import {LocalRoomService} from './local-room.js?v=quente27';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente27';
+import {TONES} from './editorial.js?v=quente27';
+import {mountSettings} from './settings.js?v=quente27';
+import {MAPAS,setRoomMap} from './visual.js?v=quente27';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente27';
+import {GameAudio} from './som.js?v=quente27';
+import {contagem,transicao,depois,setSom} from './abertura.js?v=quente27';
+import {ligarSonsDaInterface} from './sfx.js?v=quente27';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente27';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente27';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente26';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints,SEP_BRANCAS} from './motor.js?v=quente27';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -27,7 +27,7 @@ function setOnline(online){$('connection').classList.toggle('connected',online);
 function pickAvatar(i){avatarIndex=i;document.querySelectorAll('#avatars button').forEach((b,j)=>b.setAttribute('aria-pressed',j===i));}
 avatars.forEach((a,i)=>{const b=el('button',a.emoji);b.type='button';b.title=a.nome;b.setAttribute('aria-label',a.nome);b.setAttribute('aria-pressed',i===0);b.style.setProperty('--avatar',a.cor);b.onclick=()=>pickAvatar(i);$('avatars').append(b);});
 const categories=[['votacao','Votação'],['dilemas','Dilemas'],['blefe','Blefe'],['debate','Debate'],['sintonia','Sintonia'],['desafio','Desafio']];
-function renderPicker(){$('mode-picker').replaceChildren();for(const [category,name] of categories){const group=el('section',undefined,'category-block'),head=el('div',undefined,'category-title'),im=document.createElement('img');im.src=DECK_ART[CATEGORY_DECK[category]].back;im.alt='';head.append(im,el('h3',name));group.append(head);for(const m of Object.values(modes).filter(m=>m.categoria===category&&!(m.id==='o_espiao'&&(formMode==='local'||formMode==='edit'&&room?.local)))){const label=el('label',undefined,'mode-option'),input=document.createElement('input');input.type='checkbox';input.value=m.id;input.checked=chosen.has(m.id);input.name='minigame';const text=el('span');text.append(el('strong',(m.icone?m.icone+' ':'')+m.nome),el('small',m.objetivo||m.descricao));label.append(input,text);input.onchange=()=>{if(input.checked){if(!$('free-mode').checked){for(const id of [...chosen])if(modes[id].categoria!==category)chosen.delete(id);}chosen.add(m.id);}else chosen.delete(m.id);markPreset();renderPicker();};group.append(label);}$('mode-picker').append(group);}}
+function renderPicker(){queueMicrotask(()=>syncToneChoice());$('mode-picker').replaceChildren();for(const [category,name] of categories){const group=el('section',undefined,'category-block'),head=el('div',undefined,'category-title'),im=document.createElement('img');im.src=DECK_ART[CATEGORY_DECK[category]].back;im.alt='';head.append(im,el('h3',name));group.append(head);for(const m of Object.values(modes).filter(m=>m.categoria===category&&!(m.id==='o_espiao'&&(formMode==='local'||formMode==='edit'&&room?.local)))){const label=el('label',undefined,'mode-option'),input=document.createElement('input');input.type='checkbox';input.value=m.id;input.checked=chosen.has(m.id);input.name='minigame';const text=el('span');text.append(el('strong',(m.icone?m.icone+' ':'')+m.nome),el('small',m.objetivo||m.descricao));label.append(input,text);input.onchange=()=>{if(input.checked){if(!$('free-mode').checked){for(const id of [...chosen])if(modes[id].categoria!==category)chosen.delete(id);}chosen.add(m.id);}else chosen.delete(m.id);markPreset();renderPicker();};group.append(label);}$('mode-picker').append(group);}}
 function markPreset(id=''){document.querySelectorAll('#preset-picker .preset').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.preset===id)));}
 function applyPreset(pk){chosen=new Set(pk.minigames);$('free-mode').checked=new Set(pk.minigames.map(id=>modes[id].categoria)).size>1;document.querySelectorAll('[name=tone]').forEach(i=>i.checked=pk.tones.includes(i.value));$('round-count').value=pk.rodadas;syncToneChoice();renderPicker();markPreset(pk.id);if(!$('adult-choice').hidden)$('adult-choice').scrollIntoView({block:'nearest',behavior:'smooth'});}
 $('free-mode').onchange=()=>{if(!$('free-mode').checked&&chosen.size){const cat=modes[[...chosen][0]].categoria;chosen=new Set([...chosen].filter(id=>modes[id].categoria===cat));}markPreset();renderPicker();};
@@ -55,7 +55,8 @@ function renderEvents(){const key=service?.code||roomCode,list=Array.isArray(roo
  for(const e of list){if(!e?.id||seenEvents.has(e.id))continue;seenEvents.add(e.id);tone(/sai|caiu|desconect/i.test(e.text||'')?'leave':'join');const n=el('div',e.text,'table-event');$('event-stack').append(n);setTimeout(()=>n.classList.add('out'),4200);setTimeout(()=>n.remove(),4800);}}
 // Sem Noção: as respostas aparecem uma por uma (tempo curto) para todo mundo ler e rir; o juiz só escolhe no fim.
 const REVELA_MS=3000,semNocaoVisto={},semNocaoTocadas=new Set();
-function encaixa(preta,branca){const b=branca.replace(/[.!]$/,'');return preta.includes('____')?preta.replace('____','«'+b+'»'):preta+' → «'+b+'»';}
+let escolhaBrancas={id:'',sel:[]};
+function encaixa(preta,branca){const partes=branca.split(SEP_BRANCAS).map(b=>b.replace(/[.!]$/,''));let t=preta,resto=[];for(const b of partes){if(t.includes('____'))t=t.replace('____','«'+b+'»');else resto.push('«'+b+'»');}return resto.length?t+' → '+resto.join(' + '):t;}
 function revelarUmaPorUma(c,lista,escolher){const t0=semNocaoVisto[c.id]??=Date.now(),fim=t0+(lista.length-1)*REVELA_MS,box=el('div',undefined,'revelacao');
  lista.forEach((w,i)=>{const at=t0+i*REVELA_MS,txt=encaixa(c.text||'',w),item=escolher?btn(txt,()=>escolher(w),'carta-branca revela'):el('div',txt,'carta-branca revela');item.dataset.at=String(at);item.dataset.key=c.id+'|'+i;if(escolher){item.dataset.fim=String(fim);item.disabled=Date.now()<fim||busy||!service.online;}if(Date.now()>=at){item.classList.add('show','ja');semNocaoTocadas.add(item.dataset.key);}box.append(item);});
  const st=el('p','','revela-status');st.dataset.fim=String(fim);st.dataset.total=String(lista.length);box.append(st);atualizaRevelacao();return box;}
@@ -129,8 +130,10 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
  else if(c.modeId==='batalha_de_argumentos'){box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Jogador')+' defende a ideia. '+(room.jogadores[c.debaters[1]]?.nome||'Jogador')+' argumenta contra.'));c.debaters.forEach(id=>choose('Melhor argumento: '+(room.jogadores[id]?.nome||'Jogador'),id));}
  else if(c.modeId==='carta_branca'){const prontas=p.respostas||[];
   if(reader){if(prontas.length){box.append(el('h3','Leia cada resposta em voz alta. Quando todas aparecerem, escolha a melhor'));box.append(revelarUmaPorUma(c,prontas,w=>action('escolher',{value:w})));}else box.append(el('p','Você é o juiz. '+(p.answerCount||0)+'/'+(p.expectedCount||0)+' já jogaram a carta branca.','thermo-pista'));}
-  else if(isParticipant){if(myAnswer===undefined){box.append(el('h3','Sua mão: jogue UMA carta branca'));const g=el('div',undefined,'mao-brancas');(c.hand||[]).forEach(w=>{const b=btn(w,()=>action('answer',{value:w}),'carta-branca');b.disabled=busy||!service.online;g.append(b);});box.append(g);}
-   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',myAnswer,'carta-branca jogada'));if(prontas.length){box.append(el('h3','As respostas da mesa'));box.append(revelarUmaPorUma(c,prontas));}else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
+  else if(isParticipant){if(myAnswer===undefined){const n=c.pick||1;if(escolhaBrancas.id!==c.id)escolhaBrancas={id:c.id,sel:[]};const sel=escolhaBrancas.sel;box.append(el('h3',n>1?'Sua mão: escolha '+n+' cartas, na ordem das lacunas':'Sua mão: jogue UMA carta branca'));const g=el('div',undefined,'mao-brancas');
+   (c.hand||[]).forEach(w=>{const ordem=sel.indexOf(w),b=btn(w,()=>{if(n===1)return action('answer',{value:w});const i=sel.indexOf(w);if(i>=0)sel.splice(i,1);else if(sel.length<n)sel.push(w);renderGame(room.hostId===service.uid,connected(room));},'carta-branca'+(ordem>=0?' marcada':''));if(ordem>=0)b.dataset.ordem=String(ordem+1);b.disabled=busy||!service.online;g.append(b);});box.append(g);
+   if(n>1){if(sel.length)box.append(el('p',encaixa(c.text||'',sel.join(SEP_BRANCAS)),'carta-branca previa'));const ok=btn('Jogar '+sel.length+'/'+n,()=>action('answer',{value:sel.join(SEP_BRANCAS)}),'primary');ok.disabled=sel.length!==n||busy||!service.online;box.append(ok);}}
+   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',encaixa(c.text||'',myAnswer),'carta-branca jogada'));if(prontas.length){box.append(el('h3','As respostas da mesa'));box.append(revelarUmaPorUma(c,prontas));}else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
  else if(c.modeId==='apenas_uma_dica'){if(reader){if(!c.hintsRevealed){box.append(el('p','Aguarde todas as dicas. Elas aparecerão automaticamente, sem as repetidas.'));}else{const hints=uniqueHints(answers);hints.forEach(h=>box.append(el('span',h,'hint-chip')));if(!hints.length)box.append(el('p','Nenhuma dica única recebida.'));submitText('Quem você é?','guess',80);}}else if(c.hintsRevealed){box.append(el('p','As dicas foram entregues ao leitor.'));}else submitText('Sua dica (uma palavra, sem o nome)');}
  else if(c.modeId==='palavra_proibida'){if(reader)box.append(el('p','Explique em voz alta, sem usar os termos da carta.'));else submitText('Seu palpite');}
  else box.append(el('p','Respondam em voz alta. Ao terminar a conversa, concluam a rodada.'));
@@ -141,7 +144,7 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
 function renderResults(box,c,p){if(room.local&&connected(room).length===1){box.append(el('h3',c.skipped?'Carta pulada':'Carta explorada'),el('p','Sem pontuação fictícia. Continue para a próxima rodada quando quiser.'));return;}const result=outcome(c,p,room.jogadores);box.append(el('h3',result.title,'result-title'),el('p',result.detail,'result-detail'));for(const row of result.rows){const line=el('div',undefined,'result-bar');line.style.setProperty('--share',Math.round(row.count/Math.max(1,row.total)*100)+'%');line.append(el('span',row.label),el('b',row.count+' / '+row.total));box.append(line);}renderAwards(box,c);}
 function renderGuide(){if(!room||room.status!=='jogando')return;const p=room.partida,c=p.cartaAtual,g=guidance(c,p,service.uid);$('turn-hint').textContent=g.text;$('phase-track').replaceChildren(...g.steps.map((text,i)=>{const item=el('span',text,i===g.index?'current':i<g.index?'done':'');if(i===g.index)item.setAttribute('aria-current','step');return item;}));$('participation-status').textContent=room.local&&connected(room).length===1?'Explorando sozinho':g.count;if(room.local&&connected(room).length===1&&c.phase==='public')$('turn-hint').textContent='Explore a carta e encerre a conversa quando quiser continuar.';$('tone-badge').textContent=c.modeId==='carta_branca'?'Vale tudo':TONES[c.tone]||'';$('game').dataset.phase=c.phase;$('game').dataset.tone=c.tone||'leve';document.body.dataset.tone=c.tone||'leve';gameAudio.setMood(c.tone||'leve');if(c.phase==='results')$('turn-title').textContent=c.skipped?'Tudo bem passar':'Hora de conferir';if(room.local){$('turn-title').textContent=c.phase==='deck'?'Puxe a próxima carta':c.skipped?'Carta pulada':modes[c.modeId].nome;$('turn-hint').textContent=c.phase==='deck'?'Toque no baralho ou no botão e leia a carta em voz alta para a galera.':(DICAS_AO_VIVO[c.modeId]||'');$('participation-status').textContent='';}}
 setInterval(()=>{if(!document.hidden)renderGuide();},500);
-function syncToneChoice(){const adult=['adulto','acido','casal'].some(v=>document.querySelector('[name=tone][value='+v+']').checked);$('adult-choice').hidden=!adult;$('adult-confirm').required=adult&&!['join','add-local'].includes(formMode);}
+function syncToneChoice(){const adult=['adulto','acido','casal'].some(v=>document.querySelector('[name=tone][value='+v+']').checked)||chosen.has('carta_branca');$('adult-choice').hidden=!adult;$('adult-confirm').required=adult&&!['join','add-local'].includes(formMode);}
 document.querySelectorAll('[name=tone]').forEach(i=>i.onchange=()=>{syncToneChoice();markPreset();});$('round-count').addEventListener('input',()=>markPreset());
 $('confirm-skip').onclick=async()=>{$('skip-dialog').close();await action('skip');};
 async function copy(value){try{await navigator.clipboard.writeText(value);toast('Copiado!');}catch{toast('Copie este código: '+roomCode);}}

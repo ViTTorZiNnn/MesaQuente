@@ -9,7 +9,7 @@ export function viewFor(room,uid){
  const own=c.readerId===uid,participant=c.participants.includes(uid),results=c.phase==='results'&&!c.skipped,visible=results||!c.skipped&&(c.phase==='public'||participant&&own&&['private','voting'].includes(c.phase));
  const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
  card.viewerText=visible?(!participant&&!results&&['o_espiao','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
- if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
+ if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji','pick'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
  if(visible&&c.hands?.[uid]&&!results)card.hand=structuredClone(c.hands[uid]);
  if(results){for(const k of ['secret','spyId','lie','awards','extremes','verdict','verdictWinner'])if(c[k]!==undefined)card[k]=c[k];}
  else if(own&&visible&&c.lie!==undefined)card.lie=c.lie;

@@ -1,134 +1,912 @@
-// Minijogo "Sem Noção": não tem clima. É um monte só de coisas malucas, sorteado a cada rodada.
-// Cartas pretas: pergunta ou frase com lacuna (____). Cartas brancas: respostas.
-// Cada jogador recebe 10 brancas só dele; o juiz escolhe a melhor sem saber de quem é.
-// As cartas marcadas como 18+ (sexo) só entram se a sala confirmou que todos têm 18 anos ou mais.
-// Regras de escrita: zoar situações e atitudes, nunca grupos de pessoas.
+// Minijogo "Sem Noção": cartas do pacote "Cards Against Humanity" Brasil (print & play), transcritas do PDF oficial.
+// Cards Against Humanity® é marca registrada de Cards Against Humanity, LLC. Conteúdo distribuído por eles sob
+// licença Creative Commons BY-NC-SA 2.0: uso não comercial, com crédito e mesma licença.
+// O pacote é pesado: o minijogo só pode ser escolhido numa sala que confirmou que todos têm 18 anos ou mais.
+// Cartas pretas: text (pergunta ou frase com lacunas ____) e pick (quantas brancas jogar). Brancas: respostas.
+export const CREDITO='Cartas: Cards Against Humanity® (Brasil), CC BY-NC-SA 2.0.';
 export const PRETAS=[
- 'O grupo da família entrou em pânico quando alguém mandou ____.',
- 'Minha terapeuta disse que o meu problema é ____.',
- 'Fui demitido por causa de ____.',
- 'O segredo para um casamento feliz é ____.',
- 'Qual é o verdadeiro motivo do atraso do ônibus?',
- 'Nova série da Netflix: "Eu, ____ e um apartamento de 30m²".',
- 'O que tem dentro da bolsa da sua mãe?',
- 'Minha avó descobriu ____ e agora não para de falar disso.',
- 'No meu velório, eu quero ____.',
- 'Por que o seu ex não para de te mandar mensagem?',
- 'Coach motivacional: "O sucesso começa com ____."',
- 'Plantão urgente: cientistas confirmam que ____ causa ressaca.',
- 'O que realmente acontece no churrasco depois das 22h?',
- 'A próxima trend do TikTok vai ser ____.',
- 'Meu talento escondido é ____.',
- 'O que o síndico falou na reunião de condomínio?',
- 'A NASA encontrou ____ em Marte.',
- 'O que tem no porão da casa da Xuxa?',
- 'Meu plano de aposentadoria é ____.',
- 'Novo sabor de Doritos: ____.',
- 'O que eu levaria pra uma ilha deserta?',
- 'Por que o pombo da praça me olha daquele jeito?',
- 'O Brasil ganhou a Copa por causa de ____.',
- 'Meu cachorro fugiu de casa por causa de ____.',
- 'O que o padre confessou pra mim?',
- 'Na minha lápide vai estar escrito: "Aqui jaz alguém que amava ____".',
- 'O que o Faustão faz quando ninguém está olhando?',
- 'Fui expulso do Carnaval por causa de ____.',
- 'Receita de vó pra curar tudo: ____.',
- 'O que o meu gato pensa de mim?',
- 'A minha última pesquisa no Google foi "como se livrar de ____".',
- 'Os ETs pousaram e a primeira coisa que pediram foi ____.',
- 'O que tem no fundo do Rio Tietê?',
- 'Novo reality show: "Casamento às cegas com ____".',
- 'O que deixou o Silvio Santos sem palavras?',
- 'Meu horóscopo de hoje diz: cuidado com ____.',
- 'O verdadeiro motivo da queda da internet no Brasil foi ____.',
- 'Ninguém sabe, mas o Cristo Redentor esconde ____.',
- 'A melhor desculpa pra faltar na academia é ____.',
- 'Ganhei na Mega-Sena e a primeira coisa que fiz foi ____.',
- 'O que o motorista de aplicativo me contou?',
- 'Black Friday: 90% de desconto em ____.',
- 'Por que a festa junina foi cancelada?',
- 'Minha bio do Instagram agora é: "Amo Deus, minha família e ____".',
- 'O que acontece se você falar "Bloody Mary" três vezes no banheiro da rodoviária?',
- 'A Anvisa acaba de proibir ____.',
- 'A nova vacina tem um efeito colateral: ____.',
- 'O que eu falei dormindo e todo mundo ouviu?',
- 'Fui parado na blitz por causa de ____.',
- 'O que o vizinho de cima faz às 3 da manhã?',
- 'Próximo filme da Marvel: "Os Vingadores contra ____".',
- 'O segredo do pastel da feira é ____.',
- 'A minha avó tem um Instagram secreto só de ____.',
- 'O que tem no grupo "Família 🙏" que ninguém pode ver?',
- 'A cura do câncer de ressaca é ____.',
- 'Meu maior medo é acordar e encontrar ____ na minha cama.',
- 'A Receita Federal me pegou por causa de ____.',
- 'Novo esporte olímpico: ____.',
- 'Por que o Papai Noel parou de vir no Brasil?',
- 'Meu crush me deu um fora e disse que o problema era ____.',
- 'O que causou a briga no grupo de mães da escola?',
- 'Meu primeiro emprego foi ____.',
- 'Uma pesquisa revelou que 9 em cada 10 brasileiros preferem ____.',
- 'O que tem no fundo do armário do seu pai?',
- 'A minha playlist da academia é só ____.',
- 'O que o papagaio da vizinha aprendeu a falar?',
- 'Fui eliminado do Big Brother por causa de ____.',
- 'Novidade no cardápio do boteco: ____ à milanesa.',
- 'O que o pastor disse no culto que viralizou?',
- 'A Copa do Mundo de 2050 vai ser decidida por ____.',
- 'O que eu escondi da minha mãe a vida inteira?',
- 'Meu chefe me pegou no flagra fazendo ____.',
- 'Por que eu fui banido do Uber?',
- 'O próximo ministro vai ser ____.',
- 'No meu casamento, vai ter open bar de ____.',
- 'O que tinha naquele brigadeiro da festa?',
- 'O app de namoro me recomendou ____.',
- 'O que o Galvão Bueno grita no chuveiro?',
- 'Meu filho vai se chamar ____.',
- 'Fui ao médico e o diagnóstico foi ____.',
- 'O Detran agora exige ____ pra tirar a carteira.',
- 'O que o Google Maps me mandou fazer?',
- 'O que acabou com a minha festa de 15 anos?',
- 'Minha mãe me ligou chorando por causa de ____.',
- 'O grande segredo da pirâmide de Gizé é ____.',
- '____: o motivo de eu não ser convidado para mais nada.',
- 'Por que o meu tio não pode mais entrar no Paraguai?'
-];
-export const PRETAS_18=[
- 'O motel tinha de tudo, menos ____.',
- 'O que eu sussurraria no ouvido do crush pra estragar tudo?',
- 'Minha noite foi incrível até aparecer ____.',
- 'Lançamento do sex shop: ____.',
- 'O que tem no histórico da aba anônima?',
- 'Na hora H, eu gritei ____ sem querer.',
- 'O que o porteiro viu às 4 da manhã?',
- 'O nudes foi recusado por causa de ____.',
- 'Depois da terceira caipirinha, eu sempre acabo ____.',
- 'Meu fetiche mais estranho envolve ____.',
- 'O que acabou com o clima na hora mais quente?',
- 'O kama sutra brasileiro tem uma posição chamada ____.',
- 'Meu ex dizia que eu era muito bom em ____.',
- 'Minha lista de contatinhos está organizada por ____.'
+{
+"text": "Ei Reddit! Eu estou ____. Me pergunte qualquer coisa.",
+"pick": 1
+},
+{
+"text": "Apresentando Baseball X-Tremo! É igual baseball, mas com ____!",
+"pick": 1
+},
+{
+"text": "Qual é o prazer secreto do Batman?",
+"pick": 1
+},
+{
+"text": "Administração de Segurança dos Transportes agora proíbe ____ em aviões.",
+"pick": 1
+},
+{
+"text": "Próximo livro de J.K. Rowling: Harry Potter e a câmara de ____.",
+"pick": 1
+},
+{
+"text": "É isso aí, eu matei ____. Você quer saber como? ____.",
+"pick": 2
+},
+{
+"text": "Desculpe, professor, mas não consegui terminar meu dever de casa porque ____.",
+"pick": 1
+},
+{
+"text": "E o Oscar de ____ vai para ____.",
+"pick": 2
+},
+{
+"text": "Cara, não vai naquele banheiro. Tem ____ lá.",
+"pick": 1
+},
+{
+"text": "Como eu perdi minha virgindade?",
+"pick": 1
+},
+{
+"text": "É uma pena que as crianças hoje em dia estejam todas se envolvendo com ____.",
+"pick": 1
+},
+{
+"text": "Passo 1: ____. Passo 2: ____. Passo 3: Lucro.",
+"pick": 2
+},
+{
+"text": "____. Aposto que não pode ter só um!",
+"pick": 1
+},
+{
+"text": "Crianças, não preciso de drogas para ficar chapado. Estou chapado de ____.",
+"pick": 1
+},
+{
+"text": "Para o meu próximo truque, vou tirar ____ da ____.",
+"pick": 2
+},
+{
+"text": "Flavio Bolsonaro não pode gozar sem ____.",
+"pick": 1
+},
+{
+"text": "No novo filme original do Disney Channel, Hannah Montana tem dificuldade com ____ pela primeira vez.",
+"pick": 1
+},
+{
+"text": "Qual é o meu poder secreto?",
+"pick": 1
+},
+{
+"text": "Vou fazer um detox esta semana. Nada além de suco de couve e ____.",
+"pick": 1
+},
+{
+"text": "____ + ____ = ____.",
+"pick": 3
+},
+{
+"text": "Quando o Faraó não fez nada, Moisés chamou a Praga de ____.",
+"pick": 1
+},
+{
+"text": "Só uma vez, eu gostaria de ouvir você falar \"Obrigado, mãe. Obrigado por ____.\"",
+"pick": 1
+},
+{
+"text": "Papai, por que a mamãe está chorando?",
+"pick": 1
+},
+{
+"text": "Eu estava louco de ácido, ____ virou ____.",
+"pick": 2
+},
+{
+"text": "50% de todos os casamentos terminam em ____.",
+"pick": 1
+},
+{
+"text": "Meus compatriotas: Antes que a década acabe, teremos ____ na lua!",
+"pick": 1
+},
+{
+"text": "Nesta temporada em Steppenwolf, a clássica peça existencial de Samuel Beckett: Esperando por ____.",
+"pick": 1
+},
+{
+"text": "Em vez de carvão, o Papai Noel vai dar ____ para as crianças más.",
+"pick": 1
+},
+{
+"text": "A vida dos índios mudou para sempre quando o homem branco apresentou ____.",
+"pick": 1
+},
+{
+"text": "O que as escolas públicas estão usando para inspirar os alunos do centro da cidade a terem sucesso?",
+"pick": 1
+},
+{
+"text": "Talvez ela tenha nascido com isso. Talvez seja ____.",
+"pick": 1
+},
+{
+"text": "O que o ex-presidente Fernando Collor está pensando agora?",
+"pick": 1
+},
+{
+"text": "Pessoas brancas gostam de ____.",
+"pick": 1
+},
+{
+"text": "____ é uma ladeira escorregadia que leva a ____.",
+"pick": 2
+},
+{
+"text": "Por que estou todo dolorido?",
+"pick": 1
+},
+{
+"text": "Um jantar romântico à luz de velas não estaria completo sem ____.",
+"pick": 1
+},
+{
+"text": "Acabei de ver um vídeo triste! Por favor, retweet!! #pare____.",
+"pick": 1
+},
+{
+"text": "Dica legal! Quando o seu homem te pedir para descer nele, tente surpreender ele com ____.",
+"pick": 1
+},
+{
+"text": "A viagem de turma foi completamente arrasada por ____.",
+"pick": 1
+},
+{
+"text": "Qual é o melhor amigo da mulher?",
+"pick": 1
+},
+{
+"text": "Caro Abby, estou tendo um pouco de dificuldade com ____ e gostaria de seu conselho.",
+"pick": 1
+},
+{
+"text": "No novo suspense de Jordan Peele, uma jovem família descobre que ____ realmente foi ____ o tempo todo.",
+"pick": 2
+},
+{
+"text": "Quando eu for Presidente, vou criar um departamento de ____.",
+"pick": 1
+},
+{
+"text": "O que meus pais estão escondendo de mim?",
+"pick": 1
+},
+{
+"text": "O que nunca falha em animar uma festa?",
+"pick": 1
+},
+{
+"text": "SE você gosta de ____, VOCÊ PODE SER UM CAIPIRA.",
+"pick": 1
+},
+{
+"text": "Fazer haiku.",
+"pick": 1
+},
+{
+"text": "O que fez meu primeiro beijo ser tão estranho?",
+"pick": 1
+},
+{
+"text": "E aí pessoal, bem-vindo ao Chili! Vocês querem iniciar a noite com ____?",
+"pick": 1
+},
+{
+"text": "\"Eu tenho 99 problemas mas não ____ é um deles.\"",
+"pick": 1
+},
+{
+"text": "____. É uma armadilha.",
+"pick": 1
+},
+{
+"text": "O novo reality show do Hulu apresenta doze solteiras gostosas vivendo com ____.",
+"pick": 1
+},
+{
+"text": "O que a vovó acharia bizarro, mas estranhamente charmoso?",
+"pick": 1
+},
+{
+"text": "____. Era tão foda.",
+"pick": 1
+},
+{
+"text": "Eu nunca entendi direito ____ até eu encontrar ____.",
+"pick": 2
+},
+{
+"text": "Durante o sexo, eu gosto de pensar em ____.",
+"pick": 1
+},
+{
+"text": "O que acabou com meu último relacionamento?",
+"pick": 1
+},
+{
+"text": "O que é esse som?",
+"pick": 1
+},
+{
+"text": "Uh, ei pessoal, eu sei que isso foi minha ideia, mas estou tendo sérias dúvidas sobre ____.",
+"pick": 1
+},
+{
+"text": "Por que eu estou grudento?",
+"pick": 1
+},
+{
+"text": "Eu não sou médico, mas tenho certeza de que você está sofrendo de algo chamado \"____.\"",
+"pick": 1
+},
+{
+"text": "O que tem aos montes no céu?",
+"pick": 1
+},
+{
+"text": "Depois de 4 álbuns platina e três Grammys, é hora de voltar para as minhas raízes, para o que me inspirou a fazer música: ____.",
+"pick": 1
+},
+{
+"text": "O que sempre te faz conseguir transar?",
+"pick": 1
+},
+{
+"text": "Eles falaram que estávamos loucos. Eles falaram que não conseguiríamos colocar ____ dentro de ____. Eles estavam errados.",
+"pick": 2
+},
+{
+"text": "Sky® Apresenta \"____: a história de ____.\"",
+"pick": 2
+},
+{
+"text": "____: testado por crianças, aprovado por mães.",
+"pick": 1
+},
+{
+"text": "Por que eu não consigo dormir de noite?",
+"pick": 1
+},
+{
+"text": "O que é esse cheiro?",
+"pick": 1
+},
+{
+"text": "Por que a Brett está tão suada?",
+"pick": 1
+},
+{
+"text": "Esse é o jeito que o mundo acaba. Esse é o jeito que o mundo acaba. Não com um boom, mas com ____.",
+"pick": 1
+},
+{
+"text": "Indo para Broadway, ____: O Musical.",
+"pick": 1
+},
+{
+"text": "Aqui é a igreja. Aqui é a capela. Abra as portas. E aqui está ____.",
+"pick": 1
+},
+{
+"text": "Mas antes de te matar, Sr. Bond, eu devo te mostrar ____.",
+"pick": 1
+},
+{
+"text": "Um estudo laboratorial recente mostra que alunos de graduação fazem 50% menos sexo após serem expostos a ____.",
+"pick": 1
+},
+{
+"text": "Apresentando a incrível dupla de super-herói e seu ajudante! O ____ e!",
+"pick": 1
+},
+{
+"text": "A seguir na ESPN2: A série mundial de ____.",
+"pick": 1
+},
+{
+"text": "Quando eu for bilionário, eu vou erguer uma estátua de 15 metros para comemorar ____.",
+"pick": 1
+},
+{
+"text": "Os historiadores militares se lembram de Alexandre, o Grande, por seu uso brilhante de ____ contra os persas.",
+"pick": 1
+},
+{
+"text": "Guerra! Para que isso é bom?",
+"pick": 1
+},
+{
+"text": "O que me dá gás incontrolável?",
+"pick": 1
+},
+{
+"text": "A nova SW4. Com o poder e espaço para levar ____ com você para qualquer lugar.",
+"pick": 1
+},
+{
+"text": "Bom, se me dão licença, senhores, tenho um encontro com ____.",
+"pick": 1
+},
+{
+"text": "A medicina alternativa agora está adotando os poderes curativos de ____.",
+"pick": 1
+},
+{
+"text": "Como mãe de cinco meninos bagunceiros, estou acostumada a ____.",
+"pick": 1
+},
+{
+"text": "____. Bate aqui, irmão.",
+"pick": 1
+},
+{
+"text": "Hoje no Casos de Família: \"Socorro! Meu filho está ____!\"",
+"pick": 1
+},
+{
+"text": "Eu me virei com uma ajudinha do ____.",
+"pick": 1
+},
+{
+"text": "★☆☆☆☆ NÃO vão aqui! Achei ____ no meu fettuccine alfredo!",
+"pick": 1
+},
+{
+"text": "Eu bebo para esquecer ____.",
+"pick": 1
+},
+{
+"text": "Eu sou LeBron James, e quando não estou enterrando, eu amo ____.",
+"pick": 1
+},
+{
+"text": "O que faz a vida valer a pena?",
+"pick": 1
+},
+{
+"text": "Arby: Nós temos ____.",
+"pick": 1
+},
+{
+"text": "Sr. e Sra. Diaz, nós chamamos vocês aqui porque estamos preocupados com a Cynthia. Vocês sabem que a filha de vocês é ____.",
+"pick": 1
+},
+{
+"text": "Se você não pode estar com quem você ama, ame ____.",
+"pick": 1
+},
+{
+"text": "Trazido para você pela Bud Light®, a cerveja oficial do ____.",
+"pick": 1
+},
+{
+"text": "Clique aqui para ____!!!",
+"pick": 1
+},
+{
+"text": "Ei, dá uma olhada nisso! Eu chamo esse movimento de dança de \"____\".",
+"pick": 1
+},
+{
+"text": "O velho MacDonald tinha um ____. I-A-I-A-O.",
+"pick": 1
+},
+{
+"text": "Loja de roupas masculinas: Você vai gostar de ____. Eu garanto.",
+"pick": 1
+}
 ];
 export const BRANCAS=[
- 'Um áudio de 7 minutos.','Pagar de rico no Instagram.','A tia do pavê.','Um churrasco sem carvão.','Fingir que entendeu a piada.','Dormir de meia.','O Wi-Fi da casa da vó.','Um boleto vencido.','Chorar vendo propaganda de margarina.','Responder "kkkk" com a cara séria.',
- 'A fila do banco às 15h59.','Um crush que só curte e nunca fala.','Um pagodinho triste.','Um carregador de outra marca.','Sair do grupo e voltar no mesmo dia.','Pedir "só uma batata" do prato dos outros.','Uma dancinha do TikTok na hora errada.','A conta do bar dividida por igual.','Esquecer o nome de alguém que sabe o seu.','Uma figurinha de bom dia com flores.',
- 'Ligar sem avisar.','Uma ressaca de três dias.','Dormir no ônibus e acordar no ponto final.','O cachorro caramelo.','Dar tchau e andar pro mesmo lado.','Um Pix de 1 centavo com mensagem.','Um vizinho com furadeira às 7 da manhã.','Coentro.','A senha que eu acabei de trocar.','Fingir que está trabalhando no home office.',
- 'Um pão de queijo frio.','A sogra.','Comer miojo cru.','O primo que "faz uns corre".','Mandar áudio cantando.','O grupo do condomínio.','O famoso "a gente marca".','Uma reunião que podia ser um e-mail.','Pagar a academia e não ir.','O filtro de cachorrinho.',
- 'Um brigadeiro de colher às 3 da manhã.','Uma fofoca quentinha.','Ficar online e não responder.','O tio do churrasco que sabe de tudo.','Um karaokê sem ninguém afinado.','Um signo de fogo.','Uma corrente de WhatsApp.','Um pombo com autoestima elevada.','Um capivara de terno.','Um anão de jardim possuído.',
- 'Seiscentos gatos.','Um pastel de vento.','O mistério do Triângulo das Bermudas.','Uma pochete cheia de farofa.','O Faustão de sunga.','Uma lhama revoltada.','Um ET que só fala em áudio.','O espírito do Chaves.','Uma sandália da humildade.','Um pinguim fugitivo de Santa Catarina.',
- 'Leite com manga.','Uma cobra que faz Pix.','O Ronaldinho Gaúcho preso num elevador.','Uma rodada de tequila às 9 da manhã.','Um bebê reborn com CPF.','O cheiro de pneu queimado.','Uma calcinha bege de vó.','Um coach quântico.','Uma pirâmide financeira de cuscuz.','Um galo que canta às 2 da tarde.',
- 'Uma pedra no rim.','Um bigode falso.','Um homem-placa de "compro ouro".','Uma enchente no meio da sala.','O tiozinho do "pão quentinho".','Uma aula de zumba obrigatória.','Um pato que sabe a senha do Wi-Fi.','O Rei do Camarote.','Uma gaivota que roubou meu sanduíche.','Uma fantasia de banana.',
- 'Uma simpatia pra passar no Enem.','Um copo de requeijão como taça.','O dinossauro Barney.','Uma vela de 7 dias acesa pro crush.','Um sapato de bico fino.','Uma dancinha da cabeça.','Um caminhão de gás tocando "Für Elise".','O carro do ovo.','Um morcego de estimação.','O Zé Gotinha bêbado.',
- 'A pamonha de Piracicaba.','Uma sereia com pé de pato.','Um zumbi vegano.','Uma vovó que faz manobra de skate.','O boto cor-de-rosa.','O Pé Grande de chinelo.','Um fantasma que só assusta em dia útil.','Uma garrafa de Dolly.','Um tênis que acende.','Um rato que fala inglês.',
- 'O hino do Corinthians de trás pra frente.','Um velório com DJ.','Um fantasma com Wi-Fi.','Uma minhoca gigante.','Um robô aspirador fugindo de casa.','Um político honesto.','Comer pizza com garfo e faca.','Uma barata voadora.','Um bolo de pote de 3 dias.','A Xuxa cantando em latim.',
- 'A ex do meu ex.','Um Uno com escada no teto.','Um baile funk no asilo.','Uma múmia no transporte público.','A tia que pergunta "e as namoradinhas?".','Um pombo mensageiro do Tinder.','Cinquenta reais rasgados.','O sumiço das meias.','Um curso de 7 dias pra virar milionário.','Uma palestra sobre NFT de feijão.',
- 'Um papagaio que fala palavrão.','O choro do Neymar.','Uma briga de bar por causa de futebol de botão.','Um grilo no quarto às 3 da manhã.','A tampa da Tupperware que nunca encaixa.','Um prato de feijoada no café da manhã.','O Silvio Santos jogando aviãozinho de dinheiro.','O Teletubbies num after.','Um avião de papel com o salário inteiro.','A vizinha que vê tudo pela janela.',
- 'Uma lambada no velório.','A dancinha do Siri.','Uma piscina de bolinhas no escritório.','Um porco-espinho de estimação.','O pagode do Exaltasamba às 6 da manhã.','O último biscoito do pacote.','Um sabonete em forma de pé.','Uma armadura medieval de papelão.','Uma Kombi lotada de palhaços.','Um gnomo que cobra aluguel.',
- 'Uma esteira de academia usada como cabide.','Cheirar o próprio sovaco no ônibus.','Um teste de paternidade no Ratinho.','Três horas de fila pra tirar foto com a Peppa.','A senha do Wi-Fi da padaria.','Um gato que manda indireta.','Uma criança gritando no avião.','Um canudo de papel que derreteu.','Um peixe-boi com depressão.','Uma ressaca moral de domingo.',
- 'O Fantástico de domingo à noite.','A depressão pós-feriado.','O barulho do Windows XP.','Um telefone com fio.','O carteiro mordido pelo cachorro.','Um chá revelação que pegou fogo no mato.','O CPF na nota.','Um jogo de bingo valendo um frango.','A minha conta bancária.','O cara do "aceita um panfleto?".',
- 'Uma sunga de crochê.','Um bolo de casamento que caiu.','O cheiro de cerveja quente.','Andar descalço no chão gelado.','O Kiko do Chaves.','Um tamagotchi morto.','O carnê das Casas Bahia.','Um chinelo havaianas voando.','Um esquilo com problemas de raiva.','A risada do Silvio Santos.',
- 'Um terraplanista na NASA.','Dar ré no quibe.','Um elefante numa loja de cristais.','Um pato de borracha gigante.','Um karaokê de "Evidências" às 4 da manhã.','O cheiro de bolo de cenoura.','O "tá pago" da academia.','Um sósia do Papai Noel no verão.','Uma caneta azul.','Um surto coletivo no grupo da família.'
+"Silêncio.",
+"A ilusão de escolha em uma sociedade altamente capitalista.",
+"Muitos morcegos.",
+"Fome extrema.",
+"Bactéria comedora de carne.",
+"Cobras sexuais voadoras.",
+"Não dar a mínima para países de terceiro mundo.",
+"Ímãs.",
+"Uma desculpa lamentável para um pai.",
+"Vendo o que acontece quando você tranca pessoas em um quarto com gaivotas famintas.",
+"A crucificação.",
+"Polícia antidrogas.",
+"72 virgens.",
+"Audiência ao vivo.",
+"Um paradoxo de viagem no tempo.",
+"Cozinha mexicana autêntica.",
+"Cometendo crimes.",
+"COVID-19.",
+"Dívida aleijante.",
+"Problemas paternais.",
+"Calcinhas usadas.",
+"Um pum tão poderoso que acorda gigantes dos seus mil anos de sono.",
+"Ex Presidente Lula.",
+"Nu frontal completo.",
+"Me cobrir com queijo parmesão e pimenta porque eu sou uma pizza.",
+"Botar um ovo.",
+"Ficar pelado e assistir Nickelodeon.",
+"Fingir se importar.",
+"Ter grandes sonhos, mas nenhuma maneira realista de atingi-los.",
+"Ver a vovó pelada.",
+"Catarro.",
+"A inevitável morte quente do universo.",
+"O milagre do nascimento.",
+"O arrebatamento.",
+"Ter um derrame.",
+"Privilégio branco.",
+"Emergir do oceano e destruir Tóquio.",
+"O Papa-Búrguer do McDonald's.",
+"Desodorante AXE.",
+"Sangue de Cristo.",
+"Posição papai e mamãe fofinha e com beijos.",
+"BATMAN!",
+"Agricultura.",
+"Mal ganhando R$25,000 por ano.",
+"Seleção natural.",
+"Aborto com cabide.",
+"Sexo com Patrick Stewart.",
+"Meu namorado abusivo, que não é tão ruim quando você passa a conhecer ele melhor.",
+"Receita para analgésicos.",
+"Swooping.",
+"Mansplaining.",
+"Uma montagem homoerótica de voleibol.",
+"Maria do Rosário.",
+"Colocar as coisas onde elas vão.",
+"Masculinidade frágil.",
+"Coma tudo que puder de camarão por R$8.99.",
+"Um cara velho que está quase morto.",
+"Kanye West.",
+"Queijo quente.",
+"Ataque de velociraptor.",
+"Sete mortos e três em condição crítica.",
+"Smegma.",
+"Alcoolismo.",
+"Um cara de meia idade de patins.",
+"Olhando no espelho, passando batom, e cochichando “Hoje, você vai transar com o Tom Cruise.",
+"Pegando meu homem pelos punhos de amor e comendo a bunda grande dele.",
+"Um pirulito gigante.",
+"Auto desgosto.",
+"Sentar no meu rosto e me falar que sou um lixo.",
+"Preliminares mais ou menos.",
+"A Bíblia sagrada.",
+"Porno alemão de masmorras.",
+"Estar em fogo.",
+"Gravidez adolescente.",
+"Gandhi.",
+"Seu irmão estranho.",
+"Uma Lanterna.",
+"Uma pirâmide de cabeças decapitadas.",
+"Um ereção que dura mais que quatro horas.",
+"Sexo a três com minha esposa e Shaquille O'Neal.",
+"O passado.",
+"Minha genitália.",
+"Um jato de diarréia sem fim.",
+"Ciência.",
+"Sexo oral não recíproco.",
+"Aves que não voam.",
+"Uma boa cheirada.",
+"50,000 volts direto nos mamilos.",
+"Café da manhã balanceado.",
+"Pássaros mortos por todos os lados.",
+"A chegada da pizza.",
+"Desordem permanente de expressão facial de orgasmo.",
+"O sabor fresco e refrescante de Pepsi®.",
+"Armas quimicas.",
+"Danilo Gentili.",
+"Imaginando se é possível levar um pouco da salsa embora.",
+"Bananas.",
+"Post-it passivo agressivo.",
+"Emails da Dilma.",
+"Trocar para Allianz®.",
+"Fazer um xixizinho.",
+"Sonhos molhados.",
+"Os judeus.",
+"Meu marido filho da puta.",
+"Coxas poderosas.",
+"Essas safadas.",
+"A única pessoa gay em centenas de quilômetros.",
+"Fazer sexo pela primeira vez.",
+"Donald J. Trump.",
+"Dar um beijo na testa da vovó e desligar os aparelhos.",
+"Tensão sexual.",
+"Um rifle automático.",
+"Meu sutiã bom.",
+"Bater na cara de um político.",
+"Whiskas®.",
+"Ser rico.",
+"Doce, doce vingança.",
+"Direita Política.",
+"Cheirando e beijando meu pé.",
+"Uma mulher muito mais nova.",
+"Miséria.",
+"Pilotos Kamikaze.",
+"Cometer suicídio.",
+"A agenda gay.",
+"Um mexicano.",
+"Um falcão com boné na cabeça.",
+"Música de mago.",
+"O personagem Ki-Suco.",
+"Explicar a diferença entre sexo e gênero.",
+"Amostras grátis.",
+"Machucando aqueles mais próximos de mim.",
+"Fazer a coisa certa.",
+"O acordo para contagem de escravos para taxação.",
+"Lactação.",
+"Paz mundial.",
+"Calar a boca para eu poder assitir o jogo.",
+"Comendo um ovo cozido que saiu do cu do meu marido.",
+"RoboCop.",
+"Um peitinho para fora.",
+"Justin Bieber.",
+"Oompa-Loompas.",
+"Cantar lodelei inapropriado.",
+"Puberdade.",
+"Fantasmas.",
+"Rivotril diário.",
+"Comendo minha irmã.",
+"Amarrar três pênis em um nó.",
+"Mãos de jazz vigorosas.",
+"Tomando uma dedada.",
+"Meu motorista de Uber.",
+"Geladinho.",
+"Violência policial.",
+"Encher minha maleta com coisas de trabalho.",
+"Pré-adolescentes.",
+"Minha filha gorda.",
+"Rap.",
+"Desaparecer no nada.",
+"Darth Vader.",
+"Uma punheta triste.",
+"Exatamente o que você esperava.",
+"Esperando um arroto e vomitando no chão.",
+"Adderall®.",
+"Sua mãe.",
+"Lado do peitinho.",
+"Um polvo batendo sete punhetas e fumando um cigarro.",
+"Meu pescoço, minhas costas, minha boceta e minha bunda.",
+"J.D. Power e seus associados.",
+"Herpes de boca.",
+"Esperma de baleia.",
+"Mulher de cor.",
+"Homem discutindo os sentimentos de uma maneira emocionalmente saudável.",
+"Incesto.",
+"Pac-Man bebendo esperma de maneira descontrolada.",
+"Casualmente sugerindo sexo a três.",
+"Ficando sem sêmen.",
+"Deus.",
+"Atropelar uma criança com um Lifan.",
+"Urinando na minha boca sedenta.",
+"Emoções.",
+"Lamber as coisas para falar que são suas.",
+"Trabalhos.",
+"Placenta.",
+"Combustão humana espontânea.",
+"Episódio final do Big Brother Brasil.",
+"Jogando uvas em um homem até que ele perca o contato com a realidade.",
+"Estabelecer dominância.",
+"Pintura a dedo.",
+"Cheiro de pessoa velha.",
+"Ser esmagado por uma máquina de vendas.",
+"Meus demônios internos.",
+"Uma Super Soaker® cheia de urina de gato.",
+"Aaron Burr.",
+"Abraçando.",
+"Quanta maconha der para comprar com R$20.",
+"Amputações do campo de batalha.",
+"Spaghetti? De novo?",
+"Juscelino Kubitschek.",
+"Uma festa de aniversário ruim.",
+"Nachos para a mesa.",
+"Virar uma blueberry.",
+"Um mini cavalo.",
+"Caranguejo.",
+"Vendendo crack para crianças.",
+"Um plot twist do M. Night Shyamalan.",
+"Pessoas marrons.",
+"Destruição mutuamente garantida.",
+"Pedófilos.",
+"Fermento.",
+"Quão ruim minha filha fodeu o recital de dança.",
+"Retângulos.",
+"Catapultas.",
+"Pessoas pobres.",
+"Apenas namorar mulheres asiáticas.",
+"The Hustle.",
+"A Força.",
+"Como é incrível comer cogumelos.",
+"Julgando todo mundo.",
+"Kourtney, Kim, Khloe, Kendall, e Kylie.",
+"Casar, ter uns filhos, comprar umas coisas, aposentar na Flórida, e morrer.",
+"Um pouco de paz e silêncio, droga.",
+"AIDS.",
+"Foto de peitos.",
+"Personagens femininos fortes.",
+"Um pouco de base, rímel e um toque de blush.",
+"Tratamento em Hospício.",
+"Ficar muito louco.",
+"Epidemia de opioides.",
+"Inveja peniana.",
+"Terapia de conversão gay.",
+"Hamburguer e boceta.",
+"Chanceler alemã Angela Merkel.",
+"A KKK.",
+"Um polvo pangênero que vaga no cosmos em busca do amor.",
+"Metanfetamina.",
+"Servidão.",
+"Segurar uma criança e peidar nela.",
+"A Bop It™.",
+"A coisa toda de manteiga.",
+"Ainda ser virgem.",
+"Resolver problemas com violência.",
+"Tomar uma gozada.",
+"Bukkake pixelado.",
+"Uma vida de tristeza.",
+"Ficar um dia inteiro sem masturbação.",
+"Foto de rola.",
+"Racismo.",
+"Ódio menstrual.",
+"Raios de sol e Arco-íris.",
+"Terrorismo Islâmico radical.",
+"Bíceps gigantes.",
+"Minha ereçãozinha.",
+"Secar.",
+"Um jato de porra que pega a luz enquanto se arqueia no ar da manhã.",
+"Executar um refém a cada hora.",
+"As músicas Africanas.",
+"Quebrando em som e dança.",
+"Lepra.",
+"Gloryhole.",
+"Lâminas de mamilos.",
+"O coração de uma criança.",
+"Filhotinhos!",
+"Camaradas em Cristo.",
+"Pênis de menininhos.",
+"Acordando meio sem roupa no estacionamento do Denny.",
+"Uma velha senhora que conhece bem um pênis.",
+"Tirar as drogas das ruas e colocá-las no meu corpo.",
+"O delicioso cu de Daniel Radcliffe.",
+"Ouvir ativamente.",
+"Limpeza étnica.",
+"Coceira vaginal.",
+"Chupar meu namorado com tanta força que ele cague.",
+"Uma tonelada de almondegas.",
+"Uma salada para homens que é feita de metal.",
+"Esperando até o casamento.",
+"Estupidez incomensurável.",
+"Objetos brilhantes.",
+"O próprio Diabo.",
+"Autocanibalismo.",
+"Disfunção erétil.",
+"Minha coleção de brinquedos sexuais japoneses.",
+"O Papa.",
+"Pessoas brancas.",
+"Porno de tentáculos.",
+"Meu buraco de transar rosa brilhante.",
+"Até onde consigo colocar meu pênis na minha bunda.",
+"Tendo ânus no lugar dos olhos.",
+"O solo de “My Heart Will Go On.",
+"Seppuku.",
+"Danny DeVito.",
+"A magia do teatro ao vivo.",
+"Jogar uma virgem em um vulcão.",
+"Dwayne “The Rock Johnson.",
+"Aceitar o jeito que as coisas são.",
+"NBA superstar LeBron James.",
+"Ouvir os problemas dela sem tentar resolver.",
+"Terapia.",
+"Ser um gordo idiota.",
+"Cagando para fora e para dentro. Para sempre.",
+"Rasgando aquela bunda como embrulho de presente na manhã de Natal.",
+"Mais pinto de elefante do que eu esperava.",
+"Uma surpresa salgada.",
+"O Sul.",
+"A violação do nosso direito humano mais básico.",
+"Sapateado como se não houvesse amanhã.",
+"Sexo consensual.",
+"Contar uma história merda que não vai para lugar nenhum.",
+"Um bom e forte gorila.",
+"Vendo meu pai chorar.",
+"Necrofilia.",
+"Ser uma mulher.",
+"Sofrer um acidente de carro muito grave.",
+"Beakman, o cara da ciência.",
+"Pessoas negras.",
+"Os escoteiros da América.",
+"Lunchables®.",
+"Vadias.",
+"Algum garoto punk que roubou meu sanduíche de peru.",
+"Órfãos comoventes.",
+"Spirit Linhas Aéreas.",
+"Meninos de bunda redonda.",
+"Uma tigela de maionese e dentes humanos.",
+"Bunda queimando por conta da comida picante.",
+"Dizendo “Eu amo você.",
+"Enfiar um pote de vidro na minha bunda.",
+"O verdadeiro significado do Natal.",
+"Alguns dos melhores rappers do jogo.",
+"Ter e manter uma franquia de Chili.",
+"Estrogênio.",
+"Meninas.",
+"Os Russos.",
+"Um ânus branqueado.",
+"Fodendo o meteorologista ao vivo na televisão.",
+"TEPT.",
+"Forças sombrias e misteriosas além do nosso controle.",
+"Cobertores contra varíola.",
+"Masturbação.",
+"Mendigos.",
+"Peido vaginal.",
+"Os caras de Queer Eye.",
+"Cardi B.",
+"Viagra®.",
+"Sopa que está quente demais.",
+"Muhammad (Que a paz esteja com ele).",
+"Explicando como funcionam as vaginas.",
+"Meryl Streep, vencedora do Oscar.",
+"Beber sozinho.",
+"Dedo de rola.",
+"Múltiplas feridas de faca.",
+"Fraldas sujas.",
+"Toque de suporte na parte de baixo das costas.",
+"Bolinhas anais.",
+"Massacrando civis inocentes.",
+"Puxar para fora.",
+"Ser capaz de falar com elefantes.",
+"Carne de cavalo.",
+"Um chapéu bem legal.",
+"Stalin.",
+"Um pelo pubiano perdido.",
+"Adorando aquela buceta.",
+"Confiança totalmente injustificada.",
+"Fazendo na bunda.",
+"Minha ex-mulher.",
+"Ensinando um robô a amar.",
+"Tocar bem no pênis de um pug.",
+"Um moinho cheio de corpos.",
+"Count Chocula.",
+"Vladimir Putin.",
+"O Patriarcado.",
+"O teto de vidro.",
+"Vomitando comida marinha e com sangramento anal.",
+"O sonho americano.",
+"Não usar calças.",
+"Minhas bolas na sua cara.",
+"Cagar em um notebook e fechar ele.",
+"Bebês mortos.",
+"Prepúcio.",
+"Um solo de saxofone.",
+"Italianos.",
+"Um feto.",
+"Atirando com um rifle para cima enquanto comia um porco grunhindo.",
+"Mike Pence.",
+"10.000 refugiados sírios.",
+"Esterilização forçada.",
+"Meu status de relacionamento.",
+"Uma gravidez indesejada.",
+"marvel.",
+"Meu chefe.",
+"Abelhas?",
+"Harry Potter Pornô.",
+"Parir o Anticristo.",
+"Três pintos ao mesmo tempo.",
+"Nazistas.",
+"Meio kilo da doce heroína mexicana de preta.",
+"O que essa boca faz.",
+"Pais mortos.",
+"Permanência do objeto.",
+"Polegares opositores.",
+"Perguntas de vestibular preconceituosas.",
+"A grande depressão.",
+"Motosserra no lugar das mãos.",
+"Nicolas Cage.",
+"Concursos de beleza infantil.",
+"Explosões.",
+"Não vacinando meu filho porque sou retardado.",
+"Nosso dildo.",
+"Jogando tinta spray.",
+"Um homem à beira do orgasmo.",
+"Repressão.",
+"Invadir a Polônia.",
+"Minha vagina.",
+"Calça sem bunda.",
+"Assassino.",
+"Dar 110%.",
+"Sua Majestade, Rainha Elizabeth II.",
+"Jesus negro.",
+"Memes.",
+"Sexo com animais.",
+"Ser marginalizado.",
+"Goblins.",
+"Esperança.",
+"Liberais.",
+"Um micropênis.",
+"Minha alma.",
+"Uma bola de cera de ouvido, sêmen e pedaços de unha de pé.",
+"Uma horda viking.",
+"Pessoas gostosas.",
+"Fervendo com ressentimento silencioso.",
+"Complexo de Edipo.",
+"Ganso.",
+"Calças extremamente apertadas.",
+"Fox News.",
+"Um garotinho que não para de falar sobre dinossauros.",
+"Fazendo careta.",
+"Atropelamento intencional.",
+"Revolução feminina.",
+"Algum cara.",
+"Juiz Judite.",
+"Subindo no poste telefônico e virando um só com a Embratel.",
+"No tiroteio em massa desse mês.",
+"Barack Obama.",
+"Imigrantes ilegais.",
+"Idoso japonês.",
+"Orgasmo feminino.",
+"Heteronormatividade.",
+"Migalhas por todo o maldito tapete.",
+"Arnold Schwarzenegger.",
+"A senha do wifi.",
+"Abdômen espetacular.",
+"Um pássaro que caga bosta humana.",
+"Um leão de zoológico triste.",
+"Uma sacola de feijões mágicos.",
+"Escolhas de vida ruins.",
+"Minha vida sexual.",
+"Auschwitz.",
+"Uma tartaruga, do nada, mordendo a ponta do seu pênis.",
+"Todos os caras que transei.",
+"O clitóris.",
+"O Big Bang.",
+"Minas terrestres.",
+"Todo o Coro do Tabernáculo Mórmon.",
+"Um mini-porco vestindo roupa de chuva e botas.",
+"Bafo de rola.",
+"Bater uma em uma piscina de lágrimas de crianças.",
+"Rola.",
+"Tempo para mim.",
+"Ferrovia subterrânea.",
+"Caiaque com minhas putas.",
+"Oceano de problemas.",
+"Fantasia com lenhadores.",
+"A voz do Morgan Freeman.",
+"Mulheres em comerciais de iogurte.",
+"Próstata.",
+"Ser um maldito feiticeiro.",
+"Minha bunda preta.",
+"Conexão humana genuína.",
+"Falando que estou prestes a gozar.",
+"Bolas.",
+"Vovó.",
+"Atrito.",
+"Pedaços de um mochileiro morto.",
+"Peidar e ir embora.",
+"Ser babaca com crianças.",
+"Um trilhão de dólares.",
+"Afogando as crianças na banheira.",
+"Morrendo.",
+"Beber água da privada e comer lixo.",
+"Os gays.",
+"Os gritos ... os gritos horríveis.",
+"Homens.",
+"O bombardeio de Nagasaki.",
+"Peitos falsos.",
+"Os Amish.",
+"David Bowie voando em um tigre feito de relâmpago.",
+"Minha cara feia e personalidade ruim.",
+"Um tapa de vadia.",
+"Um tumor cerebral.",
+"O próprio medo.",
+"Judeus, hippies, e homosexuais.",
+"O leiteiro.",
+"Cartas Contra a Humanidade."
 ];
-export const BRANCAS_18=['Uma rapidinha no estacionamento.','Algemas de pelúcia.','O ex às 3 da manhã.','Uma lingerie que não fecha.','Gemer mais alto que o vizinho.','Um nudes com o dedo na frente.','O chuveiro desligando na hora H.','Uma camisinha sabor tutti-frutti.','Chamar pelo nome errado.','O motel com espelho no teto.','Um chupão no lugar errado.','Fingir orgasmo e ser aplaudido.','Um vibrador barulhento demais.','Uma DR no meio da transa.','A preliminar mais curta da história.','Um strip-tease com câimbra.','A cama que range.','Uma pegação no banheiro da balada.','O casal do quarto ao lado.','Um fetiche por pés.','O "foi bom pra você?".','Um tapa na bunda mal calculado.','Transar com a TV ligada no jornal.','Um áudio gemendo enviado no grupo da família.','Ser corno com estilo.','Um contatinho salvo como "Pedreiro".','A posição do frango assado.','Uma sex shop com cartão fidelidade.','Uma calcinha comestível de jiló.','Um gel que esquenta demais.'];
-// Monte da rodada: tudo junto, com as cartas 18+ só se a sala confirmou maioridade.
-export function pretasSemNocao(adulto){return adulto?[...PRETAS,...PRETAS_18]:PRETAS;}
-export function brancasPara(adulto){return adulto?[...BRANCAS,...BRANCAS_18]:BRANCAS;}
+export function pretasSemNocao(){return PRETAS;}
+export function brancasPara(){return BRANCAS;}

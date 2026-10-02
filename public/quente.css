@@ -220,3 +220,7 @@ body .carta-branca,#interactions button.carta-branca{display:flex!important;flex
 #interactions button.carta-branca.revela:disabled{opacity:1;cursor:default}
 .carta-branca.revela:not(.show):after{content:''}
 .revela-status{font-weight:900;text-align:center;font-size:13px;color:#ffd23f;margin:4px 0 0}
+.carta-branca.marcada{position:relative;box-shadow:0 4px 0 rgba(0,0,0,.55),0 0 0 3px #ff1f2d!important;transform:translateY(-3px)}
+.carta-branca.marcada:before{content:attr(data-ordem);position:absolute;top:-10px;right:-8px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#ff1f2d;color:#fff;font-family:'Bungee',Impact,sans-serif;font-size:13px;border:2px solid #000}
+.carta-branca.previa{background:#111!important;color:#fff!important;border-color:#ff1f2d!important}
+.carta-branca.previa:after{color:#777}
