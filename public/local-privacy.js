@@ -1,4 +1,4 @@
-import {textForViewer,replyIds} from './motor.js?v=quente23';
+import {textForViewer,replyIds,respostasAnonimas} from './motor.js?v=quente24';
 // Build a new response from allowed fields; never send the database snapshot.
 export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');
@@ -10,11 +10,13 @@ export function viewFor(room,uid){
  const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
  card.viewerText=visible?(!participant&&!results&&['o_espiao','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
  if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
+ if(visible&&c.hands?.[uid]&&!results)card.hand=structuredClone(c.hands[uid]);
  if(results){for(const k of ['secret','spyId','lie','awards','extremes','verdict','verdictWinner'])if(c[k]!==undefined)card[k]=c[k];}
  else if(own&&visible&&c.lie!==undefined)card.lie=c.lie;
  const answers=p.answers||{};let shown={};
  if(!c.skipped&&(results||c.phase==='public'&&(c.modeId==='preencha_a_lacuna'||c.modeId==='apenas_uma_dica'&&c.hintsRevealed)))shown=structuredClone(answers);
  else if(answers[uid]!==undefined)shown[uid]=answers[uid];
- out.partida={status:p.status,rodadaAtual:p.rodadaAtual,totalRodadas:p.totalRodadas,cartaAtual:card,answers:shown,answerCount:replyIds(room).filter(id=>Object.hasOwn(answers,id)).length,expectedCount:replyIds(room).length,answeredIds:replyIds(room).filter(id=>Object.hasOwn(answers,id))};return out;
+ const todos=replyIds(room).every(id=>Object.hasOwn(answers,id));
+ out.partida={respostas:c.modeId==='carta_branca'&&c.phase==='public'&&!c.skipped&&todos?respostasAnonimas(c,answers):[],status:p.status,rodadaAtual:p.rodadaAtual,totalRodadas:p.totalRodadas,cartaAtual:card,answers:shown,answerCount:replyIds(room).filter(id=>Object.hasOwn(answers,id)).length,expectedCount:replyIds(room).length,answeredIds:replyIds(room).filter(id=>Object.hasOwn(answers,id))};return out;
 }
 

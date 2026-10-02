@@ -3,6 +3,7 @@ export const FLOWS={
  eu_nunca:{steps:['Comprar','Ler','Responder','Descobrir'],read:'Leia a frase para a mesa e abra as respostas.',play:'Marque Já fiz ou Nunca fiz. Conte a história se quiser.',reveal:'Abrir respostas'},
  o_que_voce_prefere:{steps:['Comprar','Ler','Escolher','Comparar'],read:'Leia as duas alternativas e abra as escolhas.',play:'Escolha uma alternativa. Depois, contem seus motivos.',reveal:'Abrir escolhas'},
  preencha_a_lacuna:{steps:['Comprar','Ler','Completar','Escolher'],read:'Leia a frase incompleta e entregue as opções à mesa.',play:'Complete a frase com a opção que você prefere.',reader:'Aguarde todas as respostas e escolha a que mais gostou.',reveal:'Entregar respostas'},
+ carta_branca:{steps:['Puxar','Ler a preta','Jogar a branca','Juiz escolhe'],read:'Você é o juiz. Leia a carta preta em voz alta e revele para a mesa.',play:'Escolha UMA das 10 cartas brancas da sua mão. Ninguém sabe qual é a sua.',reader:'Espere todo mundo jogar. Depois leia cada resposta em voz alta e escolha a mais engraçada.',reveal:'Revelar a carta preta'},
  niveis_intimidade:{steps:['Comprar','Ler','Conversar','Encerrar'],read:'Leia a pergunta. Você pode responder, convidar a mesa ou pular.',play:'Conversem sem pressa. Ninguém é obrigado a responder.',reveal:'Conversar com a mesa'},
  verdade_ou_desafio_hot:{steps:['Comprar','Escolher','Participar','Encerrar'],read:'Escolha Verdade ou Desafio. Depois compartilhe a carta.',play:'Respondam ou façam o desafio. É permitido pular.',reveal:'Compartilhar escolha'},
  duas_verdades_uma_mentira:{steps:['Comprar','Escrever','Adivinhar','Revelar'],read:'Escreva dois fatos verdadeiros e um falso. Marque a mentira e salve.',play:'Qual dos três fatos é mentira? Envie seu palpite.',reader:'Aguarde os palpites. A mentira será revelada no fim.',reveal:'Apresentar os três fatos'},
@@ -37,11 +38,12 @@ export function outcome(c,p,players){
  if(c.modeId==='duas_verdades_uma_mentira'){title='A mentira era o fato '+(c.lie+1);detail=c.statements?.[c.lie]||'';}
  if(c.modeId==='o_termometro'){const e=c.extremes||{};title=e.unanimous?'Unanimidade: ninguém brigou':c.verdictWinner?name(c.verdictWinner)+' venceu o tribunal':e.low?name(e.low)+' ('+e.lowValue+') VS '+name(e.high)+' ('+e.highValue+')':'Notas reveladas';detail=e.unanimous?'Todo mundo deu a mesma nota.':c.verdictWinner===undefined&&e.low?'Os extremos defendem a nota; o resto da mesa vota em quem convenceu.':Object.entries(answers).map(([id,v])=>name(id)+': '+v).join(' · ');}
  if(c.modeId==='apenas_uma_dica'){title=c.correct?'Acertou! Você é '+c.secret+'!':'Errou! Você era '+c.secret+'.';detail=`Palpite: ${c.guess||'nenhum'}.`;}
+ if(c.modeId==='carta_branca'){title=c.winner?name(c.winner)+' levou a rodada':'Rodada encerrada';detail=(answers[c.winner]||'')+(c.winner?' — escolhida pelo juiz':'');}
  if(c.modeId==='preencha_a_lacuna'){title='A resposta escolhida';detail=(answers[c.winner]||'')+' — '+name(c.winner);}
  if(c.modeId==='palavra_proibida'){title=c.winner?name(c.winner)+' acertou!':'A palavra era '+c.secret;detail='Resposta: '+c.secret;}
  if(c.modeId==='niveis_intimidade'){title='Respondeu sem filtro!';detail=name(c.readerId)+' encarou a pergunta. Próxima vítima?';}
  if(c.modeId==='verdade_ou_desafio_hot'){title=c.choice==='dare'?'Desafio cumprido!':'Verdade revelada!';detail=name(c.readerId)+(c.choice==='dare'?' encarou o desafio.':' abriu o jogo.');}
- return {title,detail,rows:['apenas_uma_dica','preencha_a_lacuna','palavra_proibida'].includes(c.modeId)?[]:rows};
+ return {title,detail,rows:['apenas_uma_dica','preencha_a_lacuna','carta_branca','palavra_proibida'].includes(c.modeId)?[]:rows};
 }
 
 // Papel de cada pessoa na rodada: deixa claro "o que EU faço agora".
@@ -55,6 +57,7 @@ export function roleFor(c,uid,viewerText=''){
   case'palavra_proibida':return own?{label:'🗣️ Explicador',text:'Explique a palavra em voz alta sem usar os termos proibidos.'}:{label:'🎯 Adivinho',text:'Ouça e digite seu palpite. O primeiro acerto vence.'};
   case'o_termometro':return own?{label:'🌡️ Lê a treta',text:'Leia a frase e vote também, escondido.'}:{label:'⚖️ Jurado',text:'Dê sua nota de 0 a 10 e trave. Se ficar num extremo, vai ter que se defender.'};
   case'duas_verdades_uma_mentira':return own?{label:'🎭 Mentiroso',text:'Apresente os três fatos com cara de paisagem.'}:{label:'🔎 Detetive',text:'Descubra qual dos três fatos é a mentira.'};
+  case'carta_branca':return own?{label:'⚖️ Juiz',text:'Leia a carta preta e escolha a melhor resposta, sem saber de quem é.'}:{label:'🎴 Jogador',text:'Jogue a carta branca mais sem noção da sua mão.'};
   case'preencha_a_lacuna':return own?{label:'⚖️ Juiz',text:'Espere as respostas e escolha a sua favorita.'}:{label:'🃏 Jogador',text:'Escolha o final que vai conquistar o juiz.'};
   case'batalha_de_argumentos':return c.debaters?.[0]===uid?{label:'🛡️ Defensor',text:'Defenda a frase da carta com unhas e dentes.'}:c.debaters?.[1]===uid?{label:'⚔️ Atacante',text:'Argumente CONTRA a frase da carta.'}:{label:'⚖️ Jurado',text:'Ouça os dois e vote no melhor argumento.'};
   case'niveis_intimidade':case'verdade_ou_desafio_hot':return own?{label:'🔥 Na berlinda',text:'É com você: responda ou cumpra em voz alta.'}:{label:'👀 Plateia',text:'Cobre a resposta completa. Depois é a sua vez.'};

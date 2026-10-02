@@ -1,17 +1,17 @@
-import {mountChat} from './chat-ui.js?v=quente23';
-import {LocalRoomService} from './local-room.js?v=quente23';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente23';
-import {TONES} from './editorial.js?v=quente23';
-import {mountSettings} from './settings.js?v=quente23';
-import {MAPAS,setRoomMap} from './visual.js?v=quente23';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente23';
-import {GameAudio} from './som.js?v=quente23';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente23';
-import {ligarSonsDaInterface} from './sfx.js?v=quente23';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente23';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente23';
+import {mountChat} from './chat-ui.js?v=quente24';
+import {LocalRoomService} from './local-room.js?v=quente24';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente24';
+import {TONES} from './editorial.js?v=quente24';
+import {mountSettings} from './settings.js?v=quente24';
+import {MAPAS,setRoomMap} from './visual.js?v=quente24';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente24';
+import {GameAudio} from './som.js?v=quente24';
+import {contagem,transicao,depois,setSom} from './abertura.js?v=quente24';
+import {ligarSonsDaInterface} from './sfx.js?v=quente24';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente24';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente24';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente23';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente24';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -108,7 +108,7 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
  if(c.phase==='private'){
  if(reader&&c.modeId==='verdade_ou_desafio_hot'){box.append(btn('Verdade',()=>action('truth',{choice:'truth'}),c.choice==='truth'?'selected':''),btn('Desafio',()=>action('truth',{choice:'dare'}),c.choice==='dare'?'selected':''));}
  if(reader&&c.modeId==='duas_verdades_uma_mentira'){for(let i=0;i<3;i++){field('fact-'+i,'Fato '+(i+1));const l=el('label','Esta é a mentira '),r=document.createElement('input');r.type='radio';r.name='lie';r.id='lie-'+i;r.value=String(i);l.prepend(r);box.append(l);}box.append(btn(c.statements?'Atualizar fatos':'Salvar os três fatos',()=>{const lie=box.querySelector('input[name=lie]:checked');action('statements',{statements:[0,1,2].map(i=>$('fact-'+i).value),lie:lie?Number(lie.value):-1});}));}
- }else if(c.phase==='results'){renderResults(box,c,p);}
+ }else if(c.phase==='results'){if(c.modeId==='carta_branca'&&!c.skipped){const nomeDe=id=>room.jogadores[id]?.nome||'Jogador';box.append(el('h3','O que cada um jogou'));for(const [id,w] of Object.entries(answers)){const d=el('div',undefined,'carta-branca mini'+(id===c.winner?' vencedora':''));d.append(el('span',w),el('small',(id===c.winner?'👑 ':'')+nomeDe(id)));box.append(d);}}renderResults(box,c,p);}
  else if(c.votingReady===false){box.append(el('p',FLOWS[c.modeId].discussion));if(c.debaters)box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Leitor')+' defende · '+(room.jogadores[c.debaters[1]]?.nome||'Outro jogador')+' discorda'));}
  else{
  if(!isParticipant)box.append(el('p','Você poderá responder na próxima rodada.'));
@@ -118,6 +118,10 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
  else if(c.modeId==='preencha_a_lacuna'){if(reader){box.append(el('h3','Escolha a resposta que melhor completa a frase'));if(p.answerCount>=p.expectedCount)Object.entries(answers).forEach(([id,value])=>box.append(btn(value,()=>action('judge',{winner:id}))));else box.append(el('p','A escolha abre quando todos enviarem suas respostas.'));if(!Object.keys(answers).length)box.append(el('p','Aguardando as cartas brancas da mesa.'));}else{box.append(el('p','Leia a situação acima. Escolha a opção que completa o espaço em branco; o leitor decide sua favorita.'));c.white.forEach(v=>choose(v,v));}}
  else if(c.modeId==='duas_verdades_uma_mentira'){if(reader)box.append(el('p','Aguarde os palpites. Sua mentira é o fato '+(c.lie+1)+'.'));else c.statements?.forEach((v,i)=>choose((i+1)+'. '+v,String(i)));}
  else if(c.modeId==='batalha_de_argumentos'){box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Jogador')+' defende a ideia. '+(room.jogadores[c.debaters[1]]?.nome||'Jogador')+' argumenta contra.'));c.debaters.forEach(id=>choose('Melhor argumento: '+(room.jogadores[id]?.nome||'Jogador'),id));}
+ else if(c.modeId==='carta_branca'){const prontas=p.respostas||[];
+  if(reader){if(prontas.length){box.append(el('h3','Leia cada resposta em voz alta e escolha a melhor'));prontas.forEach(w=>{const b=btn(w,()=>action('escolher',{value:w}),'carta-branca');b.disabled=busy||!service.online;box.append(b);});}else box.append(el('p','Você é o juiz. '+(p.answerCount||0)+'/'+(p.expectedCount||0)+' já jogaram a carta branca.','thermo-pista'));}
+  else if(isParticipant){if(myAnswer===undefined){box.append(el('h3','Sua mão: jogue UMA carta branca'));const g=el('div',undefined,'mao-brancas');(c.hand||[]).forEach(w=>{const b=btn(w,()=>action('answer',{value:w}),'carta-branca');b.disabled=busy||!service.online;g.append(b);});box.append(g);}
+   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',myAnswer,'carta-branca jogada'));if(prontas.length){box.append(el('h3','Na mesa (o juiz está escolhendo)'));prontas.forEach(w=>box.append(el('div',w,'carta-branca mini')));}else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
  else if(c.modeId==='apenas_uma_dica'){if(reader){if(!c.hintsRevealed){box.append(el('p','Aguarde todas as dicas. Elas aparecerão automaticamente, sem as repetidas.'));}else{const hints=uniqueHints(answers);hints.forEach(h=>box.append(el('span',h,'hint-chip')));if(!hints.length)box.append(el('p','Nenhuma dica única recebida.'));submitText('Quem você é?','guess',80);}}else if(c.hintsRevealed){box.append(el('p','As dicas foram entregues ao leitor.'));}else submitText('Sua dica (uma palavra, sem o nome)');}
  else if(c.modeId==='palavra_proibida'){if(reader)box.append(el('p','Explique em voz alta, sem usar os termos da carta.'));else submitText('Seu palpite');}
  else box.append(el('p','Respondam em voz alta. Ao terminar a conversa, concluam a rodada.'));

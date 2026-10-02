@@ -17,6 +17,7 @@ for(const mode of Object.keys(modes))test('shared local flow and handoff: '+mode
  const values={quem_e_mais_provavel:reader,eu_nunca:'JA_FIZ',o_que_voce_prefere:'0',bandeiras_vermelhas:'0',duas_verdades_uma_mentira:'1',o_termometro:'1',o_espiao:reader,batalha_de_argumentos:reader};
  if(values[mode])for(const id of replyIds(s.room)){s.switchPlayer(id);await act(s,'answer',{value:values[mode]});}
  else if(mode==='preencha_a_lacuna'){for(const id of replyIds(s.room)){s.switchPlayer(id);await act(s,'answer',{value:s.room.partida.cartaAtual.white[0]});}s.switchPlayer(reader);await act(s,'judge',{winner:other});}
+ else if(mode==='carta_branca'){const c2=s.room.partida.cartaAtual;for(const id of replyIds(s.room)){s.switchPlayer(id);await act(s,'answer',{value:c2.hands[id][0]});}s.switchPlayer(reader);await act(s,'escolher',{value:c2.hands[other][0]});}
  else if(mode==='apenas_uma_dica'){for(const id of replyIds(s.room)){s.switchPlayer(id);await act(s,'answer',{value:'dica'+id});}s.switchPlayer(reader);await act(s,'guess',{value:s.room.partida.cartaAtual.secret});}
  else if(mode==='palavra_proibida'){s.switchPlayer(other);await act(s,'answer',{value:s.room.partida.cartaAtual.secret});}
  else await act(s,'results');
