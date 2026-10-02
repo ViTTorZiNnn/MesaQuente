@@ -115,14 +115,22 @@ function profile(payload) {
 
   return {
     nome: payload.name.trim(),
-    avatar: {
-      emoji: avatar.emoji,
-      cor: avatar.cor
-    },
+    avatar: limparAvatar(avatar),
     conectado: true,
     entrouEm: now,
     lastSeen: now
   };
+}
+
+// Avatar: emoji e cor; opcionalmente uma imagem (pacote do jogo ou link https) com posição e zoom.
+export function limparAvatar(avatar) {
+  const out = { emoji: avatar.emoji, cor: avatar.cor };
+  const img = typeof avatar.img === 'string' ? avatar.img.trim() : '';
+  if (img && img.length <= 500 && (/^https:\/\/[^\s"'<>()]+$/i.test(img) || /^assets\/avatars\/[a-z0-9-]+\.svg$/.test(img))) {
+    const num = (v, min, max, d) => (Number.isFinite(Number(v)) ? Math.min(max, Math.max(min, Number(v))) : d);
+    Object.assign(out, { img, x: num(avatar.x, 0, 100, 50), y: num(avatar.y, 0, 100, 50), z: num(avatar.z, 1, 3, 1) });
+  }
+  return out;
 }
 
 function presence(room, uid, now) {

@@ -58,3 +58,26 @@ html[data-scene=noir] body[data-tone]{--tone-glow:#ffffff}
 html[data-scene=noir] #game #tone-badge,html[data-scene=noir] .tone-badge[data-tone]{background:#f5f5f5!important;color:#000!important}
 html[data-scene=noir] .btn-note{font-family:var(--font-game)!important;letter-spacing:0!important}
 html[data-scene=noir] #game[data-tone] .game-footer,html[data-scene=noir] #game[data-tone] #interactions{box-shadow:6px 6px 0 rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.8)!important}
+
+/* ---------- Lobby de videogame: sotaque de cada mapa ---------- */
+/* Galáxia: cartas holográficas e ingresso nebuloso */
+html[data-scene=galaxia] .lobby .player{background:linear-gradient(160deg,rgba(127,227,255,.18),transparent 35%),linear-gradient(200deg,rgba(255,79,216,.18),transparent 45%),#0b0820!important;border-color:#b9a8ff!important;box-shadow:0 0 0 3px #05030f,0 10px 0 rgba(0,0,0,.6),0 0 26px rgba(139,107,255,.55)!important}
+html[data-scene=galaxia] .lobby .player:before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.18) 45%,transparent 60%);background-size:250% 100%;animation:holo 4s linear infinite;pointer-events:none}
+@keyframes holo{from{background-position:120% 0}to{background-position:-120% 0}}
+html[data-scene=galaxia] .code-line{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 45% 80%,rgba(255,255,255,.7) 0 1px,transparent 2px),linear-gradient(120deg,#5a3dff,#8b6bff 45%,#2fd3ff)!important}
+html[data-scene=galaxia] .mode-pill{border-left-color:#7fe3ff!important;box-shadow:0 0 14px rgba(127,227,255,.2)}
+html[data-scene=galaxia] .lobby .player.host{border-color:#ffd23f!important}
+/* Noir: cartas de jornal, sombras duras e falha ao passar o mouse */
+html[data-scene=noir] .lobby .player{background:#0a0a0a!important;border-color:#f5f5f5!important;border-radius:4px!important;box-shadow:8px 8px 0 rgba(255,255,255,.18),0 0 0 2px #000!important}
+html[data-scene=noir] .lobby .player:hover{animation:ui-glitch .26s steps(2) both}
+html[data-scene=noir] .lobby .player small{color:#bbb!important;font-family:'Courier New',monospace!important}
+html[data-scene=noir] .code-line{background:repeating-linear-gradient(90deg,#f5f5f5 0 2px,transparent 2px 6px),#000!important;border-color:#f5f5f5!important}
+html[data-scene=noir] .code-line strong{color:#000!important;background:#f5f5f5;padding:0 10px;text-shadow:3px 0 rgba(0,0,0,.25)!important;font-family:'Courier New',monospace!important}
+html[data-scene=noir] .mode-pill{border-left-color:#f5f5f5!important;transform:none!important;border-radius:2px!important}
+html[data-scene=noir] .lobby .panel:before{background:linear-gradient(90deg,transparent,#fff,transparent)!important;box-shadow:none!important}
+/* Boteco: comanda de papel e cartas de madeira */
+html[data-scene=boteco] .code-line{background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 22px),#fff4dd!important;border-color:#3b1d0b!important}
+html[data-scene=boteco] .code-line strong{color:#3b1d0b!important;text-shadow:none!important;-webkit-text-stroke:0}
+html[data-scene=boteco] .code-line button{background:#3b1d0b!important}
+html[data-scene=boteco] .lobby .player{background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 3px,transparent 3px 11px),linear-gradient(180deg,#6b3416,#3b1d0b)!important;border-color:#ffd9a8!important}
+html[data-scene=boteco] .mode-pill{border-left-color:#ffb15c!important}

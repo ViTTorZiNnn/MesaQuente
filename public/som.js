@@ -1,5 +1,5 @@
-import {Trilha} from './trilhas.js?v=quente28';
-import {tocar} from './sfx.js?v=quente28';
+import {Trilha} from './trilhas.js?v=quente29';
+import {tocar} from './sfx.js?v=quente29';
 const clamp=v=>Math.max(0,Math.min(100,Number.isFinite(Number(v))?Number(v):16));
 export class GameAudio extends EventTarget {
  constructor(onError=()=>{}){

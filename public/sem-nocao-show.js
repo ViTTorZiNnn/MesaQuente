@@ -1,3 +1,4 @@
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente29';
 // Show de revelação do Sem Noção (estilo videogame):
 // 1) cada carta aparece sozinha, já com a frase completa e o jogador que montou, por alguns segundos;
 // 2) depois todas aparecem juntas e o juiz escolhe a melhor;
@@ -7,7 +8,7 @@ let estado={id:''},box=null,ctx=null,timer=null;
 const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 // «trechos» das cartas brancas viram destaque dentro da frase.
 function frase(texto){const p=make('p','sn-frase');for(const [i,parte] of texto.split(/[«»]/).entries()){if(!parte)continue;p.append(i%2?make('mark',undefined,parte):document.createTextNode(parte));}return p;}
-function jogador(id){const j=ctx.jogadores[id]||{},d=make('div','sn-jogador'),a=make('span','sn-avatar',j.avatar?.emoji||'🙂');a.style.background=j.avatar?.cor||'#e3101f';d.append(a,make('b',undefined,j.nome||'Jogador'));return d;}
+function jogador(id){const j=ctx.jogadores[id]||{},d=make('div','sn-jogador'),a=pintarAvatar(make('span','sn-avatar'),j.avatar);d.append(a,make('b',undefined,j.nome||'Jogador'));return d;}
 function carta(id,grande){const c=ctx.c,d=make('div','sn-carta'+(grande?' grande':''));d.append(make('span','sn-marca','MESA QUENTE · SEM NOÇÃO'),frase(ctx.encaixa(c.text||'',ctx.answers[id]||'')));return d;}
 export function showSemNocao(dados){ctx=dados;const c=dados?.c;
  if(!c||c.modeId!=='carta_branca'||!c.revealStartedAt||c.skipped||!['public','results'].includes(c.phase)){fechar();return;}
