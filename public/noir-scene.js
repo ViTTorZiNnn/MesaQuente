@@ -1,5 +1,5 @@
 // Mapa "Noir Glitch": preto e branco, chuva, persiana, granulado de filme e falhas na tela.
-import {visual,reducedMotion} from './visual.js?v=quente30';
+import {visual,reducedMotion} from './visual.js?v=quente31';
 const canvas=document.getElementById('noir-cena'),ctx=canvas.getContext('2d',{willReadFrequently:false}),base=document.createElement('canvas'),b=base.getContext('2d'),grain=document.createElement('canvas');
 let W=0,H=0,dpr=1,seed=3,last=0,dirty=true,L={},font=false,glitchUntil=0,nextGlitch=3;
 const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
@@ -28,7 +28,7 @@ function glitch(c,time,k){// faixas deslocadas, chiado e flash invertido
  if(Math.random()<.5*k){const y=Math.random()*H;for(let x=0;x<W;x+=3){c.fillStyle='rgba(255,255,255,'+Math.random()*.6+')';c.fillRect(x,y+Math.random()*8,2,1+Math.random()*3);}}
  if(Math.random()<.12*k){c.globalCompositeOperation='difference';c.fillStyle='#fff';c.fillRect(0,0,W,H);c.globalCompositeOperation='source-over';}
 }
-function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='noir')return;const still=reducedMotion();if(still&&!dirty)return;if(t-last<40&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000,c=ctx,k=intensity();
+function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='noir'||document.documentElement.classList.contains('cena-pausada'))return;const still=reducedMotion();if(still&&!dirty)return;if(t-last<40&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000,c=ctx,k=intensity();
  c.setTransform(1,0,0,1,0,0);c.drawImage(base,0,0);c.setTransform(dpr,0,0,dpr,0,0);const wn=L.win;
  // Relâmpago ocasional
  const flash=(time%17)<.18||((time%17)>.3&&(time%17)<.38);if(flash&&!still){c.fillStyle='rgba(255,255,255,.35)';c.fillRect(wn.x,wn.y,wn.w,wn.h);}

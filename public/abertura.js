@@ -1,6 +1,6 @@
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente31';
 // Entrada da partida (jogadores + contagem 5→1) e corte em relâmpago entre as telas.
-import {reducedMotion} from './visual.js?v=quente30';
+import {reducedMotion} from './visual.js?v=quente31';
 let sound=()=>{},counting=false,queue=[];
 export function setSom(fn){sound=fn;}
 export const contando=()=>counting;
@@ -22,8 +22,11 @@ export function transicao(tipo='raio'){if(reducedMotion())return;const now=Date.
  const box=make('div','trans trans-'+tipo);box.setAttribute('aria-hidden','true');
  if(tipo==='entrar'||tipo==='sair')box.append(make('div','trans-cortina'));
  if(tipo==='fim')box.append(make('div','trans-iris'));
- document.body.append(box);sound({entrar:'whoosh',sair:'whooshDown',fim:'boom',rodada:'rodada'}[tipo]||'whoosh');
- setTimeout(()=>box.remove(),tipo==='fim'?1300:tipo==='rodada'?900:800);}
+ if(tipo!=='rodada')pausarCena(true);document.body.append(box);sound({entrar:'whoosh',sair:'whooshDown',fim:'boom',rodada:'rodada'}[tipo]||'whoosh');
+ setTimeout(()=>{box.remove();if(tipo!=='rodada'&&!counting)pausarCena(false);},tipo==='fim'?1300:tipo==='rodada'?900:800);}
+// Enquanto algo cobre a tela, o cenário de fundo e a mesa 3D param de desenhar (evita micro travamentos).
+let aoPausar=()=>{};export function quandoPausar(fn){aoPausar=fn;}
+function pausarCena(v){document.documentElement.classList.toggle('cena-pausada',v);document.body.classList.toggle('contando',v&&counting);aoPausar(v);}
 function relampago(){document.querySelector('.corte')?.remove();const pts=raio(),line=pts.map(([x,y])=>x+'% '+y+'%');
  const box=make('div','corte');box.setAttribute('aria-hidden','true');
  const a=make('div','corte-metade a'),b=make('div','corte-metade b');
@@ -33,7 +36,7 @@ function relampago(){document.querySelector('.corte')?.remove();const pts=raio()
  box.append(a,b,svg);document.body.append(box);sound('zap');setTimeout(()=>box.remove(),800);}
 
 // Contagem de início: nomes dos jogadores entram em placas, depois 5, 4, 3, 2, 1 e VALENDO!
-export function contagem(jogadores,{titulo='A MESA ESQUENTOU'}={}){if(counting)return;counting=true;const still=reducedMotion();
+export function contagem(jogadores,{titulo='A MESA ESQUENTOU'}={}){if(counting)return;counting=true;const still=reducedMotion();pausarCena(true);
  const box=make('div','abertura'+(still?' parada':''));box.setAttribute('role','status');box.setAttribute('aria-live','assertive');
  box.append(make('div','abertura-faixas'));
  const head=make('div','abertura-titulo');head.append(make('small',undefined,'PARTIDA COMEÇANDO'),make('strong',undefined,titulo));
@@ -42,6 +45,6 @@ export function contagem(jogadores,{titulo='A MESA ESQUENTOU'}={}){if(counting)r
  box.append(head,list,num);document.body.append(box);
  let n=5;const show=()=>{num.textContent=n;num.classList.remove('bate');void num.offsetWidth;num.classList.add('bate');box.dataset.n=n;sound('tick');};
  const finish=()=>{num.textContent='VALENDO!';num.classList.remove('bate');void num.offsetWidth;num.classList.add('bate','valendo');box.classList.add('saindo');sound('go');
-  setTimeout(()=>{box.remove();counting=false;transicao('raio');const q=queue;queue=[];q.forEach(fn=>fn());},still?300:650);};
- show();const timer=setInterval(()=>{n--;if(n>0)show();else{clearInterval(timer);finish();}},1000);
+  setTimeout(()=>{box.remove();counting=false;pausarCena(false);transicao('raio');const q=queue;queue=[];q.forEach(fn=>fn());},still?300:650);};
+ num.textContent='';setTimeout(()=>{show();const timer=setInterval(()=>{n--;if(n>0)show();else{clearInterval(timer);finish();}},1000);},still?0:900);
 }

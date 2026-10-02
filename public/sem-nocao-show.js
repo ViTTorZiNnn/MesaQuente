@@ -1,9 +1,11 @@
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente31';
 // Show de revelação do Sem Noção (estilo videogame):
 // 1) cada carta aparece sozinha, já com a frase completa e o jogador que montou, por alguns segundos;
 // 2) depois todas aparecem juntas e o juiz escolhe a melhor;
 // 3) a vencedora ganha destaque com coroa e o show fecha sozinho.
 const POR_CARTA=6000;
+// O show cobre a tela: cenário e mesa 3D param de desenhar enquanto ele está aberto.
+const pausa=v=>{document.documentElement.classList.toggle('cena-pausada',v);dispatchEvent(new CustomEvent('mq-pausa',{detail:v}));};
 let estado={id:''},box=null,ctx=null,timer=null;
 const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 // «trechos» das cartas brancas viram destaque dentro da frase.
@@ -15,10 +17,10 @@ export function showSemNocao(dados){ctx=dados;const c=dados?.c;
  if(estado.id!==c.id)estado={id:c.id,t0:Date.now(),key:''};
  if(estado.fechado)return;
  if(c.phase==='results'&&!estado.fimEm)estado.fimEm=Date.now();
- if(!box){box=make('div','sn-show');box.setAttribute('role','dialog');box.setAttribute('aria-label','Revelação das cartas');document.body.append(box);}
+ if(!box){pausa(true);box=make('div','sn-show');box.setAttribute('role','dialog');box.setAttribute('aria-label','Revelação das cartas');document.body.append(box);}
  if(!timer)timer=setInterval(()=>tick(false),200);
  tick(false);}
-export function fechar(manual=false){box?.remove();box=null;clearInterval(timer);timer=null;if(manual)estado.fechado=true;}
+export function fechar(manual=false){if(box)pausa(false);box?.remove();box=null;clearInterval(timer);timer=null;if(manual)estado.fechado=true;}
 function tick(force){if(!ctx||!box)return;const c=ctx.c,ordem=(c.revealOrder||[]).filter(id=>ctx.answers[id]!==undefined),n=ordem.length,passou=Date.now()-estado.t0,idx=Math.min(n,Math.floor(passou/POR_CARTA));
  const fase=c.phase==='results'?'vencedor':idx<n?'carta':'mesa';
  if(fase==='vencedor'&&Date.now()-estado.fimEm>7000){fechar(true);return;}

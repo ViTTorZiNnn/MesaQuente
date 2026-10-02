@@ -1,7 +1,7 @@
 // Mapa "Mesa Quente" (padrão): a roda vista por uma câmera térmica.
 // A mesa e as pessoas em volta são manchas de calor nas cores da logo (preto → vinho → vermelho → laranja → branco).
 // Quem está "falando" esquenta, a carta no centro pulsa e o calor sobe da mesa. Em cima, um HUD discreto de câmera.
-import {visual,reducedMotion} from './visual.js?v=quente30';
+import {visual,reducedMotion} from './visual.js?v=quente31';
 const canvas=document.getElementById('quente-cena'),ctx=canvas.getContext('2d'),field=document.createElement('canvas'),fc=field.getContext('2d');
 let W=0,H=0,dpr=1,last=0,dirty=true,fw=0,fh=0,img=null,noise=null,seed=5,people=[],wisps=[],heat=1,calma=0,tempShown=31;
 const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
@@ -56,7 +56,7 @@ function hud(c,time,h){const s=document.body.dataset.screen,narrow=W<700,a=s==='
  tempShown+=((26+Math.min(1,h.hot)*13)-tempShown)*.05;const rx=h.hx*W,ry=h.hy*H,r=narrow?16:22;
  if(s!=='game'){c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=1.5;c.beginPath();c.arc(rx,ry,r,0,7);c.moveTo(rx-r-8,ry);c.lineTo(rx-r+6,ry);c.moveTo(rx+r-6,ry);c.lineTo(rx+r+8,ry);c.moveTo(rx,ry-r-8);c.lineTo(rx,ry-r+6);c.moveTo(rx,ry+r-6);c.lineTo(rx,ry+r+8);c.stroke();c.textAlign='left';c.fillText(tempShown.toFixed(1)+'°C',rx+r+10,ry-6);}
  c.textAlign='left';c.textBaseline='bottom';c.fillText('MÁX '+tempShown.toFixed(1)+'°C',m+2,H-m-6);c.restore();}
-function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='quente')return;const still=reducedMotion();if(still&&!dirty)return;if(t-last<50&&!dirty)return;last=t;dirty=false;const time=still?3:t/1000,c=ctx;
+function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='quente'||document.documentElement.classList.contains('cena-pausada'))return;const still=reducedMotion();if(still&&!dirty)return;if(t-last<50&&!dirty)return;last=t;dirty=false;const time=still?3:t/1000,c=ctx;
  heat+=(heatTarget()-heat)*.04;calma+=(calmo()-calma)*.06;if(still){heat=heatTarget();calma=calmo();}
  const h=paint(time);c.setTransform(dpr,0,0,dpr,0,0);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.drawImage(field,0,0,W,H);
  // linhas do sensor e vinheta

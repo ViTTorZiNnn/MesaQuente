@@ -1,5 +1,5 @@
-import {mountVisualControls,reducedMotion} from './visual.js?v=quente30';
-import {mountAudioControls} from './som.js?v=quente30';
+import {mountVisualControls,reducedMotion} from './visual.js?v=quente31';
+import {mountAudioControls} from './som.js?v=quente31';
 export function mountSettings(audio){
  const dialog=document.createElement('dialog');dialog.id='settings';
  dialog.innerHTML='<header><h2>Configurações</h2><button type="button" aria-label="Fechar configurações">×</button></header><div class="dialog-scroll settings-sections"><section id="settings-visual"></section><section id="settings-audio"></section></div>';

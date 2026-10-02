@@ -1,5 +1,5 @@
 // Mapa "Galáxia": espaço profundo com nebulosas, galáxia espiral, planeta com anel e estrelas cadentes.
-import {visual,reducedMotion} from './visual.js?v=quente30';
+import {visual,reducedMotion} from './visual.js?v=quente31';
 const MOODS={
  leve:{bg:['#05030f','#120a2e','#1d0f45'],neb:['#7b4dff','#2fd3ff','#ff7ad9'],planet:['#ffb36b','#ff6a8a'],ring:'#ffd9a8'},
  profundo:{bg:['#02040c','#061633','#0b2350'],neb:['#2f6bff','#2fd3ff','#7b4dff'],planet:['#7fb8ff','#3a5cff'],ring:'#bfe0ff'},
@@ -19,7 +19,7 @@ function build(){const m=MOODS[mood];seed=7;base.width=W*dpr;base.height=H*dpr;b
  S.spiral=Array.from({length:900},(_,i)=>{const arm=i%3,t=rnd();return{a:t*7+arm*Math.PI*2/3+(rnd()-.5)*.35,r:t,c:m.neb[arm%m.neb.length],s:rnd()<.85?1:2};});
  S.planet={x:W*(W<700?.8:.84),y:H*(W<700?.16:.24),r:Math.min(W,H)*(W<700?.09:.075)};S.asteroids=Array.from({length:14},()=>({a:rnd()*7,d:1.3+rnd()*.5,s:1+rnd()*2.5}));
 }
-function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='galaxia')return;const m2=currentMood();if(m2!==mood){mood=m2;build();dirty=true;}const still=reducedMotion();if(still&&!dirty)return;if(t-last<33&&!dirty)return;last=t;dirty=false;
+function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='galaxia'||document.documentElement.classList.contains('cena-pausada'))return;const m2=currentMood();if(m2!==mood){mood=m2;build();dirty=true;}const still=reducedMotion();if(still&&!dirty)return;if(t-last<33&&!dirty)return;last=t;dirty=false;
  const time=still?0:t/1000,m=MOODS[mood],c=ctx;c.setTransform(1,0,0,1,0,0);c.drawImage(base,0,0);c.setTransform(dpr,0,0,dpr,0,0);
  // Nebulosas respirando e se movendo
  c.globalCompositeOperation='lighter';for(const n of S.clouds){const x=n.x+Math.sin(time*.03*n.v+n.p)*60,y=n.y+Math.cos(time*.025*n.v+n.p)*40,r=n.r*(1+.08*Math.sin(time*.2+n.p)),g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,hexA(n.c,.16));g.addColorStop(.5,hexA(n.c,.06));g.addColorStop(1,hexA(n.c,0));c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);}

@@ -1,19 +1,19 @@
-import {mountChat} from './chat-ui.js?v=quente30';
-import {LocalRoomService} from './local-room.js?v=quente30';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente30';
-import {TONES} from './editorial.js?v=quente30';
-import {mountSettings} from './settings.js?v=quente30';
-import {MAPAS,setRoomMap} from './visual.js?v=quente30';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente30';
-import {GameAudio} from './som.js?v=quente30';
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente30';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente30';
-import {ligarSonsDaInterface} from './sfx.js?v=quente30';
-import {showSemNocao,fechar as fecharShow} from './sem-nocao-show.js?v=quente30';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente30';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente30';
+import {mountChat} from './chat-ui.js?v=quente31';
+import {LocalRoomService} from './local-room.js?v=quente31';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente31';
+import {TONES} from './editorial.js?v=quente31';
+import {mountSettings} from './settings.js?v=quente31';
+import {MAPAS,setRoomMap} from './visual.js?v=quente31';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente31';
+import {GameAudio} from './som.js?v=quente31';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente31';
+import {contagem,transicao,depois,setSom,quandoPausar,contando} from './abertura.js?v=quente31';
+import {ligarSonsDaInterface} from './sfx.js?v=quente31';
+import {showSemNocao,fechar as fecharShow} from './sem-nocao-show.js?v=quente31';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente31';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente31';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints,SEP_BRANCAS} from './motor.js?v=quente30';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints,SEP_BRANCAS} from './motor.js?v=quente31';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,tutorialKey='',lobbyKey='',modesKey='',room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -22,7 +22,7 @@ function toast(error){try{tone('error');}catch{}$('toast').textContent=error?.me
 function setScreen(s){const changed=screen!==s,prev=screen;screen=s;if(s!=='game')fecharShow();if(changed){if(s==='game'&&prev==='lobby'&&room)contagem(connected(room).map(id=>room.jogadores[id]),{titulo:room.local?'BORA, GALERA!':'A MESA ESQUENTOU'});else if(prev==='home'||s==='lobby')transicao('entrar');else if(s==='end')transicao('fim');else if(s==='home')transicao('sair');}for(const id of ['home','lobby','game','end'])$(id).hidden=id!==s;document.body.dataset.screen=s;if(s!=='game'){delete document.body.dataset.tone;gameAudio.setMood('lobby');}if(s==='home')setRoomMap(null);if(s!=='lobby'){lobbyCount=0;lobbyKey='';modesKey='';}if(changed&&s==='end')setTimeout(()=>tone('end'),500);if(s==='home')chatUI.update(null,'');if(changed)mesa?.pause(s!=='game');}
 function profileNode(id,p){const n=el('div',undefined,'player'+(id===room.hostId?' host':'')+(p.conectado===false?' off':'')),a=avatarSpan(p.avatar);n.append(a,el('b',p.nome+(id===service.uid?' · você':'')),el('small',id===room.hostId?'Anfitrião':p.conectado===false?'Desconectado':'Na mesa'));if(room.local&&room.status==='lobby'&&id!==room.hostId)n.append(btn('Remover',()=>service.removePlayer(id).catch(toast),'remove-local'));return n;}
 const chatUI=mountChat({send:(text,id)=>service.chat(text,id),getIdentity:()=>service?.uid});
-const gameAudio=new GameAudio(toast);setSom(k=>gameAudio.effect(k));ligarSonsDaInterface(k=>gameAudio.effect(k));mountSettings(gameAudio);mountReactionTray();
+quandoPausar(v=>mesa?.pause(v||screen!=='game'));addEventListener('mq-pausa',e=>mesa?.pause(e.detail||screen!=='game'));const gameAudio=new GameAudio(toast);setSom(k=>gameAudio.effect(k));ligarSonsDaInterface(k=>gameAudio.effect(k));mountSettings(gameAudio);mountReactionTray();
 function tone(kind='draw'){gameAudio.effect(kind);}
 async function action(type,payload={}){if(busy)return;busy=true;render();try{await service.action(type,{cardId:room?.partida?.cartaAtual?.id,...payload});}catch(e){toast(e);}finally{busy=false;render();}}
 function setOnline(online){$('connection').classList.toggle('connected',online);$('connection').textContent=service?.local?'Partida neste aparelho':online?'Conectado':'Sem conexão · tentando reconectar…';if(room)render();}
@@ -108,7 +108,7 @@ function renderTutorial(host,ids){$('tutorial-description').textContent='Cada ro
 $('tutorial').addEventListener('cancel',e=>e.preventDefault());$('ready').onclick=()=>action('ready');$('start-game').onclick=()=>action('start');$('start-tutorial').onclick=()=>action('tutorial');$('restart').onclick=()=>action('restart');
 function renderGame(host,ids){const p=room.partida,c=p.cartaAtual,reader=c.readerId===service.uid,name=room.jogadores[c.readerId]?.nome||'Jogador',isParticipant=c.participants.includes(service.uid),cardText=room.local?textoAoVivo(c):textForViewer(c,service.uid);$('game-room').textContent='SALA '+roomCode;$('game-round').textContent='Rodada '+p.rodadaAtual+' / '+p.totalRodadas;$('game-mode').textContent=modes[c.modeId].nome+(c.level?' · Nível '+c.level:'');$('turn-title').textContent=c.phase==='results'?'Rodada concluída':reader?'Sua vez de ler!':'Vez de '+name;$('turn-hint').textContent=c.phase==='deck'?(reader?'Toque no baralho para puxar sua carta.':'Aguarde o leitor puxar a carta.'):c.phase==='private'?(reader?'Leia a carta. Quando estiver pronto, revele.':'Você vê o verso até o leitor revelar.'):c.phase==='public'?'Conversem e participem da rodada.':'Prontos para a próxima conversa?';$('game-banner').textContent=!isParticipant?'Você entrou durante a rodada e participa da próxima.':room.jogadores[c.readerId]?.conectado===false?'O leitor desconectou. O anfitrião pode passar a vez.':'';
  if(c.modeId==='quem_e_mais_provavel'&&c.phase==='public')$('turn-title').textContent='Pergunta revelada · hora de votar';
- if(!mesa){mesa=new Mesa3D($('stage'),{onDraw:()=>{if(room?.partida?.cartaAtual?.readerId===service.uid&&room.partida.cartaAtual.phase==='deck'){if(room.local)localDraw();else action('draw');}else if(room?.partida?.cartaAtual?.phase!=='deck')openCardViewer();},onError:e=>{$('scene-loading').hidden=true;toast(e);}});sceneLoadTimer=setInterval(()=>{if(mesa.ready){$('scene-loading').hidden=true;clearInterval(sceneLoadTimer);}},150);}
+ if(!mesa){mesa=new Mesa3D($('stage'),{onDraw:()=>{if(room?.partida?.cartaAtual?.readerId===service.uid&&room.partida.cartaAtual.phase==='deck'){if(room.local)localDraw();else action('draw');}else if(room?.partida?.cartaAtual?.phase!=='deck')openCardViewer();},onError:e=>{$('scene-loading').hidden=true;toast(e);}});sceneLoadTimer=setInterval(()=>{if(mesa.ready){$('scene-loading').hidden=true;clearInterval(sceneLoadTimer);}},150);if(contando())mesa.pause(true);}
  const showFront=reader||['public','results'].includes(c.phase);const showAtivo=c.modeId==='carta_branca'&&c.revealStartedAt&&!c.skipped;mesa.setCard({id:c.id,deckIndex:c.deckIndex,text:cardText,anchors:ancoras(c,cardText),phase:showAtivo?'deck':c.phase,showFront,canDraw:reader&&c.phase==='deck'});mesa.setPlayers(ids.map(id=>({id,...room.jogadores[id]})),c.readerId,service.uid);mesa.setMood?.(c.tone||'leve');
  const phaseKey=c.id+'|'+c.phase;if(lastPhase!==phaseKey){if(c.phase==='deck'&&reader)tone('turn');else if(lastPhase)tone(c.phase==='results'?'reveal':'draw');}lastPhase=phaseKey;
  $('round-actions').replaceChildren();if(reader&&c.phase==='deck')$('round-actions').append(btn('🃏 Puxar carta',()=>action('draw'),'primary'));if(reader&&c.phase==='private'&&(c.modeId!=='verdade_ou_desafio_hot'||c.choice)&&(c.modeId!=='duas_verdades_uma_mentira'||c.statements))$('round-actions').append(btn(FLOWS[c.modeId].reveal,()=>action('reveal'),'primary'));if((reader||host)&&c.phase==='public'&&(room.local&&ids.length===1||['niveis_intimidade','verdade_ou_desafio_hot','palavra_proibida'].includes(c.modeId)))$('round-actions').append(btn(room.local&&ids.length===1?'Encerrar rodada':c.modeId==='niveis_intimidade'?'Respondi! (+1)':c.modeId==='verdade_ou_desafio_hot'?(c.choice==='dare'?'Desafio cumprido! (+2)':'Verdade contada! (+1)'):'Ninguém acertou · encerrar',()=>action('results'),'primary'));if((reader||host)&&c.phase==='public'&&c.votingReady===false)$('round-actions').append(btn(c.modeId==='o_espiao'?'Abrir acusações':'Abrir votação',()=>action('openVoting'),'primary'));if((reader||host)&&c.phase==='results')$('round-actions').append(btn(p.rodadaAtual>=p.totalRodadas?'Encerrar partida':'Próxima rodada →',()=>action('next'),'primary'));if((reader||host)&&!['deck','results'].includes(c.phase))$('round-actions').append(btn('Pular esta carta',()=>$('skip-dialog').showModal(),'ghost'));

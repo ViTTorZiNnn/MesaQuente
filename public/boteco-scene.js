@@ -1,7 +1,7 @@
 // Cenário "Boteco": bar brasileiro moderno e minimalista, tons alaranjados e profundidade.
 // Camada fixa (parede, azulejo, janela para o morro, prateleira, piso, balcão) + camada animada
 // (varal de lâmpadas, letreiro neon, luzes desfocadas em primeiro plano, chuva no tom sério).
-import {visual,reducedMotion} from './visual.js?v=quente30';
+import {visual,reducedMotion} from './visual.js?v=quente31';
 
 const MOODS={
  leve:{wall:['#2b1209','#4a1f0c'],tile:'#5a2a14',tileLine:'#7a3a1c',sky:['#120a1e','#2a1430','#5a2232'],light:'#ffb15c',neon:'#ff8a2b',bokeh:'#ff9a3c',floorA:'#6b2d16',floorB:'#3a1a0e'},
@@ -55,7 +55,7 @@ function build(){
  L.rain=Array.from({length:70},()=>({x:rnd(),y:rnd(),v:.6+rnd()*.6}));L.hearts=Array.from({length:12},()=>({x:rnd()*W,y:rnd()*H,p:rnd()*6,v:.2+rnd()*.4}));
  L.motes=Array.from({length:L.narrow?35:70},()=>({x:rnd()*W,y:rnd()*H,v:.3+rnd(),p:rnd()*6,s:.6+rnd()*1.4}));L.smoke=Array.from({length:6},(_,k)=>({x:W*(.35+rnd()*.3),p:k/6,r:30+rnd()*50}));L.twinkle=Array.from({length:18},()=>({x:rnd(),y:.62+rnd()*.35,p:rnd()*6}));L.bpm={leve:132,profundo:74,adulto:66,casal:70}[mood]||100;
 }
-function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='boteco')return;const m2=currentMood();if(m2!==mood){mood=m2;build();dirty=true;}const still=reducedMotion();if(still&&!dirty)return;if(t-last<33&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000,m=MOODS[mood],c=ctx;
+function draw(t){requestAnimationFrame(draw);if(document.hidden||visual.scene!=='boteco'||document.documentElement.classList.contains('cena-pausada'))return;const m2=currentMood();if(m2!==mood){mood=m2;build();dirty=true;}const still=reducedMotion();if(still&&!dirty)return;if(t-last<33&&!dirty)return;last=t;dirty=false;const time=still?0:t/1000,m=MOODS[mood],c=ctx;
  c.setTransform(1,0,0,1,0,0);c.drawImage(base,0,0);c.setTransform(dpr,0,0,dpr,0,0);
  // Chuva na janela (tom sério)
  if(m.rain){const wn=L.win;c.save();c.beginPath();c.rect(wn.x,wn.y,wn.w,wn.h);c.clip();c.strokeStyle='rgba(180,200,255,.35)';c.lineWidth=1;for(const d of L.rain){const y=wn.y+((d.y+time*d.v*.6)%1)*wn.h,x=wn.x+d.x*wn.w;c.beginPath();c.moveTo(x,y);c.lineTo(x-2,y+9);c.stroke();}c.restore();}
