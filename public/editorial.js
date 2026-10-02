@@ -1,7 +1,7 @@
 import {QUENTE,CASAL} from './cartas-quentes.js';
 import {ACIDO} from './cartas-acidas.js';
-import {PRETAS,brancasPara} from './cartas-sem-nocao.js';
-export {brancasPara};
+import {pretasSemNocao,brancasPara} from './cartas-sem-nocao.js';
+export {brancasPara,pretasSemNocao};
 import {TERMOMETRO,FAMOSOS} from './cartas-jogos.js';
 // Shared editorial catalogue. Mechanics and tone are independent choices.
 export const TONES={leve:'Leve e divertido',profundo:'Sério e pessoal',adulto:'Picante · 18+',acido:'Ácido · 18+',casal:'A dois · 18+'};
@@ -81,7 +81,7 @@ export function editorialCards(mode,tone){const b=bank[tone]||bank.leve;const si
  case'batalha_de_argumentos':return b.debates.map(d=>({text:'"'+d+'"\n\nQuem leu defende essa frase. O próximo jogador ataca. A mesa decide quem convenceu.'}));case'o_termometro':return b.termometro.map(t=>({text:t.pretexto,scale:{min:t.ancora_0,max:t.ancora_10}}));
  case'preencha_a_lacuna':return b.blanks.map(([text,white])=>({text:'Complete a frase escolhendo uma das respostas disponíveis.\n'+text,white}));
  case'verdade_ou_desafio_hot':return b.truth.map((truth,i)=>({text:'Escolha Verdade ou Desafio. Você pode pular sem explicar.',truth,dare:b.dare[i]}));
- case'carta_branca':return(PRETAS[tone]||PRETAS.leve).map(text=>({text}));
+ case'carta_branca':return pretasSemNocao(ADULT_TONES.includes(tone)).map(text=>({text}));// Sem Noção não tem clima
  case'duas_verdades_uma_mentira':return simple('facts');
  case'o_espiao':return b.words.map(secret=>({secret}));
  case'apenas_uma_dica':return b.famosos.map(f=>({secret:f.nome,aliases:f.alias||[],cat:f.cat,dica:f.dica||''}));

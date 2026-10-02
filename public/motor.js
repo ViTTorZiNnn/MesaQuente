@@ -1,4 +1,4 @@
-import {TONES,ADULT_TONES,toneFor,cardsFor,brancasPara} from './editorial.js';
+import {TONES,ADULT_TONES,toneFor,cardsFor,brancasPara,pretasSemNocao} from './editorial.js';
 // Pure game state: the Firebase transaction and tests use the same functions.
 export const MAPAS=['quente','boteco','galaxia','noir'];
 export const CATEGORY_DECK={votacao:0,dilemas:1,blefe:5,debate:2,sintonia:4,desafio:3};
@@ -13,11 +13,11 @@ export function makeRound(room,modes,decks,rng=Math.random,now=Date.now()){
  const round=(room.partida?.rodadaAtual||0)+1;if(round>room.numeroRodadas)return{...room.partida,status:'finalizada'};
  const chosen=room.minigames||[],prev=room.partida?.cartaAtual,modeQueue=refill(room.partida?.modeQueue,chosen,prev?.modeId,rng),modeId=modeQueue.shift(),mode=modes[modeId];if(!mode)throw Error('Minijogo não encontrado.');if(modeId==='o_espiao'&&ids.length<3)throw Error('O Espião precisa de pelo menos 3 jogadores.');
  const old=room.partida?.cartaAtual?.readerId,index=ids.indexOf(old),readerId=old?ids[(index+1)%ids.length]:ids[Math.floor(rng()*ids.length)];
- const tones=Object.keys(TONES).filter(t=>room.tones?.includes(t)),toneQueue=refill(room.partida?.toneQueue,tones.length?tones:['leve'],prev?.tone,rng),tone=toneQueue.shift(),used=room.partida?.used||room.usedHistory||[],selection=selectUnused(cardsFor(modeId,tone,!!room.local),modeId+'_'+tone+(room.local?'_l':''),used,rng);
+ const tones=Object.keys(TONES).filter(t=>room.tones?.includes(t)),toneQueue=refill(room.partida?.toneQueue,tones.length?tones:['leve'],prev?.tone,rng),tone=toneQueue.shift(),used=room.partida?.used||room.usedHistory||[],selection=modeId==='carta_branca'?selectUnused(pretasSemNocao(!!room.adultConfirmed).map(text=>({text})),'carta_branca',used,rng):selectUnused(cardsFor(modeId,tone,!!room.local),modeId+'_'+tone+(room.local?'_l':''),used,rng);
  const card={id:'c_'+now+'_'+Math.floor(rng()*1e9),flowVersion:6,modeId,tone,deckIndex:SPECIAL[modeId]??CATEGORY_DECK[mode.categoria],readerId,participants:ids,phase:'deck',text:'',options:[],createdAt:now,...structuredClone(selection.x)};
  if(modeId==='o_espiao'){card.spyId=ids[Math.floor(rng()*ids.length)];card.text='Façam perguntas uns aos outros sem dizer a palavra secreta.';card.votingReady=false;}
  if(modeId==='batalha_de_argumentos'){card.debaters=[readerId,ids[(ids.indexOf(readerId)+1)%ids.length]];card.votingReady=false;}
- if(modeId==='carta_branca')card.hands=darMaos(ids.filter(id=>id!==readerId),brancasPara(tone),rng);
+ if(modeId==='carta_branca')card.hands=darMaos(ids.filter(id=>id!==readerId),brancasPara(!!room.adultConfirmed),rng);card.semClima=true;
  if(modeId==='apenas_uma_dica')card.text='Os outros escrevem uma dica de uma palavra. O leitor tenta adivinhar.';
  if(modeId==='palavra_proibida')card.text='Ouça a explicação e envie seu palpite. O leitor não pode usar os termos proibidos.';
  return{status:'jogando',rodadaAtual:round,totalRodadas:room.numeroRodadas,cartaAtual:card,answers:{},used:[...used,selection.key].slice(-400),modeQueue,toneQueue};
