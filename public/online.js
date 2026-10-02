@@ -1,17 +1,17 @@
-import {mountChat} from './chat-ui.js?v=quente25';
-import {LocalRoomService} from './local-room.js?v=quente25';
-import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente25';
-import {TONES} from './editorial.js?v=quente25';
-import {mountSettings} from './settings.js?v=quente25';
-import {MAPAS,setRoomMap} from './visual.js?v=quente25';
-import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente25';
-import {GameAudio} from './som.js?v=quente25';
-import {contagem,transicao,depois,setSom} from './abertura.js?v=quente25';
-import {ligarSonsDaInterface} from './sfx.js?v=quente25';
-import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente25';
-import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente25';
+import {mountChat} from './chat-ui.js?v=quente26';
+import {LocalRoomService} from './local-room.js?v=quente26';
+import {FLOWS,guidance,outcome,roleFor,ranking,titles} from './gameplay-ui.js?v=quente26';
+import {TONES} from './editorial.js?v=quente26';
+import {mountSettings} from './settings.js?v=quente26';
+import {MAPAS,setRoomMap} from './visual.js?v=quente26';
+import {textoAoVivo,painelAoVivo,DICAS_AO_VIVO,esconderSegredo} from './ao-vivo.js?v=quente26';
+import {GameAudio} from './som.js?v=quente26';
+import {contagem,transicao,depois,setSom} from './abertura.js?v=quente26';
+import {ligarSonsDaInterface} from './sfx.js?v=quente26';
+import {renderPlayerDock,mountReactionTray} from './mobile-ui.js?v=quente26';
+import {Mesa3D,DECK_ART} from './mesa3d.js?v=quente26';
 import {RoomService} from './rede.js';
-import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente25';
+import {connected,CATEGORY_DECK,textForViewer,uniqueHints} from './motor.js?v=quente26';
 const $=id=>document.getElementById(id),modes=window.MQ_CATALOGO.modos,avatars=window.MQ_CATALOGO.avatares,decks=BARALHOS_DISPONIVEIS;
 let lobbyCount=0,room=null,service,onlineService,mesa=null,screen='home',formMode='create',chosen=new Set(['quem_e_mais_provavel']),avatarIndex=0,busy=false,roomCode='',lastPhase='',lastFormCard='',seenReactions=new Set(),toastTimer,sceneLoadTimer;
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -53,6 +53,15 @@ function renderReactions(){const key=service?.code||roomCode;const list=Object.e
 let eventRoom='',seenEvents=new Set();
 function renderEvents(){const key=service?.code||roomCode,list=Array.isArray(room.events)?room.events:Object.values(room.events||{});if(eventRoom!==key){eventRoom=key;list.forEach(e=>seenEvents.add(e.id));return;}
  for(const e of list){if(!e?.id||seenEvents.has(e.id))continue;seenEvents.add(e.id);tone(/sai|caiu|desconect/i.test(e.text||'')?'leave':'join');const n=el('div',e.text,'table-event');$('event-stack').append(n);setTimeout(()=>n.classList.add('out'),4200);setTimeout(()=>n.remove(),4800);}}
+// Sem Noção: as respostas aparecem uma por uma (tempo curto) para todo mundo ler e rir; o juiz só escolhe no fim.
+const REVELA_MS=3000,semNocaoVisto={},semNocaoTocadas=new Set();
+function encaixa(preta,branca){const b=branca.replace(/[.!]$/,'');return preta.includes('____')?preta.replace('____','«'+b+'»'):preta+' → «'+b+'»';}
+function revelarUmaPorUma(c,lista,escolher){const t0=semNocaoVisto[c.id]??=Date.now(),fim=t0+(lista.length-1)*REVELA_MS,box=el('div',undefined,'revelacao');
+ lista.forEach((w,i)=>{const at=t0+i*REVELA_MS,txt=encaixa(c.text||'',w),item=escolher?btn(txt,()=>escolher(w),'carta-branca revela'):el('div',txt,'carta-branca revela');item.dataset.at=String(at);item.dataset.key=c.id+'|'+i;if(escolher){item.dataset.fim=String(fim);item.disabled=Date.now()<fim||busy||!service.online;}if(Date.now()>=at){item.classList.add('show','ja');semNocaoTocadas.add(item.dataset.key);}box.append(item);});
+ const st=el('p','','revela-status');st.dataset.fim=String(fim);st.dataset.total=String(lista.length);box.append(st);atualizaRevelacao();return box;}
+function atualizaRevelacao(){const now=Date.now();for(const it of document.querySelectorAll('.carta-branca.revela[data-at]')){if(now>=Number(it.dataset.at)&&!it.classList.contains('show')){it.classList.add('show');if(!semNocaoTocadas.has(it.dataset.key)){semNocaoTocadas.add(it.dataset.key);tone('pop');}}if(it.dataset.fim)it.disabled=now<Number(it.dataset.fim)||busy||!service?.online;}
+ for(const st of document.querySelectorAll('.revela-status')){const falta=Math.max(0,Math.ceil((Number(st.dataset.fim)-now)/REVELA_MS));st.textContent=falta?'Revelando… faltam '+falta:'Todas na mesa!';}}
+setInterval(atualizaRevelacao,200);
 // Termômetro da Treta: nota escondida de 0 a 10, revelação com todos no termômetro e tribunal entre os extremos.
 let thermoDraft={id:'',v:5};const tretaSeen={};
 function thermo(c,p,reader,isParticipant){const w=el('div',undefined,'thermo treta'),answers=p.answers||{},mine=answers[service.uid],results=c.phase==='results',sc=c.scale||{min:'De boa',max:'Imperdoável'},nome=id=>room.jogadores[id]?.nome||'Jogador',av=id=>room.jogadores[id]?.avatar?.emoji||'🙂';
@@ -108,7 +117,7 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
  if(c.phase==='private'){
  if(reader&&c.modeId==='verdade_ou_desafio_hot'){box.append(btn('Verdade',()=>action('truth',{choice:'truth'}),c.choice==='truth'?'selected':''),btn('Desafio',()=>action('truth',{choice:'dare'}),c.choice==='dare'?'selected':''));}
  if(reader&&c.modeId==='duas_verdades_uma_mentira'){for(let i=0;i<3;i++){field('fact-'+i,'Fato '+(i+1));const l=el('label','Esta é a mentira '),r=document.createElement('input');r.type='radio';r.name='lie';r.id='lie-'+i;r.value=String(i);l.prepend(r);box.append(l);}box.append(btn(c.statements?'Atualizar fatos':'Salvar os três fatos',()=>{const lie=box.querySelector('input[name=lie]:checked');action('statements',{statements:[0,1,2].map(i=>$('fact-'+i).value),lie:lie?Number(lie.value):-1});}));}
- }else if(c.phase==='results'){if(c.modeId==='carta_branca'&&!c.skipped){const nomeDe=id=>room.jogadores[id]?.nome||'Jogador';box.append(el('h3','O que cada um jogou'));for(const [id,w] of Object.entries(answers)){const d=el('div',undefined,'carta-branca mini'+(id===c.winner?' vencedora':''));d.append(el('span',w),el('small',(id===c.winner?'👑 ':'')+nomeDe(id)));box.append(d);}}renderResults(box,c,p);}
+ }else if(c.phase==='results'){if(c.modeId==='carta_branca'&&!c.skipped){const nomeDe=id=>room.jogadores[id]?.nome||'Jogador';box.append(el('h3','O que cada um jogou'));for(const [id,w] of Object.entries(answers)){const d=el('div',undefined,'carta-branca mini'+(id===c.winner?' vencedora':''));d.append(el('span',encaixa(c.text||'',w)),el('small',(id===c.winner?'👑 ':'')+nomeDe(id)));box.append(d);}}renderResults(box,c,p);}
  else if(c.votingReady===false){box.append(el('p',FLOWS[c.modeId].discussion));if(c.debaters)box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Leitor')+' defende · '+(room.jogadores[c.debaters[1]]?.nome||'Outro jogador')+' discorda'));}
  else{
  if(!isParticipant)box.append(el('p','Você poderá responder na próxima rodada.'));
@@ -119,9 +128,9 @@ function renderInteractions(c,p,host,reader,isParticipant){if(room.local){const 
  else if(c.modeId==='duas_verdades_uma_mentira'){if(reader)box.append(el('p','Aguarde os palpites. Sua mentira é o fato '+(c.lie+1)+'.'));else c.statements?.forEach((v,i)=>choose((i+1)+'. '+v,String(i)));}
  else if(c.modeId==='batalha_de_argumentos'){box.append(el('p',(room.jogadores[c.debaters[0]]?.nome||'Jogador')+' defende a ideia. '+(room.jogadores[c.debaters[1]]?.nome||'Jogador')+' argumenta contra.'));c.debaters.forEach(id=>choose('Melhor argumento: '+(room.jogadores[id]?.nome||'Jogador'),id));}
  else if(c.modeId==='carta_branca'){const prontas=p.respostas||[];
-  if(reader){if(prontas.length){box.append(el('h3','Leia cada resposta em voz alta e escolha a melhor'));prontas.forEach(w=>{const b=btn(w,()=>action('escolher',{value:w}),'carta-branca');b.disabled=busy||!service.online;box.append(b);});}else box.append(el('p','Você é o juiz. '+(p.answerCount||0)+'/'+(p.expectedCount||0)+' já jogaram a carta branca.','thermo-pista'));}
+  if(reader){if(prontas.length){box.append(el('h3','Leia cada resposta em voz alta. Quando todas aparecerem, escolha a melhor'));box.append(revelarUmaPorUma(c,prontas,w=>action('escolher',{value:w})));}else box.append(el('p','Você é o juiz. '+(p.answerCount||0)+'/'+(p.expectedCount||0)+' já jogaram a carta branca.','thermo-pista'));}
   else if(isParticipant){if(myAnswer===undefined){box.append(el('h3','Sua mão: jogue UMA carta branca'));const g=el('div',undefined,'mao-brancas');(c.hand||[]).forEach(w=>{const b=btn(w,()=>action('answer',{value:w}),'carta-branca');b.disabled=busy||!service.online;g.append(b);});box.append(g);}
-   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',myAnswer,'carta-branca jogada'));if(prontas.length){box.append(el('h3','Na mesa (o juiz está escolhendo)'));prontas.forEach(w=>box.append(el('div',w,'carta-branca mini')));}else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
+   else{box.append(el('p','Você jogou:','thermo-pista'),el('div',myAnswer,'carta-branca jogada'));if(prontas.length){box.append(el('h3','As respostas da mesa'));box.append(revelarUmaPorUma(c,prontas));}else box.append(el('p',(p.answerCount||0)+'/'+(p.expectedCount||0)+' jogaram. Esperando o resto…','thermo-pista'));}}}
  else if(c.modeId==='apenas_uma_dica'){if(reader){if(!c.hintsRevealed){box.append(el('p','Aguarde todas as dicas. Elas aparecerão automaticamente, sem as repetidas.'));}else{const hints=uniqueHints(answers);hints.forEach(h=>box.append(el('span',h,'hint-chip')));if(!hints.length)box.append(el('p','Nenhuma dica única recebida.'));submitText('Quem você é?','guess',80);}}else if(c.hintsRevealed){box.append(el('p','As dicas foram entregues ao leitor.'));}else submitText('Sua dica (uma palavra, sem o nome)');}
  else if(c.modeId==='palavra_proibida'){if(reader)box.append(el('p','Explique em voz alta, sem usar os termos da carta.'));else submitText('Seu palpite');}
  else box.append(el('p','Respondam em voz alta. Ao terminar a conversa, concluam a rodada.'));

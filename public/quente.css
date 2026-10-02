@@ -210,3 +210,13 @@ body .carta-branca,#interactions button.carta-branca{display:flex!important;flex
 .carta-branca small{font-size:11px;color:#555;font-weight:800}
 .carta-branca.vencedora{box-shadow:0 4px 0 rgba(0,0,0,.55),0 0 0 4px #ffd23f,0 0 24px rgba(255,210,63,.6)!important}
 @media(max-width:520px){.mao-brancas{grid-template-columns:1fr 1fr;gap:6px}.mao-brancas .carta-branca{min-height:84px;font-size:13px!important}}
+
+/* Sem Noção: respostas reveladas uma por uma */
+.revelacao{display:grid;gap:8px}
+.carta-branca.revela{opacity:0;transform:translateY(14px) scale(.92);pointer-events:none}
+.carta-branca.revela.show{opacity:1;transform:none;pointer-events:auto;animation:revela-pop .45s cubic-bezier(.2,1.5,.4,1) both}
+.carta-branca.revela.show.ja{animation:none}
+@keyframes revela-pop{from{opacity:0;transform:translateY(18px) scale(.85) rotate(-3deg)}to{opacity:1;transform:none}}
+#interactions button.carta-branca.revela:disabled{opacity:1;cursor:default}
+.carta-branca.revela:not(.show):after{content:''}
+.revela-status{font-weight:900;text-align:center;font-size:13px;color:#ffd23f;margin:4px 0 0}
