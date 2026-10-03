@@ -53,7 +53,7 @@ export function applyAction(room,uid,action,payload={},modes,decks,rng=Math.rand
  else if(action==='results'){if(!reader&&!host)throw Error('Aguarde o leitor.');if(c.phase!=='public')throw Error('Revele a carta primeiro.');if(!(room.local&&connected(room).length===1)&&(AUTO_RESULTS.includes(c.modeId)||['apenas_uma_dica','preencha_a_lacuna','carta_branca'].includes(c.modeId)))throw Error('Conclua a atividade da rodada ou pule a carta.');c.phase='results';}
  else if(action==='revelarBrancas'){if(!reader||c.modeId!=='carta_branca'||c.phase!=='public')throw Error('Só o juiz revela as cartas.');if(replyIds(room).some(id=>!Object.hasOwn(p.answers||{},id)))throw Error('Espere todo mundo jogar a sua carta.');if(!c.revealStartedAt){const ordem=Object.keys(p.answers||{});for(let i=ordem.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[ordem[i],ordem[j]]=[ordem[j],ordem[i]];}c.revealOrder=ordem;c.revealStartedAt=now;}}
  else if(action==='escolher'){if(!reader||c.modeId!=='carta_branca'||c.phase!=='public')throw Error('Só o juiz da rodada escolhe.');if(replyIds(room).some(id=>!Object.hasOwn(p.answers||{},id)))throw Error('Espere todo mundo jogar a sua carta.');if(!c.revealStartedAt)throw Error('Revele as cartas antes de escolher.');const autor=Object.keys(p.answers||{}).find(id=>p.answers[id]===payload.value);if(!autor)throw Error('Escolha uma das respostas da mesa.');c.winner=autor;c.phase='results';}
- else if(action==='veredito'){if(c.modeId!=='o_termometro'||c.phase!=='results'||c.skipped||!c.extremes||c.extremes.unanimous||c.verdictWinner!==undefined)throw Error('O tribunal não está aberto.');const ext=[c.extremes.low,c.extremes.high],judges=tribunalJudges(room,c);if(!judges.includes(uid))throw Error('Quem está no tribunal não vota em si mesmo.');if(!ext.includes(payload.value)||payload.value===uid)throw Error('Vote em quem convenceu mais.');c.verdict??={};c.verdict[uid]=payload.value;if(judges.every(id=>c.verdict[id])){const t=tally(c.verdict);c.verdictWinner=t.top||null;if(t.top){room.scores??={};room.scores[t.top]=(room.scores[t.top]||0)+2;c.awards={...(c.awards||{}),[t.top]:((c.awards||{})[t.top]||0)+2};room.stats??={};room.stats[t.top]??={};room.stats[t.top].persuasao=(room.stats[t.top].persuasao||0)+1;}}}
+ else if(action==='veredito'){if(c.modeId!=='o_termometro'||c.phase!=='results'||c.skipped||!c.extremes||c.extremes.unanimous||c.verdictWinner!==undefined)throw Error('O tribunal não está aberto.');const ext=[c.extremes.low,c.extremes.high],judges=tribunalJudges(room,c);if(!judges.includes(uid))throw Error('Quem está no tribunal não vota em si mesmo.');if(!ext.includes(payload.value)||payload.value===uid)throw Error('Vote em quem convenceu mais.');c.verdict??={};c.verdict[uid]=payload.value;if(judges.every(id=>c.verdict[id])){const t=tally(c.verdict);c.verdictWinner=t.top||null;if(t.top){room.scores??={};room.scores[t.top]=(room.scores[t.top]||0)+2;marcarPonto(room,t.top);c.awards={...(c.awards||{}),[t.top]:((c.awards||{})[t.top]||0)+2};room.stats??={};room.stats[t.top]??={};room.stats[t.top].persuasao=(room.stats[t.top].persuasao||0)+1;}}}
  else if(action==='next'){if(!reader&&!host)throw Error('Aguarde sua vez.');if(c.phase!=='results'&&!host)throw Error('Conclua a rodada primeiro.');room.partida=makeRound(room,modes,decks,rng,now);if(room.partida.status==='finalizada')room.status='finalizada';}
  else throw Error('Ação desconhecida.');}
  settleVoting(room,now);return room;
@@ -104,7 +104,7 @@ export function scoreRound(room){
   case'niveis_intimidade':add(c.readerId,1);stat(c.readerId,'sincero');break;
   case'verdade_ou_desafio_hot':if(c.choice==='dare'){add(c.readerId,2);stat(c.readerId,'ousadia');}else if(c.choice==='truth'){add(c.readerId,1);stat(c.readerId,'sincero');}break;
  }
- c.awards=awards;room.scores??={};for(const [id,n] of Object.entries(awards))room.scores[id]=(room.scores[id]||0)+n;return room;
+ c.awards=awards;room.scores??={};for(const [id,n] of Object.entries(awards)){room.scores[id]=(room.scores[id]||0)+n;marcarPonto(room,id);}return room;
 }
 
 // Entradas e saídas durante a partida: avisos para a mesa e regras para a rodada não travar.
@@ -134,3 +134,13 @@ export const SEP_BRANCAS=' ␟ ';
 export function darMaos(ids,pool,rng=Math.random){const deck=[...pool];for(let i=deck.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}let k=0;const hands={};for(const id of ids){const hand=[];while(hand.length<Math.min(10,deck.length)){const w=deck[k++%deck.length];if(!hand.includes(w))hand.push(w);}hands[id]=hand;}return hands;}
 // Respostas da rodada embaralhadas pela carta, para o juiz não saber quem jogou o quê.
 export function respostasAnonimas(card,answers){const h=s=>{let x=2166136261;for(const ch of card.id+'|'+s)x=Math.imul(x^ch.charCodeAt(0),16777619);return x>>>0;};return Object.values(answers||{}).sort((a,b)=>h(a)-h(b));}
+
+// Desempate: quantas rodadas cada um pontuou e em que rodada fez o último ponto (quem chegou primeiro ganha).
+function marcarPonto(room,id){room.stats??={};room.stats[id]??={};room.stats[id].rodadas=(room.stats[id].rodadas||0)+1;room.stats[id].ultimo=room.partida?.rodadaAtual||0;}
+// Quem saiu e voltou (outro aparelho, aba anônima...) com o mesmo nome assume a vaga antiga: pontos e rodada vêm junto.
+export function mesmoNome(a,b){const n=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();return n(a)===n(b);}
+export function vagaAntiga(room,uid,nome){return Object.keys(room.jogadores||{}).find(id=>id!==uid&&room.jogadores[id].conectado===false&&mesmoNome(room.jogadores[id].nome,nome));}
+export function assumirVaga(room,oldId,uid){if(!room.jogadores?.[oldId]||oldId===uid)return room;const troca=v=>v==null?v:JSON.parse(JSON.stringify(v).split(JSON.stringify(oldId).slice(1,-1)).join(JSON.stringify(uid).slice(1,-1)));
+ room.jogadores[uid]={...room.jogadores[oldId]};delete room.jogadores[oldId];
+ for(const k of ['scores','stats','ready'])if(room[k]&&Object.hasOwn(room[k],oldId)){room[k][uid]=room[k][oldId];delete room[k][oldId];}
+ if(room.partida)room.partida=troca(room.partida);if(room.hostId===oldId)room.hostId=uid;return room;}

@@ -66,5 +66,9 @@ export function roleFor(c,uid,viewerText=''){
 }
 // Placar ordenado e títulos do fim da partida.
 export const TITLES={holofote:['🔦','Holofote da Noite','mais votado nas cartas de votação'],ousadia:['😈','Sem Vergonha Oficial','mais "já fiz" e desafios cumpridos'],blefe:['🎭','Mestre do Blefe','enganou a mesa'],sintonia:['🧠','Leitor de Mentes','pensou igual à mesa'],sincero:['💬','Coração Aberto','respondeu sem fugir']};
-export function ranking(room){return Object.keys(room.jogadores||{}).map(id=>({id,nome:room.jogadores[id].nome,avatar:room.jogadores[id].avatar,pontos:room.scores?.[id]||0})).sort((a,b)=>b.pontos-a.pontos||a.nome.localeCompare(b.nome));}
+// Ranking com desempate: 1) pontos; 2) em quantas rodadas pontuou; 3) quem chegou à pontuação primeiro.
+// Se ainda empatar, os dois dividem a mesma posição. Quem saiu sem pontos não entra no pódio.
+export function ranking(room){const st=room.stats||{};const lista=Object.keys(room.jogadores||{}).map(id=>({id,nome:room.jogadores[id].nome,avatar:room.jogadores[id].avatar,pontos:room.scores?.[id]||0,rodadas:st[id]?.rodadas||0,ultimo:st[id]?.ultimo??9999,saiu:room.jogadores[id].conectado===false})).filter(r=>!r.saiu||r.pontos>0);
+ lista.sort((a,b)=>b.pontos-a.pontos||b.rodadas-a.rodadas||a.ultimo-b.ultimo||a.nome.localeCompare(b.nome));
+ let pos=0;lista.forEach((r,i)=>{const ant=lista[i-1];const igual=ant&&ant.pontos===r.pontos&&ant.rodadas===r.rodadas&&ant.ultimo===r.ultimo;if(!igual)pos=i+1;r.pos=pos;if(ant&&ant.pontos===r.pontos&&r.pontos>0)r.desempate=igual?'empate':ant.rodadas!==r.rodadas?'rodadas':'primeiro';});return lista;}
 export function titles(room){const out=[];for(const [key,[icon,name,why]] of Object.entries(TITLES)){let best=null,max=0;for(const [id,s] of Object.entries(room.stats||{}))if(room.jogadores?.[id]&&(s[key]||0)>max){max=s[key];best=id;}if(best)out.push({icon,name,why,id:best,nome:room.jogadores[best].nome,count:max});}return out;}

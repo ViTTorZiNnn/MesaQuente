@@ -1,7 +1,7 @@
 // Mapa "Mesa Quente" (padrão): a roda vista por uma câmera térmica.
 // A mesa e as pessoas em volta são manchas de calor nas cores da logo (preto → vinho → vermelho → laranja → branco).
 // Quem está "falando" esquenta, a carta no centro pulsa e o calor sobe da mesa. Em cima, um HUD discreto de câmera.
-import {visual,reducedMotion} from './visual.js?v=quente31';
+import {visual,reducedMotion} from './visual.js?v=quente32';
 const canvas=document.getElementById('quente-cena'),ctx=canvas.getContext('2d'),field=document.createElement('canvas'),fc=field.getContext('2d');
 let W=0,H=0,dpr=1,last=0,dirty=true,fw=0,fh=0,img=null,noise=null,seed=5,people=[],wisps=[],heat=1,calma=0,tempShown=31;
 const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};

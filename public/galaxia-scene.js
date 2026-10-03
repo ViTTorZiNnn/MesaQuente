@@ -1,5 +1,5 @@
 // Mapa "Galáxia": espaço profundo com nebulosas, galáxia espiral, planeta com anel e estrelas cadentes.
-import {visual,reducedMotion} from './visual.js?v=quente31';
+import {visual,reducedMotion} from './visual.js?v=quente32';
 const MOODS={
  leve:{bg:['#05030f','#120a2e','#1d0f45'],neb:['#7b4dff','#2fd3ff','#ff7ad9'],planet:['#ffb36b','#ff6a8a'],ring:'#ffd9a8'},
  profundo:{bg:['#02040c','#061633','#0b2350'],neb:['#2f6bff','#2fd3ff','#7b4dff'],planet:['#7fb8ff','#3a5cff'],ring:'#bfe0ff'},

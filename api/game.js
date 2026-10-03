@@ -11,7 +11,9 @@ import {
   canJoin,
   noteEvent,
   playerLeft,
-  validateConfig
+  validateConfig,
+  vagaAntiga,
+  assumirVaga
 } from '../server/motor.js';
 
 import { modes, decks } from '../server/content.js';
@@ -140,6 +142,13 @@ function presence(room, uid, now) {
 
     // Avisa a mesa e destrava a rodada quando alguém some ou volta.
     if (was && !is) playerLeft(room, id, now);
+
+    // No lobby, quem sai some da lista (não fica acumulando "desconectado").
+    if (!is && id !== uid && ['lobby', 'tutorial'].includes(room.status)) {
+      delete room.jogadores[id];
+      if (room.ready) delete room.ready[id];
+      continue;
+    }
     if (!was && is) noteEvent(room, '👋 ' + player.nome + ' voltou para a mesa.', now);
 
     player.conectado = is;
@@ -331,6 +340,9 @@ export default async function handler(req, res) {
       try {
         if (body.op === 'join') {
           const player = profile(body);
+          // Mesmo nome de alguém que caiu: assume a vaga antiga (pontos, vez e respostas) em vez de duplicar.
+          const antiga = !room.jogadores[uid] && vagaAntiga(room, uid, player.nome);
+          if (antiga) assumirVaga(room, antiga, uid);
           const previous = room.jogadores[uid];
 
           // Ninguém novo entra com a partida rolando; quem caiu pode voltar.
