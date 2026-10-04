@@ -38,7 +38,7 @@ export function outcome(c,p,players){
  if(c.modeId==='duas_verdades_uma_mentira'){title='A mentira era o fato '+(c.lie+1);detail=c.statements?.[c.lie]||'';}
  if(c.modeId==='o_termometro'){const e=c.extremes||{};title=e.unanimous?'Unanimidade: ninguém brigou':c.verdictWinner?name(c.verdictWinner)+' venceu o tribunal':e.low?name(e.low)+' ('+e.lowValue+') VS '+name(e.high)+' ('+e.highValue+')':'Notas reveladas';detail=e.unanimous?'Todo mundo deu a mesma nota.':c.verdictWinner===undefined&&e.low?'Os extremos defendem a nota; o resto da mesa vota em quem convenceu.':Object.entries(answers).map(([id,v])=>name(id)+': '+v).join(' · ');}
  if(c.modeId==='apenas_uma_dica'){title=c.correct?'Acertou! Você é '+c.secret+'!':'Errou! Você era '+c.secret+'.';detail=`Palpite: ${c.guess||'nenhum'}.`;}
- if(c.modeId==='carta_branca'){title=c.winner?name(c.winner)+' levou a rodada':'Rodada encerrada';detail=(answers[c.winner]||'')+(c.winner?' — escolhida pelo juiz':'');}
+ if(c.modeId==='carta_branca'){title=c.winner==='rando'?'O Rando (bot) ganhou! Que vergonha, mesa…':c.winner?name(c.winner)+' levou a rodada':'Rodada encerrada';detail=(answers[c.winner]||'')+(c.winner?' — escolhida pelo juiz':'');}
  if(c.modeId==='preencha_a_lacuna'){title='A resposta escolhida';detail=(answers[c.winner]||'')+' — '+name(c.winner);}
  if(c.modeId==='palavra_proibida'){title=c.winner?name(c.winner)+' acertou!':'A palavra era '+c.secret;detail='Resposta: '+c.secret;}
  if(c.modeId==='niveis_intimidade'){title='Respondeu sem filtro!';detail=name(c.readerId)+' encarou a pergunta. Próxima vítima?';}

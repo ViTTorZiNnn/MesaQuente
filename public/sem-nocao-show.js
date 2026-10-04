@@ -1,4 +1,4 @@
-import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente32';
+import {pintarAvatar,avatarSpan,avatarTexto} from './avatar.js?v=quente33';
 // Show de revelação do Sem Noção (estilo videogame):
 // 1) cada carta aparece sozinha, já com a frase completa e o jogador que montou, por alguns segundos;
 // 2) depois todas aparecem juntas e o juiz escolhe a melhor;

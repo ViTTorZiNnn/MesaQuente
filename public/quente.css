@@ -296,3 +296,7 @@ html.cena-pausada .scene-canvas{opacity:.999}
 .abertura[data-n="1"]{animation:none}
 .abertura[data-n="1"] .abertura-numero{animation:numero-bate .9s cubic-bezier(.2,1.5,.4,1) both,treme-n .25s linear 2}
 @keyframes treme-n{25%{translate:-5px 2px}50%{translate:5px -2px}75%{translate:-3px -3px}}
+/* Sem Noção sozinho: o clima não importa, só a confirmação de 18+ */
+.nota-sem-clima{display:none;font-weight:800;padding:10px 12px;border-radius:10px;background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.4)}
+.tone-picker.sem-clima .nota-sem-clima{display:block}
+.tone-picker.sem-clima>label:not(#adult-choice),.tone-picker.sem-clima>p:not(.nota-sem-clima){opacity:.3;pointer-events:none}

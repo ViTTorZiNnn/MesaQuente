@@ -1,4 +1,4 @@
-import {textForViewer,replyIds,respostasAnonimas} from './motor.js?v=quente32';
+import {textForViewer,replyIds,respostasAnonimas} from './motor.js?v=quente33';
 // Build a new response from allowed fields; never send the database snapshot.
 export function viewFor(room,uid){
  if(!room?.jogadores?.[uid])throw Error('Você não participa desta sala.');
@@ -7,7 +7,7 @@ export function viewFor(room,uid){
  out.chat=Object.entries(room.chat||{}).sort((a,b)=>a[1].at-b[1].at||a[0].localeCompare(b[0])).slice(-60).map(([id,m])=>({id,uid:m.uid,name:m.name,emoji:m.emoji,text:m.text,at:m.at}));
  const p=room.partida,c=p?.cartaAtual;if(!c)return out;
  const own=c.readerId===uid,participant=c.participants.includes(uid),results=c.phase==='results'&&!c.skipped,visible=results||!c.skipped&&(c.phase==='public'||participant&&own&&['private','voting'].includes(c.phase));
- const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion','revealStartedAt','revealOrder'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
+ const card={};for(const k of ['id','modeId','deckIndex','readerId','participants','phase','createdAt','level','hintsRevealed','debaters','voteOpensAt','revealedAt','tone','votingReady','skipped','flowVersion','revealStartedAt','revealOrder','rando'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);
  card.viewerText=visible?(!participant&&!results&&['o_espiao','apenas_uma_dica','palavra_proibida'].includes(c.modeId)?c.text:textForViewer(c,uid)):'';card.options=[];card.white=[];
  if(visible){for(const k of ['options','white','statements','choice','debaters','winner','guess','correct','scale','cat','emoji','pick'])if(c[k]!==undefined)card[k]=structuredClone(c[k]);}
  if(visible&&c.hands?.[uid]&&!results)card.hand=structuredClone(c.hands[uid]);
